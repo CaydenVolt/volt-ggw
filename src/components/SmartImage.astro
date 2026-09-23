@@ -1,0 +1,88 @@
+---
+/**
+ * Image component that resolves a config path two ways.
+ *
+ * WHY THIS EXISTS
+ * ───────────────
+ * Astro's <Image> can only optimise files that live under `src/`. Files in
+ * `public/` are copied verbatim — no resizing, no format conversion. But
+ * `public/` is far friendlier for a non-technical person swapping photos.
+ *
+ * So this component supports both, and the config just writes a normal-looking
+ * path like `/images/hero-placeholder.webp`:
+ *
+ *   1. If a file with that name exists in `src/assets/images/`, it is run
+ *      through <Image> — resized, converted to WebP, hashed, cached forever.
+ *      This is what the shipped placeholders use.
+ *
+ *   2. Otherwise it falls back to a plain <img> pointing at `/images/<file>`
+ *      in `public/`. Drop a file there and it just works, unoptimised.
+ *
+ * Replacing the files in `src/assets/images/` is the recommended path.
+ */
+import { Image } from 'astro:assets';
+
+export interface Props {
+  /** Config-style path, e.g. `/images/hero-placeholder.webp`. */
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  class?: string;
+  /** Pass `eager` for above-the-fold images (the hero). */
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className = '',
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  sizes,
+} = Astro.props;
+
+/* Eagerly collect every local asset so we can look one up by filename. */
+const localAssets = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/*.{webp,avif,png,jpg,jpeg,svg}',
+  { eager: true }
+);
+
+const filename = src.split('/').pop() ?? '';
+const match = localAssets[`../assets/images/${filename}`];
+const localSrc = match?.default;
+
+/* SVGs are passed through untouched — nothing to optimise. */
+const isSvg = filename.endsWith('.svg');
+---
+
+{
+  localSrc && !isSvg ? (
+    <Image
+      src={localSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      sizes={sizes}
+      format="webp"
+      class={className}
+    />
+  ) : (
+    <img
+      src={isSvg && localSrc ? localSrc.src : `/images/${filename}`}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      class={className}
+    />
+  )
+}

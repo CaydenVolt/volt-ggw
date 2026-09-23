@@ -1,0 +1,107 @@
+---
+/**
+ * Inline SVG icon set. Zero runtime, zero network requests.
+ *
+ * Content icons (referenced by `icon:` fields in client.ts) are stroke-based.
+ * Brand glyphs (facebook, instagram, whatsapp…) are fill-based.
+ *
+ * To add an icon: drop a 24×24 path into STROKE_ICONS or FILL_ICONS below,
+ * then add its name to `IconName` in `src/config/client.ts` if it will be
+ * selectable from the config.
+ */
+
+export interface Props {
+  name: string;
+  /** Rendered size in px (square). */
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 24, class: className = '' } = Astro.props;
+
+/* 24×24, stroke-based, no fill. */
+const STROKE_ICONS: Record<string, string> = {
+  // ── Services ──
+  roller:
+    '<rect x="3" y="4" width="14" height="6" rx="1.5"/><path d="M17 7h2.5A1.5 1.5 0 0 1 21 8.5v2a1.5 1.5 0 0 1-1.5 1.5H12v2"/><rect x="9.5" y="14" width="5" height="7" rx="1.5"/>',
+  droplet: '<path d="M12 2.5S5.5 9.3 5.5 14a6.5 6.5 0 0 0 13 0c0-4.7-6.5-11.5-6.5-11.5Z"/>',
+  shield:
+    '<path d="M12 22s8-3.6 8-10V5.5l-8-3-8 3V12c0 6.4 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
+  building:
+    '<rect x="4" y="2.5" width="16" height="19" rx="1.5"/><path d="M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M9 15h1.5M13.5 15H15"/><path d="M10 21.5v-3h4v3"/>',
+  wrench:
+    '<path d="M14.7 6.3a4 4 0 0 0 5.1 5.1l-8.6 8.6a2.4 2.4 0 0 1-3.4 0l-1.8-1.8a2.4 2.4 0 0 1 0-3.4Z"/><path d="M14.7 6.3 18 3a4 4 0 0 0-3.3 3.3Z"/>',
+  sparkles:
+    '<path d="m12 2.5 1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.9Z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z"/>',
+
+  // ── Trust ──
+  leaf:
+    '<path d="M4 20c0-8 5-13 16-13 0 9-4.5 13.5-11 13.5-2.5 0-5-.8-5-.5Z"/><path d="M4.5 19.5C8 16 11.5 13.5 15 12"/>',
+  award: '<circle cx="12" cy="9" r="5.5"/><path d="m8.5 13.5-1.5 8 5-3 5 3-1.5-8"/>',
+  'badge-check':
+    '<path d="m12 2.5 2.4 1.9 3-.2.9 2.9 2.5 1.7-1.3 2.7 1.3 2.7-2.5 1.7-.9 2.9-3-.2L12 20.5l-2.4-1.9-3 .2-.9-2.9L3.2 14l1.3-2.7L3.2 8.6l2.5-1.7.9-2.9 3 .2Z"/><path d="m9 12 2 2 4-4"/>',
+  clock: '<circle cx="12" cy="12" r="9.5"/><path d="M12 6.5V12l3.5 2"/>',
+  users:
+    '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.8a3.5 3.5 0 0 1 0 6.4"/><path d="M17.5 14.2A6.5 6.5 0 0 1 21.5 20"/>',
+
+  // ── Contact ──
+  phone:
+    '<path d="M6.2 3h3l1.5 4-2 1.4a12 12 0 0 0 5.9 5.9l1.4-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.2 2 2 0 0 1 6.2 3Z"/>',
+  mail: '<rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 6 9-6"/>',
+  'map-pin':
+    '<path d="M12 21.5S5 15.6 5 10.2a7 7 0 1 1 14 0c0 5.4-7 11.3-7 11.3Z"/><circle cx="12" cy="10" r="2.6"/>',
+
+  // ── UI ──
+  menu: '<path d="M3.5 6.5h17M3.5 12h17M3.5 17.5h17"/>',
+  x: '<path d="m5.5 5.5 13 13M18.5 5.5l-13 13"/>',
+  check: '<path d="m4.5 12.5 5 5 10-11"/>',
+  'chevron-down': '<path d="m6 9.5 6 6 6-6"/>',
+  'chevron-left': '<path d="m14.5 5.5-6 6.5 6 6.5"/>',
+  'chevron-right': '<path d="m9.5 5.5 6 6.5-6 6.5"/>',
+  'arrow-right': '<path d="M4.5 12h15M13.5 6l6 6-6 6"/>',
+};
+
+/* 24×24, fill-based (brand marks and the star). */
+const FILL_ICONS: Record<string, string> = {
+  star: '<path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9Z"/>',
+  whatsapp:
+    '<path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.6 0a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3A2.9 2.9 0 0 0 6.7 12a5.1 5.1 0 0 0 1.1 2.3 11.6 11.6 0 0 0 4.4 3.9c1.6.6 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3Z"/>',
+  facebook:
+    '<path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/>',
+  instagram:
+    '<path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9s.7.8.9 1.4c.1.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4s-.8.7-1.4.9c-.4.1-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9s-.7-.8-.9-1.4c-.1-.4-.3-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4s.8-.7 1.4-.9c.4-.1 1-.3 2.2-.4 1.3-.1 1.7-.1 4.9-.1Zm0 1.8c-3.1 0-3.5 0-4.8.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.2.8s-.6.7-.8 1.2c-.2.4-.3 1-.4 2.1-.1 1.3-.1 1.7-.1 4.8s0 3.5.1 4.8c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.2s.7.6 1.2.8c.4.2 1 .3 2.1.4 1.3.1 1.7.1 4.8.1s3.5 0 4.8-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.2-.8s.6-.7.8-1.2c.2-.4.3-1 .4-2.1.1-1.3.1-1.7.1-4.8s0-3.5-.1-4.8c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.2s-.7-.6-1.2-.8c-.4-.2-1-.3-2.1-.4-1.3-.1-1.7-.1-4.8-.1Zm0 3.1a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 8.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm6.4-8.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z"/>',
+  linkedin:
+    '<path d="M6.9 21H3.3V9.2h3.6V21ZM5.1 7.6a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2ZM21 21h-3.6v-5.7c0-1.4 0-3.1-1.9-3.1s-2.2 1.5-2.2 3V21H9.7V9.2h3.4v1.6h.1a3.8 3.8 0 0 1 3.4-1.9c3.6 0 4.3 2.4 4.3 5.5V21Z"/>',
+  tiktok:
+    '<path d="M16.6 2h-3.1v13.4a2.4 2.4 0 1 1-2.4-2.4c.3 0 .5 0 .7.1V9.9a5.6 5.6 0 1 0 4.8 5.5V8.7a6.4 6.4 0 0 0 3.8 1.2V6.8a3.6 3.6 0 0 1-3.8-3.4V2Z"/>',
+  youtube:
+    '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.1V8.9l5.2 3.1Z"/>',
+};
+
+const isFill = name in FILL_ICONS;
+const path = isFill ? FILL_ICONS[name] : STROKE_ICONS[name];
+
+if (!path && import.meta.env.DEV) {
+  console.warn(`[Icon] Unknown icon name: "${name}"`);
+}
+---
+
+{
+  path && (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={isFill ? 'currentColor' : 'none'}
+      stroke={isFill ? 'none' : 'currentColor'}
+      stroke-width={isFill ? undefined : 1.75}
+      stroke-linecap={isFill ? undefined : 'round'}
+      stroke-linejoin={isFill ? undefined : 'round'}
+      class={className}
+      aria-hidden="true"
+      focusable="false"
+      set:html={path}
+    />
+  )
+}

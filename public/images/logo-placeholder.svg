@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="176" height="40" viewBox="0 0 176 40" role="img" aria-label="Logo placeholder">
+  <rect x="0.75" y="0.75" width="38.5" height="38.5" rx="9" fill="#F0A81C"/>
+  <path d="M20 9.5c-4.4 4.8-7 8.6-7 11.7a7 7 0 0 0 14 0c0-3.1-2.6-6.9-7-11.7Z" fill="#0B1F3A"/>
+  <text x="50" y="18.5" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="15" font-weight="800" fill="#ffffff" letter-spacing="-0.3">GOAL GREEN</text>
+  <text x="50" y="32.5" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="10.5" font-weight="600" fill="#F0A81C" letter-spacing="3.2">WORLD</text>
+</svg>

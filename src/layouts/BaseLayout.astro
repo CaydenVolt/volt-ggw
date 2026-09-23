@@ -1,0 +1,140 @@
+---
+/**
+ * Base document shell for every page.
+ *
+ * Two jobs worth knowing about:
+ *
+ *  1. It emits the brand colour palette from `client.ts` as CSS custom
+ *     properties on `:root`. `global.css` maps those onto Tailwind utility
+ *     names, so changing a hex in the config re-skins the entire site.
+ *
+ *  2. It holds the commented-out slots for GA4 / Meta Pixel / Google Ads.
+ *     Per the brief these are NOT injected yet — only the IDs are wired up.
+ */
+import '../styles/global.css';
+import client from '../config/client.ts';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  /** Set true on /privacy and /terms so they stay out of search results. */
+  noindex?: boolean;
+}
+
+const {
+  title = client.seo.title,
+  description = client.seo.description,
+  noindex = false,
+} = Astro.props;
+
+const { brand, analytics, seo } = client;
+
+/* Canonical URL. Falls back to the configured origin when Astro.site is unset. */
+const canonical = new URL(Astro.url.pathname, seo.siteUrl).href;
+const ogImage = new URL(seo.ogImage, seo.siteUrl).href;
+
+/*
+ * Palette → CSS custom properties. This is the single bridge between the
+ * TypeScript config and the stylesheet.
+ */
+/*
+ * Dormant tracking slots. Rendering the configured IDs into the page source
+ * makes it trivial to confirm the config is wired up before the real vendor
+ * snippets go in.
+ */
+const trackingSlots = [
+  ['GA4', analytics.ga4Id],
+  ['META PIXEL', analytics.metaPixelId],
+  ['GOOGLE ADS', analytics.googleAdsId],
+]
+  .map(([label, id]) => `<!-- ${label} SLOT — id: ${id || '(not set)'} -->`)
+  .join('\n    ');
+
+const brandVars = [
+  `--brand-primary:${brand.primary}`,
+  `--brand-primary-light:${brand.primaryLight}`,
+  `--brand-secondary:${brand.secondary}`,
+  `--brand-accent:${brand.accent}`,
+  `--brand-accent-hover:${brand.accentHover}`,
+  `--brand-accent-text:${brand.accentText}`,
+  `--brand-bg:${brand.background}`,
+  `--brand-bg-alt:${brand.backgroundAlt}`,
+  `--brand-text:${brand.text}`,
+  `--brand-muted:${brand.textMuted}`,
+].join(';');
+---
+
+<!doctype html>
+<html lang="en-SG">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content={brand.primary} />
+
+    {/* Open Graph / social preview */}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={client.company.name} />
+    <meta property="og:locale" content={seo.locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/* Inter — the only external asset the page loads. */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+
+    {/* Brand palette from src/config/client.ts */}
+    <style is:inline set:html={`:root{${brandVars}}`}></style>
+
+    {/*
+      ─────────────────────────────────────────────────────────────────────
+       TRACKING SLOTS — intentionally NOT active yet.
+      ─────────────────────────────────────────────────────────────────────
+       The IDs below are read from `client.analytics`. To go live, replace
+       the matching comment block with the real vendor snippet.
+
+       GA4 measurement ID ........ analytics.ga4Id
+       Meta Pixel ID ............. analytics.metaPixelId
+       Google Ads conversion ID .. analytics.googleAdsId
+
+       Current values are rendered into this comment at build time so you
+       can confirm the config is wired up by viewing page source.
+    */}
+    {/*
+      Emitted via set:html because Astro passes literal HTML comments through
+      verbatim — an expression inside `<!-- -->` would never be evaluated.
+    */}
+    <Fragment set:html={trackingSlots} />
+
+    <slot name="head" />
+  </head>
+
+  <body class="bg-brand-bg text-brand-text antialiased">
+    {/* Keyboard users land here first. */}
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-accent focus:px-4 focus:py-2 focus:font-semibold focus:text-brand-accent-text"
+    >
+      Skip to content
+    </a>
+
+    <slot />
+  </body>
+</html>

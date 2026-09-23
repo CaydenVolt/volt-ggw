@@ -1,0 +1,223 @@
+@import 'tailwindcss';
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ *  DESIGN SYSTEM
+ * ─────────────────────────────────────────────────────────────────────────────
+ *  Brand colours are NOT hardcoded here. `BaseLayout.astro` emits a
+ *  `:root { --brand-*: … }` block from `src/config/client.ts`, and the
+ *  @theme below maps those runtime variables onto Tailwind utility names.
+ *
+ *  Result: `bg-brand-primary`, `text-brand-accent`, `border-brand-accent`
+ *  all work as normal Tailwind utilities, but the actual hex values live in
+ *  the config file. Change the config, the whole site re-skins.
+ *
+ *  The fallbacks below only apply if the layout fails to emit the block.
+ */
+
+@theme {
+  --color-brand-primary: var(--brand-primary, #0b1f3a);
+  --color-brand-primary-light: var(--brand-primary-light, #15305a);
+  --color-brand-secondary: var(--brand-secondary, #1e3a5f);
+  --color-brand-accent: var(--brand-accent, #f0a81c);
+  --color-brand-accent-hover: var(--brand-accent-hover, #d9940f);
+  --color-brand-accent-text: var(--brand-accent-text, #11203a);
+  --color-brand-bg: var(--brand-bg, #ffffff);
+  --color-brand-bg-alt: var(--brand-bg-alt, #f5f7fa);
+  --color-brand-text: var(--brand-text, #1a2233);
+  --color-brand-muted: var(--brand-muted, #5a6779);
+
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  /* Consistent vertical rhythm between stacked sections. */
+  --spacing-section: 5rem;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Sticky nav is ~72px; keep anchor targets clear of it. */
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Respect users who have asked for less motion. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings inherit the brand's darkest tone by default. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-brand-primary);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* A single, consistent focus ring across every interactive element. */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-brand-accent);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ── Reusable component classes ───────────────────────────────────────────── */
+
+@layer components {
+  /* Page gutter + max width. Every section uses this. */
+  .container-x {
+    width: 100%;
+    max-width: 80rem; /* 1280px */
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-x {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Vertical padding for a stacked page section. */
+  .section-y {
+    padding-block: 3.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-y {
+      padding-block: var(--spacing-section);
+    }
+  }
+
+  /* ---- Buttons ---- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8125rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Primary action — amber on anything. */
+  .btn-accent {
+    background-color: var(--color-brand-accent);
+    color: var(--color-brand-accent-text);
+  }
+
+  .btn-accent:hover {
+    background-color: var(--color-brand-accent-hover);
+  }
+
+  /* Secondary action on a DARK background. */
+  .btn-outline-light {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid rgb(255 255 255 / 0.35);
+  }
+
+  .btn-outline-light:hover {
+    background-color: rgb(255 255 255 / 0.12);
+    border-color: rgb(255 255 255 / 0.6);
+  }
+
+  /* Secondary action on a LIGHT background. */
+  .btn-outline-dark {
+    background-color: transparent;
+    color: var(--color-brand-primary);
+    border: 2px solid var(--color-brand-primary);
+  }
+
+  .btn-outline-dark:hover {
+    background-color: var(--color-brand-primary);
+    color: #ffffff;
+  }
+
+  /* ---- Typography helpers ---- */
+
+  /* Small uppercase label that sits above a section heading. */
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-accent);
+  }
+
+  .heading-section {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .lead {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--color-brand-muted);
+  }
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Hide scrollbars on the horizontally-scrolling review rail. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

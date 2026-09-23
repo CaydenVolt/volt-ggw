@@ -1,0 +1,173 @@
+---
+/**
+ * Sticky top navigation.
+ *
+ * Layout: logo left · anchor links centre · Call Now + Get a Free Quote right.
+ * Below `lg` the links collapse into a hamburger panel.
+ *
+ * JS budget: one small inline script for the mobile toggle. Nothing else.
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+
+const { company, logo, nav, contact } = client;
+---
+
+<header
+  id="site-nav"
+  class="sticky top-0 z-50 border-b border-white/10 bg-brand-primary/95 backdrop-blur supports-[backdrop-filter]:bg-brand-primary/85"
+>
+  <div class="container-x">
+    <div class="flex h-[72px] items-center justify-between gap-4">
+      {/* ── Logo ── */}
+      <a
+        href="/"
+        class="flex shrink-0 items-center gap-3"
+        aria-label={`${company.name} — home`}
+      >
+        <img
+          src={logo.src}
+          alt={logo.alt}
+          height={logo.height}
+          width={logo.height * 4}
+          class="w-auto"
+          style={`height:${logo.height}px`}
+        />
+        <span class="hidden border-l border-white/20 pl-3 text-[11px] font-semibold uppercase leading-tight tracking-wider text-white/70 xl:block">
+          {company.division}
+        </span>
+      </a>
+
+      {/* ── Desktop links ── */}
+      {/* `flex-1` lets this column absorb the slack so the links sit centred
+          between the logo and the CTAs, rather than butting up to the logo. */}
+      <nav aria-label="Main" class="hidden flex-1 justify-center lg:flex">
+        <ul class="flex items-center gap-1">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="rounded-md px-3 py-2 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      {/* ── Desktop CTAs ── */}
+      <div class="hidden shrink-0 items-center gap-3 lg:flex">
+        <a href={`tel:${contact.phoneHref}`} class="btn btn-outline-light">
+          <Icon name="phone" size={17} />
+          <span>Call Now</span>
+        </a>
+        <a href="#quote" class="btn btn-accent">Get a Free Quote</a>
+      </div>
+
+      {/* ── Mobile: call + hamburger ── */}
+      <div class="flex items-center gap-2 lg:hidden">
+        <a
+          href={`tel:${contact.phoneHref}`}
+          class="inline-flex h-11 w-11 items-center justify-center rounded-lg border-2 border-white/30 text-white transition-colors hover:bg-white/10"
+          aria-label={`Call ${contact.phone}`}
+        >
+          <Icon name="phone" size={19} />
+        </a>
+        <button
+          type="button"
+          id="nav-toggle"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10"
+          aria-expanded="false"
+          aria-controls="nav-mobile"
+          aria-label="Open menu"
+        >
+          <Icon name="menu" size={24} class="nav-icon-open" />
+          <Icon name="x" size={24} class="nav-icon-close hidden" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* ── Mobile panel ── */}
+  <div
+    id="nav-mobile"
+    hidden
+    class="border-t border-white/10 bg-brand-primary lg:hidden"
+  >
+    <nav aria-label="Mobile" class="container-x py-4">
+      <ul class="flex flex-col gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="nav-mobile-link block rounded-md px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4">
+        <a href="#quote" class="nav-mobile-link btn btn-accent w-full">
+          Get a Free Quote
+        </a>
+        <a
+          href={`tel:${contact.phoneHref}`}
+          class="btn btn-outline-light w-full"
+        >
+          <Icon name="phone" size={17} />
+          <span>{contact.phone}</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle. Deliberately tiny and dependency-free.
+  const toggle = document.getElementById('nav-toggle');
+  const panel = document.getElementById('nav-mobile');
+
+  if (toggle && panel) {
+    const iconOpen = toggle.querySelector('.nav-icon-open');
+    const iconClose = toggle.querySelector('.nav-icon-close');
+
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+    };
+
+    toggle.addEventListener('click', () => {
+      // `hidden` is typed `boolean | string` (it accepts "until-found"),
+      // so coerce before handing it to setOpen.
+      setOpen(Boolean(panel.hidden));
+    });
+
+    // Tapping any link inside the panel closes it.
+    panel.querySelectorAll('.nav-mobile-link').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+    // Escape closes the panel and returns focus to the button.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !panel.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // If the viewport grows past the `lg` breakpoint, reset to the desktop nav.
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    desktop.addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+</script>
