@@ -1,0 +1,44 @@
+---
+/**
+ * Service area tag cloud (section 11).
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+
+const { serviceArea, contact } = client;
+---
+
+<section id="service-area" class="section-y bg-white" aria-labelledby="area-heading">
+  <div class="container-x">
+    <div class="mx-auto max-w-3xl text-center">
+      <span
+        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent"
+      >
+        <Icon name="map-pin" size={24} />
+      </span>
+      <p class="eyebrow mt-4">Coverage</p>
+      <h2 id="area-heading" class="heading-section mt-3">{serviceArea.heading}</h2>
+      <p class="lead mx-auto mt-4 max-w-xl">{serviceArea.subheading}</p>
+    </div>
+
+    <ul class="mx-auto mt-9 flex max-w-4xl flex-wrap justify-center gap-2.5">
+      {
+        serviceArea.cities.map((city) => (
+          <li class="rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10">
+            {city}
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8 text-center text-[15px] text-brand-muted">
+      Not sure if we cover your area?{' '}
+      <a
+        href={`tel:${contact.phoneHref}`}
+        class="font-bold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
+      >
+        Call {contact.phone}
+      </a>
+    </p>
+  </div>
+</section>

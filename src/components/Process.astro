@@ -1,0 +1,70 @@
+---
+/**
+ * Numbered process steps (section 6).
+ *
+ * Vertical timeline on mobile, horizontal row from `lg` up. The connecting
+ * line is a pseudo-element on the list, hidden when a step is last.
+ */
+import client from '../config/client.ts';
+
+const { process } = client;
+const steps = process.steps;
+---
+
+<section id="process" class="section-y bg-brand-primary" aria-labelledby="process-heading">
+  <div class="container-x">
+    <div class="max-w-2xl">
+      <p class="eyebrow">Our Process</p>
+      <h2 id="process-heading" class="heading-section mt-3 text-white">
+        {process.heading}
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-white/70">
+        {process.subheading}
+      </p>
+    </div>
+
+    <ol class="mt-12 grid gap-8 lg:grid-cols-5 lg:gap-6">
+      {
+        steps.map((step, index) => (
+          <li class="relative flex gap-5 lg:flex-col lg:gap-0">
+            {/* Number + connector */}
+            <div class="relative flex shrink-0 flex-col items-center lg:w-full lg:flex-row">
+              <span class="z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 border-brand-accent bg-brand-primary text-lg font-extrabold text-brand-accent">
+                {index + 1}
+              </span>
+              {/* Vertical line (mobile) */}
+              {index < steps.length - 1 && (
+                <span
+                  class="mt-1 w-0.5 flex-1 bg-white/15 lg:hidden"
+                  aria-hidden="true"
+                />
+              )}
+              {/* Horizontal line (desktop) */}
+              {index < steps.length - 1 && (
+                <span
+                  class="ml-3 hidden h-0.5 flex-1 bg-white/15 lg:block"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
+
+            <div class="pb-8 lg:pb-0 lg:pr-6 lg:pt-6">
+              <h3 class="text-base font-bold leading-snug text-white">
+                {step.title}
+              </h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-white/65">
+                {step.description}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-10 lg:mt-12">
+      <a href="#quote" class="btn btn-accent px-7 py-4 text-base">
+        Start With a Free Assessment
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,62 @@
+---
+/**
+ * One service card. Image, icon badge, name, one-line description,
+ * "Learn more" link.
+ *
+ * The whole card is clickable via a stretched-link overlay on the anchor, so
+ * there is still exactly one link in the accessibility tree.
+ */
+import type { Service } from '../config/client.ts';
+import Icon from './Icon.astro';
+import SmartImage from './SmartImage.astro';
+
+export interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+---
+
+<article
+  class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5 transition-shadow duration-200 hover:shadow-xl hover:shadow-slate-900/10"
+>
+  <div class="relative aspect-[4/3] overflow-hidden bg-brand-primary">
+    <SmartImage
+      src={service.image}
+      alt={service.name}
+      width={800}
+      height={600}
+      sizes="(min-width: 1024px) 384px, (min-width: 640px) 45vw, 90vw"
+      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    <span
+      class="absolute bottom-0 left-5 flex h-12 w-12 translate-y-1/2 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text shadow-lg"
+    >
+      <Icon name={service.icon} size={24} />
+    </span>
+  </div>
+
+  <div class="flex flex-1 flex-col p-6 pt-9">
+    <h3 class="text-lg font-bold leading-snug text-brand-primary">
+      {service.name}
+    </h3>
+    <p class="mt-2 flex-1 text-[15px] leading-relaxed text-brand-muted">
+      {service.description}
+    </p>
+
+    <a
+      href={service.href}
+      class="mt-4 inline-flex items-center gap-1.5 self-start text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
+    >
+      {/* Stretches the hit area to the whole card without nesting links. */}
+      <span class="absolute inset-0" aria-hidden="true"></span>
+      <span>Learn more</span>
+      <Icon
+        name="arrow-right"
+        size={16}
+        class="transition-transform duration-200 group-hover:translate-x-1"
+      />
+      <span class="sr-only">about {service.name}</span>
+    </a>
+  </div>
+</article>

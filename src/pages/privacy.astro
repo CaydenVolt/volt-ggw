@@ -1,0 +1,127 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import client from '../config/client.ts';
+
+const { company, legal, contact } = client;
+const address = [
+  contact.address.line1,
+  contact.address.line2,
+  [contact.address.city, contact.address.postalCode].filter(Boolean).join(' '),
+]
+  .filter(Boolean)
+  .join(', ');
+---
+
+<LegalLayout
+  title="Privacy Policy"
+  intro={`How ${company.legalName} collects, uses and protects your personal data.`}
+>
+  <div class="legal-notice">
+    <p>
+      <strong>Placeholder text.</strong> This page is scaffolding so the site can
+      ship with working compliance links. It has not been reviewed by a lawyer and
+      is not legal advice. Replace it with a policy drafted for {company.legalName}
+      — in Singapore that means aligning it with the Personal Data Protection Act
+      (PDPA) — before going live.
+    </p>
+  </div>
+
+  <h2>1. Who we are</h2>
+  <p>
+    {company.legalName} ({company.registrationNumber}) operates this website and
+    is the organisation responsible for personal data collected through it. Our
+    registered address is {address}.
+  </p>
+
+  <h2>2. What we collect</h2>
+  <p>When you submit an enquiry form on this site, we collect:</p>
+  <ul>
+    <li>Your name</li>
+    <li>Your phone number</li>
+    <li>Your email address</li>
+    <li>Any project details you choose to include in your message</li>
+    <li>
+      Marketing attribution data — the page you submitted from, the website that
+      referred you, and any campaign parameters in the link you followed
+    </li>
+  </ul>
+
+  <h2>3. Why we collect it</h2>
+  <p>We use your personal data to:</p>
+  <ul>
+    <li>Respond to your enquiry and prepare a quotation</li>
+    <li>Contact you about your project by phone, SMS, WhatsApp or email</li>
+    <li>Schedule and carry out work you engage us for</li>
+    <li>Understand which marketing channels bring us enquiries</li>
+  </ul>
+  <p>
+    We do not sell your personal data. We do not use it for unrelated marketing
+    without your consent.
+  </p>
+
+  <h2>4. Consent and withdrawing it</h2>
+  <p>
+    By ticking the consent box on our enquiry form, you agree to us contacting
+    you about your enquiry using the details you provided, including by SMS and
+    WhatsApp. You may withdraw that consent at any time by replying STOP to any
+    message, or by emailing <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.
+    Withdrawing consent will not affect work already in progress, but it may
+    limit our ability to respond to you.
+  </p>
+
+  <h2>5. Who we share it with</h2>
+  <p>
+    We share personal data only with service providers who help us operate the
+    business — for example our customer relationship management platform and our
+    website host. These providers process data on our instructions.
+  </p>
+  <p>
+    We may also disclose personal data where we are required to by law or by a
+    competent authority.
+  </p>
+
+  <h2>6. How long we keep it</h2>
+  <p>
+    We retain enquiry data for as long as needed to respond to you and to meet
+    our legal, tax and warranty obligations, after which it is deleted or
+    anonymised.
+  </p>
+
+  <h2>7. How we protect it</h2>
+  <p>
+    We apply reasonable administrative and technical measures to protect personal
+    data against unauthorised access, loss or misuse. No method of transmission
+    over the internet is completely secure, so we cannot guarantee absolute
+    security.
+  </p>
+
+  <h2>8. Cookies and analytics</h2>
+  <p>
+    This site may use analytics and advertising tools to understand how visitors
+    find and use it. These tools may set cookies or similar identifiers in your
+    browser. You can block or delete cookies through your browser settings; the
+    site will continue to work.
+  </p>
+
+  <h2>9. Your rights</h2>
+  <p>
+    Subject to applicable law, you may request access to the personal data we
+    hold about you, ask us to correct it if it is inaccurate, or ask us to delete
+    it. Send requests to{' '}
+    <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a> and we will
+    respond within a reasonable period.
+  </p>
+
+  <h2>10. Changes to this policy</h2>
+  <p>
+    We may update this policy from time to time. The revision date at the top of
+    this page shows when it was last changed.
+  </p>
+
+  <h2>11. Contact</h2>
+  <p>
+    Questions about this policy or about how we handle your data can be sent to{' '}
+    <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a> or{' '}
+    <a href={`tel:${contact.phoneHref}`}>{contact.phone}</a>.
+  </p>
+</LegalLayout>

@@ -1,0 +1,135 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import client from '../config/client.ts';
+
+const { company, contact, legal } = client;
+---
+
+<LegalLayout
+  title="Terms of Service"
+  intro={`The terms on which ${company.legalName} provides this website and its services.`}
+>
+  <div class="legal-notice">
+    <p>
+      <strong>Placeholder text.</strong> This page is scaffolding so the site can
+      ship with working compliance links. It has not been reviewed by a lawyer and
+      is not legal advice. Replace it with terms drafted for {company.legalName}
+      before going live — particularly the quotation, warranty and liability
+      sections, which need to match what you actually offer.
+    </p>
+  </div>
+
+  <h2>1. About these terms</h2>
+  <p>
+    These terms govern your use of this website and any enquiry you submit
+    through it. By using the site you accept them. If you do not accept them,
+    please do not use the site.
+  </p>
+  <p>
+    The site is operated by {company.legalName} ({company.registrationNumber}).
+  </p>
+
+  <h2>2. Use of this website</h2>
+  <p>You agree not to:</p>
+  <ul>
+    <li>Use the site for any unlawful purpose</li>
+    <li>Submit false, misleading or third-party contact details</li>
+    <li>Attempt to gain unauthorised access to the site or its systems</li>
+    <li>Copy or reuse site content without our written permission</li>
+  </ul>
+
+  <h2>3. Enquiries and quotations</h2>
+  <p>
+    Submitting an enquiry does not create a contract. It is a request for us to
+    contact you. Any indicative pricing shown on this site is illustrative only.
+  </p>
+  <p>
+    A binding agreement is formed only when we issue a written quotation and you
+    accept it. The quotation and its attached terms govern the work — where they
+    conflict with this page, the quotation prevails.
+  </p>
+
+  <h2>4. Scope of works and variations</h2>
+  <p>
+    Work is limited to the scope described in the accepted quotation. Additional
+    work discovered during a job — for example concealed water damage or
+    substrate failure found once surfaces are opened up — will be quoted
+    separately and requires your approval before we proceed.
+  </p>
+
+  <h2>5. Site access and preparation</h2>
+  <p>
+    You agree to provide safe and timely access to the property, and to obtain
+    any approvals required from a management corporation, landlord or authority
+    before work begins. Delays caused by access or approvals may affect the
+    schedule and the price.
+  </p>
+
+  <h2>6. Warranty</h2>
+  <p>
+    Where a warranty is offered, its scope and duration are stated in your
+    quotation. Warranties typically exclude damage arising from structural
+    movement, third-party works, alterations by others, misuse, or failure to
+    carry out reasonable maintenance.
+  </p>
+
+  <h2>7. Payment</h2>
+  <p>
+    Payment terms are stated in the quotation. Unless agreed otherwise, invoices
+    are payable by the due date shown, and we may suspend work on overdue
+    accounts.
+  </p>
+
+  <h2>8. Cancellation</h2>
+  <p>
+    Either party may cancel before work begins by giving written notice. Where we
+    have already incurred costs — materials ordered, scaffolding erected,
+    scheduled crew time — those costs may be charged.
+  </p>
+
+  <h2>9. Website content</h2>
+  <p>
+    We aim to keep the information on this site accurate and current, but we make
+    no warranty that it is complete or error-free. Images of past work are
+    illustrative; results vary with substrate, condition and specification.
+  </p>
+
+  <h2>10. Limitation of liability</h2>
+  <p>
+    To the extent permitted by law, we are not liable for indirect or
+    consequential loss arising from your use of this site. Nothing in these terms
+    excludes liability that cannot lawfully be excluded, including liability for
+    death or personal injury caused by negligence.
+  </p>
+
+  <h2>11. Third-party links</h2>
+  <p>
+    This site may link to third-party websites and services. We do not control
+    them and are not responsible for their content or their privacy practices.
+  </p>
+
+  <h2>12. Privacy</h2>
+  <p>
+    Personal data submitted through this site is handled in accordance with our{' '}
+    <a href="/privacy">Privacy Policy</a>.
+  </p>
+
+  <h2>13. Governing law</h2>
+  <p>
+    These terms are governed by the laws of Singapore, and the courts of
+    Singapore have exclusive jurisdiction over any dispute arising from them.
+  </p>
+
+  <h2>14. Changes</h2>
+  <p>
+    We may update these terms from time to time. The revision date at the top of
+    this page shows when they were last changed. Last updated: {legal.lastUpdated}.
+  </p>
+
+  <h2>15. Contact</h2>
+  <p>
+    Questions about these terms can be sent to{' '}
+    <a href={`mailto:${contact.email}`}>{contact.email}</a> or{' '}
+    <a href={`tel:${contact.phoneHref}`}>{contact.phone}</a>.
+  </p>
+</LegalLayout>

@@ -1,0 +1,191 @@
+---
+/**
+ * Footer (section 13).
+ *
+ * Four columns on desktop: brand, contact, quick links, hours.
+ * Compliance links and a dynamic copyright year sit in the bottom bar.
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+
+const { company, contact, social, nav, logo, services } = client;
+
+/* Computed at build time — no stale year to remember to update. */
+const year = new Date().getFullYear();
+
+const address = [
+  contact.address.line1,
+  contact.address.line2,
+  [contact.address.city, contact.address.postalCode].filter(Boolean).join(' '),
+].filter(Boolean);
+---
+
+<footer class="border-t-4 border-brand-accent bg-brand-primary" aria-labelledby="footer-heading">
+  <h2 id="footer-heading" class="sr-only">Site footer</h2>
+
+  <div class="container-x py-12 md:py-16">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      {/* ── Brand ── */}
+      <div class="sm:col-span-2 lg:col-span-1">
+        <img
+          src={logo.src}
+          alt={logo.alt}
+          height={logo.height}
+          width={logo.height * 4}
+          class="w-auto"
+          style={`height:${logo.height}px`}
+        />
+        <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-brand-accent">
+          {company.division}
+        </p>
+        <p class="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
+          {company.tagline}
+        </p>
+
+        {
+          social.length > 0 && (
+            <ul class="mt-5 flex gap-3">
+              {social.map((item) => (
+                <li>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-brand-accent hover:text-brand-accent-text"
+                  >
+                    <Icon name={item.platform} size={19} />
+                    <span class="sr-only">
+                      {company.name} on {item.platform}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      {/* ── Contact ── */}
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+          Contact
+        </h3>
+        <ul class="mt-4 space-y-3 text-sm">
+          <li>
+            <a
+              href={`tel:${contact.phoneHref}`}
+              class="flex items-start gap-2.5 text-white/70 transition-colors hover:text-brand-accent"
+            >
+              <Icon name="phone" size={17} class="mt-0.5 shrink-0" />
+              <span>{contact.phone}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href={`mailto:${contact.email}`}
+              class="flex items-start gap-2.5 break-all text-white/70 transition-colors hover:text-brand-accent"
+            >
+              <Icon name="mail" size={17} class="mt-0.5 shrink-0" />
+              <span>{contact.email}</span>
+            </a>
+          </li>
+          <li class="flex items-start gap-2.5 text-white/70">
+            <Icon name="map-pin" size={17} class="mt-0.5 shrink-0" />
+            <address class="not-italic leading-relaxed">
+              {address.map((line) => <span class="block">{line}</span>)}
+            </address>
+          </li>
+        </ul>
+      </div>
+
+      {/* ── Links ── */}
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+          Quick Links
+        </h3>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-white/70 transition-colors hover:text-brand-accent"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="#quote" class="font-semibold text-brand-accent hover:underline">
+              Get a Free Quote
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* ── Hours ── */}
+      <div>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+          Business Hours
+        </h3>
+        <dl class="mt-4 space-y-2.5 text-sm">
+          {
+            contact.hours.map((entry) => (
+              <div>
+                <dt class="text-white/70">{entry.days}</dt>
+                <dd class="font-semibold text-white/90">{entry.hours}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+
+    {/* ── Services strip ── */}
+    <div class="mt-10 border-t border-white/10 pt-8">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-white">
+        Services
+      </h3>
+      <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+        {
+          services.map((service) => (
+            <li>
+              <a
+                href={service.href}
+                class="text-white/60 transition-colors hover:text-brand-accent"
+              >
+                {service.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  {/* ── Bottom bar ── */}
+  <div class="border-t border-white/10">
+    <div class="container-x flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
+      <p class="text-center text-xs leading-relaxed text-white/50 sm:text-left">
+        © {year} {company.legalName}. All rights reserved.
+        {company.registrationNumber && (
+          <span class="block sm:ml-2 sm:inline">{company.registrationNumber}</span>
+        )}
+      </p>
+
+      <ul class="flex items-center gap-5 text-xs">
+        <li>
+          <a href="/privacy" class="text-white/60 transition-colors hover:text-brand-accent">
+            Privacy Policy
+          </a>
+        </li>
+        <li>
+          <a href="/terms" class="text-white/60 transition-colors hover:text-brand-accent">
+            Terms of Service
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>

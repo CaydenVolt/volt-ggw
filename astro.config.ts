@@ -39,7 +39,16 @@ export default defineConfig({
     responsiveStyles: true,
   },
 
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      /**
+       * The compliance pages are served with `noindex`. Listing a noindex URL
+       * in the sitemap tells search engines two contradictory things, so keep
+       * them out of it.
+       */
+      filter: (page) => !/\/(privacy|terms)\/?$/.test(page),
+    }),
+  ],
 
   vite: {
     plugins: [tailwindcss()],

@@ -1,0 +1,78 @@
+---
+/**
+ * About section (section 7) — copy + photo + differentiator list.
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+import SmartImage from './SmartImage.astro';
+
+const { about, company } = client;
+
+/* "5+ years" rather than a hardcoded number that silently goes stale. */
+const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
+---
+
+<section id="about" class="section-y bg-white" aria-labelledby="about-heading">
+  <div class="container-x">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      {/* ── Photo ── */}
+      <div class="relative order-first lg:order-last">
+        <div class="overflow-hidden rounded-2xl shadow-xl shadow-slate-900/10">
+          <SmartImage
+            src={about.image}
+            alt={about.imageAlt}
+            width={1000}
+            height={750}
+            sizes="(min-width: 1024px) 560px, 92vw"
+            class="h-full w-full object-cover"
+          />
+        </div>
+
+        {/* Floating stat badge */}
+        {
+          yearsInBusiness > 0 && (
+            <div class="absolute -bottom-5 left-5 rounded-xl bg-brand-accent px-5 py-3 shadow-lg sm:left-8">
+              <p class="text-2xl font-extrabold leading-none text-brand-accent-text">
+                {yearsInBusiness}+
+              </p>
+              <p class="mt-1 text-xs font-bold uppercase tracking-wider text-brand-accent-text/80">
+                Years in Singapore
+              </p>
+            </div>
+          )
+        }
+      </div>
+
+      {/* ── Copy ── */}
+      <div>
+        <p class="eyebrow">About Us</p>
+        <h2 id="about-heading" class="heading-section mt-3">{about.heading}</h2>
+
+        <div class="mt-5 space-y-4">
+          {about.body.map((paragraph) => <p class="lead">{paragraph}</p>)}
+        </div>
+
+        <ul class="mt-7 space-y-3">
+          {
+            about.points.map((point) => (
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                  <Icon name="check" size={15} />
+                </span>
+                <span class="text-[15px] font-medium leading-relaxed text-brand-text">
+                  {point}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-8">
+          <a href="#quote" class="btn btn-outline-dark px-7 py-3.5">
+            Get a Free Quote
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

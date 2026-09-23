@@ -1,0 +1,152 @@
+---
+/**
+ * Review carousel (section 9).
+ *
+ * Implemented as a native horizontally-scrolling flex rail with CSS
+ * scroll-snap. It works with no JavaScript at all — touch swipe, trackpad and
+ * keyboard scrolling are all native. The arrow buttons are a small progressive
+ * enhancement layered on top, and hide themselves if the rail does not
+ * overflow.
+ */
+import { reviews, reviewSummary } from '../data/reviews.ts';
+import Icon from './Icon.astro';
+
+/* Aggregate rating is only shown once a real count is set (see reviews.ts). */
+const showSummary = reviewSummary.count > 0;
+---
+
+<section id="reviews" class="section-y bg-white" aria-labelledby="reviews-heading">
+  <div class="container-x">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Testimonials</p>
+        <h2 id="reviews-heading" class="heading-section mt-3">
+          {reviewSummary.heading}
+        </h2>
+
+        {
+          showSummary && (
+            <div class="mt-4 flex items-center gap-3">
+              <span class="flex gap-0.5 text-brand-accent" aria-hidden="true">
+                {Array.from({ length: 5 }).map(() => (
+                  <Icon name="star" size={20} />
+                ))}
+              </span>
+              <p class="text-sm font-semibold text-brand-text">
+                {reviewSummary.rating.toFixed(1)} from {reviewSummary.count}{' '}
+                {reviewSummary.source} reviews
+              </p>
+            </div>
+          )
+        }
+      </div>
+
+      {/* Arrow controls — revealed by script only when the rail overflows. */}
+      <div id="review-controls" class="hidden gap-2">
+        <button
+          type="button"
+          id="review-prev"
+          class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-300 text-brand-primary transition-colors hover:border-brand-primary hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:text-brand-primary"
+          aria-label="Previous reviews"
+          aria-controls="review-rail"
+        >
+          <Icon name="chevron-left" size={20} />
+        </button>
+        <button
+          type="button"
+          id="review-next"
+          class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-300 text-brand-primary transition-colors hover:border-brand-primary hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:text-brand-primary"
+          aria-label="Next reviews"
+          aria-controls="review-rail"
+        >
+          <Icon name="chevron-right" size={20} />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* Full-bleed rail so cards can bleed past the container on wide screens. */}
+  <div
+    id="review-rail"
+    tabindex="0"
+    role="group"
+    aria-label="Customer reviews, scrollable"
+    {/*
+      `scroll-px-*` must mirror `px-*`. Without it, snap-mandatory aligns the
+      first card past the left padding, so the rail rests at scrollLeft > 0,
+      the left gutter collapses and the Previous button starts enabled.
+    */}
+    class="no-scrollbar mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 pb-4 scroll-px-5 md:px-8 md:scroll-px-8 xl:px-[max(2rem,calc((100vw-80rem)/2+2rem))] xl:scroll-px-[max(2rem,calc((100vw-80rem)/2+2rem))]"
+  >
+    {
+      reviews.map((review) => (
+        <figure class="flex w-[300px] shrink-0 snap-start flex-col rounded-2xl bg-brand-bg-alt p-6 ring-1 ring-slate-900/5 sm:w-[360px]">
+          <div
+            class="flex gap-0.5 text-brand-accent"
+            role="img"
+            aria-label={`${review.stars} out of 5 stars`}
+          >
+            {Array.from({ length: review.stars }).map(() => (
+              <Icon name="star" size={18} />
+            ))}
+          </div>
+
+          <blockquote class="mt-4 flex-1">
+            <p class="text-[15px] leading-relaxed text-brand-text">
+              “{review.quote}”
+            </p>
+          </blockquote>
+
+          <figcaption class="mt-5 border-t border-slate-300/70 pt-4">
+            <p class="text-sm font-bold text-brand-primary">{review.name}</p>
+            <p class="mt-0.5 text-xs text-brand-muted">{review.jobType}</p>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  // Progressive enhancement only — the rail is fully usable without this.
+  const rail = document.getElementById('review-rail');
+  const controls = document.getElementById('review-controls');
+  const prev = document.getElementById('review-prev') as HTMLButtonElement | null;
+  const next = document.getElementById('review-next') as HTMLButtonElement | null;
+
+  if (rail && controls && prev && next) {
+    const overflows = () => rail.scrollWidth > rail.clientWidth + 4;
+
+    const syncControls = () => {
+      if (!overflows()) {
+        controls.classList.add('hidden');
+        controls.classList.remove('flex');
+        return;
+      }
+      controls.classList.remove('hidden');
+      controls.classList.add('flex');
+
+      // 1px of slack absorbs sub-pixel scroll positions.
+      prev.disabled = rail.scrollLeft <= 1;
+      next.disabled = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 1;
+    };
+
+    // Scroll by one card plus its gap, so cards land on snap points.
+    const step = () => {
+      const card = rail.querySelector('figure');
+      const gap = 20;
+      return card ? card.getBoundingClientRect().width + gap : rail.clientWidth;
+    };
+
+    prev.addEventListener('click', () =>
+      rail.scrollBy({ left: -step(), behavior: 'smooth' })
+    );
+    next.addEventListener('click', () =>
+      rail.scrollBy({ left: step(), behavior: 'smooth' })
+    );
+
+    rail.addEventListener('scroll', syncControls, { passive: true });
+    window.addEventListener('resize', syncControls);
+    syncControls();
+  }
+</script>
