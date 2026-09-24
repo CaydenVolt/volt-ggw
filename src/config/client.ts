@@ -135,7 +135,7 @@ export interface ProductSpec {
 }
 
 export interface PaintProduct {
-  /** Drives the `/paint-products#<slug>` anchor. */
+  /** Drives the `/painting#<slug>` anchor. */
   slug: string;
   name: string;
   /** Grouping chip, e.g. "Sealer" or "Interior Paint". */
@@ -262,7 +262,7 @@ export const client = {
   nav: [
     { label: 'Home', href: '/' },
     { label: 'Services', href: '/services' },
-    { label: 'Paint Products', href: '/paint-products' },
+    { label: 'Painting', href: '/painting' },
     { label: 'Gallery', href: '/gallery' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Resources', href: '/resources' },
@@ -633,12 +633,41 @@ export const client = {
    * is revised, update the matching `specs` rows — nothing else reads them.
    */
   paintProducts: {
-    heading: 'Paint Products',
+    heading: 'Painting',
     eyebrow: 'Green Building Materials',
     tagline: 'Protect Structures, Protect the Planet.',
     intro:
       'Durable, eco-conscious coatings selected for Singapore’s tropical climate — low-VOC, low-odour and formaldehyde-free, specified around the substrate rather than the price list.',
-    heroImage: '/images/paint-hero-placeholder.webp',
+    heroImage: '/images/painting-hero.webp',
+
+    /** "What We Offer" cards. Numbered 01, 02… in render order. */
+    offerings: {
+      heading: 'What We Offer',
+      intro:
+        'Our coatings are formulated for durability, sustainability, and Singapore’s year-round humidity.',
+      items: [
+        {
+          title: 'Waterproof Exterior Coatings',
+          description:
+            'High-performance coatings that shield façades, rooftops, and structures from tropical rain and UV exposure.',
+        },
+        {
+          title: 'Eco-Friendly Interior Paint',
+          description:
+            'Low-VOC formulations safe for homes, schools, and commercial interiors — without compromising finish quality.',
+        },
+        {
+          title: 'Industrial Protective Coatings',
+          description:
+            'Heavy-duty solutions for warehouses, factories, and infrastructure — engineered for long-term durability.',
+        },
+        {
+          title: 'Low-VOC Formulations',
+          description:
+            'Healthier indoor environments and reduced chemical emissions — aligned with green building standards.',
+        },
+      ],
+    },
 
     /** Bundled systems, shown above the individual products. */
     systems: [
@@ -855,7 +884,7 @@ export const client = {
   },
 
   /* ---- Painting FAQ ------------------------------------------------------ */
-  /** Shown on /paint-products. Condensed from the full customer FAQ. */
+  /** Shown on /painting. Condensed from the full customer FAQ. */
   paintFaq: [
     {
       question: 'What types of properties do you paint?',
@@ -1060,10 +1089,10 @@ export const client = {
         description:
           'Interior and exterior painting, waterproofing, leak detection and repair, protective coatings and surface preparation across Singapore.',
       },
-      paintProducts: {
-        title: 'Paint Products | Low-VOC & Anti-Mould Coatings Singapore',
+      painting: {
+        title: 'Painting | Low-VOC & Anti-Mould Coatings Singapore',
         description:
-          'Low-VOC, formaldehyde-free paint products for Singapore properties — anti-mould sealers, air-purifying interior paint and penetrating sealers, with full technical specifications.',
+          'Painting services and low-VOC, formaldehyde-free coatings for Singapore properties — anti-mould sealers, air-purifying interior paint and penetrating sealers, with full technical specifications.',
       },
       gallery: {
         title: 'Project Gallery | Goal Green World',

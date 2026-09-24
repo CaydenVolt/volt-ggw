@@ -17,6 +17,14 @@ export interface Props {
   backLink?: { href: string; label: string };
   /** Background image path. Defaults to the hero image. */
   image?: string;
+  /**
+   * How present the background image is.
+   *  - `subtle` (default): a texture behind the type.
+   *  - `bold`: a real photograph you are meant to see. Pairs with a heavier
+   *    left-to-right scrim so white text keeps its contrast over a busy or
+   *    light-coloured image.
+   */
+  imageEmphasis?: 'subtle' | 'bold';
 }
 
 const {
@@ -25,7 +33,10 @@ const {
   eyebrow,
   backLink,
   image = client.hero.backgroundImage,
+  imageEmphasis = 'subtle',
 } = Astro.props;
+
+const isBold = imageEmphasis === 'bold';
 ---
 
 <section class="relative isolate overflow-hidden bg-brand-primary">
@@ -37,9 +48,23 @@ const {
       height={1080}
       loading="eager"
       sizes="100vw"
-      class="h-full w-full object-cover opacity-20"
+      class:list={[
+        'h-full w-full object-cover',
+        isBold ? 'opacity-70' : 'opacity-20',
+      ]}
     />
-    <div class="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary/95 to-brand-primary/85"></div>
+    {
+      isBold ? (
+        <>
+          {/* Horizontal scrim: solid behind the copy, clearing to the right. */}
+          <div class="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-primary/85 to-brand-primary/30" />
+          {/* Vertical lift so the nav edge and lower boundary stay defined. */}
+          <div class="absolute inset-0 bg-gradient-to-b from-brand-primary/60 via-transparent to-brand-primary/70" />
+        </>
+      ) : (
+        <div class="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary/95 to-brand-primary/85" />
+      )
+    }
   </div>
 
   <div class="container-x">
