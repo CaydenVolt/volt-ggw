@@ -50,6 +50,7 @@ Opens on <http://localhost:4321>.
 | --- | --- | --- |
 | `/` | `pages/index.astro` | Split hero with the estimate form card |
 | `/services` | `pages/services.astro` | One anchored section per service |
+| `/paint-products` | `pages/paint-products.astro` | Product specs + painting FAQ |
 | `/gallery` | `pages/gallery.astro` | Filterable by category |
 | `/pricing` | `pages/pricing.astro` | Indicative pricing cards + pricing FAQ |
 | `/resources` | `pages/resources/index.astro` | Article listing |
@@ -155,6 +156,23 @@ a unique title and description automatically.
 the client has confirmed. Publishing invented prices for a real business is a
 misrepresentation problem, and the "every project is different" disclaimer does
 not cover it.
+
+### ⚠️ Paint product data and attribution
+
+`paintProducts.products[]` holds figures transcribed from supplier technical
+data sheets. **The manufacturer's name, UEN, phone number and domain are
+deliberately omitted** throughout the config, the page and the build — product
+names and technical figures are retained, attribution is not. Keep it that way
+when editing, and do not embed supplier artwork that shows branding on the
+containers.
+
+Two things to watch:
+
+- **CleanCare has no data sheet yet.** It carries `specsIncomplete: true`,
+  which renders a visible "full specifications pending" note. Remove the flag
+  once the real figures are in.
+- **Data sheets get revised.** If a supplier issues a new revision, update the
+  matching `specs` rows. Nothing else in the codebase reads them.
 
 ### ⚠️ Area pages and thin content
 
