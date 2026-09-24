@@ -366,7 +366,7 @@ export const client = {
         'Waterproofing contractor in Singapore. Roof and podium membranes, bathroom and wet area systems, and leak detection that finds the source. Ponding tested, written warranty.',
       intro:
         'Membrane failure is the leading cause of recurring repair work in Singapore buildings. We diagnose why the last system failed, specify the right one for the substrate, and ponding test it before anything gets covered up.',
-      heroImage: '/images/stock-waterproofing.webp',
+      heroImage: '/images/waterproofing-hero.webp',
     },
   ],
 
