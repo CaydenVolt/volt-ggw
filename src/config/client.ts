@@ -128,6 +128,47 @@ export interface PageMeta {
   description?: string;
 }
 
+/** One row of a product's technical data table. */
+export interface ProductSpec {
+  label: string;
+  value: string;
+}
+
+export interface PaintProduct {
+  /** Drives the `/paint-products#<slug>` anchor. */
+  slug: string;
+  name: string;
+  /** Grouping chip, e.g. "Sealer" or "Interior Paint". */
+  category: string;
+  /** One line under the product name. */
+  tagline: string;
+  description: string;
+  features: string[];
+  /** Where the product is intended to be used. */
+  designUse: string[];
+  /** Rendered as a two-column technical table. */
+  specs: ProductSpec[];
+  image: string;
+  /**
+   * Application guidance in the company's own words. Shown as a highlighted
+   * recommendation box.
+   */
+  recommendation?: string;
+  /** Set when the manufacturer data sheet has not been supplied yet. */
+  specsIncomplete?: boolean;
+}
+
+/** A bundled multi-product coating system. */
+export interface PaintSystem {
+  name: string;
+  /** Product slugs, in application order. */
+  productSlugs: string[];
+  bestFor: string;
+  description: string;
+  /** Ordered application steps. */
+  steps: { product: string; role: string }[];
+}
+
 /* ── Config ─────────────────────────────────────────────────────────────── */
 
 export const client = {
@@ -221,6 +262,7 @@ export const client = {
   nav: [
     { label: 'Home', href: '/' },
     { label: 'Services', href: '/services' },
+    { label: 'Paint Products', href: '/paint-products' },
     { label: 'Gallery', href: '/gallery' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Resources', href: '/resources' },
@@ -578,6 +620,340 @@ export const client = {
     ] as FaqItem[],
   },
 
+  /* ---- Paint products ---------------------------------------------------- */
+  /**
+   * Product data transcribed from the supplied technical data sheets.
+   *
+   * ⚠️ MANUFACTURER NAME DELIBERATELY OMITTED. The source data sheets carry a
+   * supplier's company name, UEN, phone number and domain. None of that
+   * appears here or anywhere on the site, per instruction. Product names and
+   * technical figures are retained; attribution is not.
+   *
+   * Figures below are quoted from the data sheets as supplied. If a data sheet
+   * is revised, update the matching `specs` rows — nothing else reads them.
+   */
+  paintProducts: {
+    heading: 'Paint Products',
+    eyebrow: 'Green Building Materials',
+    tagline: 'Protect Structures, Protect the Planet.',
+    intro:
+      'Durable, eco-conscious coatings selected for Singapore’s tropical climate — low-VOC, low-odour and formaldehyde-free, specified around the substrate rather than the price list.',
+    heroImage: '/images/paint-hero-placeholder.webp',
+
+    /** Bundled systems, shown above the individual products. */
+    systems: [
+      {
+        name: 'Anti-Mould Protection System',
+        productSlugs: ['mouldseal', 'care', 'cleancare'],
+        bestFor:
+          'Preventing mould growth, even in high humidity conditions.',
+        description:
+          'A three-part system: a sealer that blocks mould at the substrate, a humidity-regulating ceiling paint, and a stain-resistant wall paint. Used together they protect the whole envelope of a room rather than one surface of it.',
+        steps: [
+          { product: 'MouldSeal', role: 'Sealer coat — blocks mould at its root' },
+          { product: 'Care', role: 'Ceilings — humidity control and anti-moulding' },
+          { product: 'CleanCare', role: 'Walls — easy to clean, stain and mould resistant' },
+        ],
+      },
+    ] as PaintSystem[],
+
+    products: [
+      {
+        slug: 'mouldseal',
+        name: 'MouldSeal',
+        category: 'Sealer',
+        tagline: 'Premium water-based acrylic sealer for high-humidity walls.',
+        description:
+          'A premium water-based acrylic sealer providing superior mould resistance, creating a durable barrier that protects walls from moisture infiltration. Formulated to resist alkali attack, so the topcoat finish above it lasts. Used with a compatible interior paint it forms a complete mould-prevention system for high-humidity environments, while maintaining indoor air quality.',
+        features: [
+          'Formaldehyde-free',
+          'Ultra-low VOC',
+          'Superior mould resistance',
+          'High water ponding resistance',
+          'High-performance coverage of hairline cracks',
+          'Good adhesion and alkali resistance',
+        ],
+        designUse: [
+          'Interior walls in high-humidity environments',
+          'Substrates prone to recurring mould growth',
+          'As the sealer coat beneath a compatible interior topcoat',
+        ],
+        specs: [
+          { label: 'Type', value: 'Acrylic emulsion' },
+          { label: 'Finish', value: 'Matte' },
+          { label: 'Application method', value: 'Roller, brush or spray' },
+          { label: 'Theoretical coverage', value: '10–12 m²/L (35–40 microns DFT)' },
+          { label: 'Dilution', value: 'Max 10% with clean water' },
+          { label: 'Surface drying time', value: '30 mins at 25°C' },
+          { label: 'Cleaning solvent', value: 'Clean water' },
+          { label: 'Solid content', value: '52 ± 2% by weight (white)' },
+          { label: 'Specific gravity', value: '1.30 ± 2% kg/L (white)' },
+          { label: 'Packing', value: '20 litres' },
+          { label: 'Shelf life', value: 'Up to 24 months in a tightly sealed container' },
+          { label: 'Storage', value: 'Tightly sealed, in a cool dry place' },
+        ],
+        image: '/images/product-mouldseal-placeholder.webp',
+        recommendation:
+          'For heavily mould-affected conditions, we recommend repainting with MouldSeal + Care Interior after carrying out any necessary make-good works.',
+      },
+      {
+        slug: 'care',
+        name: 'Care Interior Paint',
+        category: 'Interior Paint',
+        tagline: 'Air-purifying, humidity-regulating interior paint.',
+        description:
+          'An interior paint that purifies airborne pollutants for healthier indoor air quality. Unlike conventional paints it is certified VOC-free, releases zero odour, and adds anti-moulding, anti-bacterial and humidity-regulating properties — absorbing and desorbing moisture as ambient conditions change.',
+        features: [
+          'Certified VOC-free (<2 g/L)',
+          'Odourless',
+          'Purifies airborne pollutants',
+          'Anti-bacterial',
+          'Anti-moulding',
+          'Absorbs and desorbs moisture',
+          'Easy application, quick-drying',
+        ],
+        designUse: [
+          'Interior wall and ceiling surfaces — cement, plaster and fibreboard',
+          'Common areas such as void decks and corridors',
+          'Other properly primed material surfaces',
+        ],
+        specs: [
+          { label: 'Type', value: 'Water-based acrylic emulsion paint' },
+          { label: 'Finish', value: 'Matte' },
+          { label: 'Application method', value: 'Roller, brush or spray' },
+          { label: 'Theoretical coverage', value: '10–12 m²/L (30 microns DFT)' },
+          { label: 'Dilution', value: 'Not more than 10% with clean water' },
+          { label: 'Touch dry', value: '30 mins at 25°C' },
+          { label: 'Over-coating interval', value: 'Minimum 2 hours at 25°C' },
+          { label: 'Cleaning solvent', value: 'Clean water' },
+          { label: 'Solid content', value: '53 ± 2% by weight (white)' },
+          { label: 'Specific gravity', value: '1.45 ± 2% kg/L (white)' },
+          { label: 'Packing', value: '1, 5 and 20 litres' },
+          { label: 'Colour', value: 'Colour atlas available on request' },
+          { label: 'Shelf life', value: 'Up to 24 months in a tightly sealed container' },
+        ],
+        image: '/images/product-care-placeholder.webp',
+        recommendation:
+          'Recommended for ceilings, where humidity control and anti-moulding matter most.',
+      },
+      {
+        slug: 'cleancare',
+        name: 'CleanCare Interior Paint',
+        category: 'Interior Paint',
+        tagline: 'Stain-resistant, washable interior paint for walls.',
+        description:
+          'An air-purifying interior paint with added stain resistance, intended for wall surfaces that get handled, marked and cleaned. Anti-moulding like its companion ceiling paint, but formulated so marks lift without taking the finish with them.',
+        features: [
+          'Air-purifying',
+          'Anti-moulding',
+          'Stain-resistant',
+          'Easy to clean',
+          'Matte finish',
+        ],
+        designUse: [
+          'Interior walls in homes, offices and commercial interiors',
+          'High-traffic areas where walls are regularly cleaned',
+          'Paired with a humidity-regulating ceiling paint above',
+        ],
+        specs: [
+          { label: 'Type', value: 'Water-based interior emulsion paint' },
+          { label: 'Finish', value: 'Matte' },
+          { label: 'Packing', value: '20 litres' },
+        ],
+        image: '/images/product-cleancare-placeholder.webp',
+        recommendation:
+          'Recommended for walls — easy to clean whilst being both stain and mould resistant.',
+        /* No technical data sheet supplied for this product yet. */
+        specsIncomplete: true,
+      },
+      {
+        slug: 'deepseal',
+        name: 'DeepSeal Sealer',
+        category: 'Sealer',
+        tagline: 'Penetrating sealer for loose, powdery and chalky walls.',
+        description:
+          'A premium water-based acrylic penetrating sealer for loose, porous, powdery and weak wall surfaces. It penetrates deeply to bind loose particles, strengthen the surface and stabilise the wall before putty, skim coat, sealer or topcoat goes on. Particularly suited to old wall renovation, powdery cement plaster, weak skim coat, porous masonry and high-absorption surfaces. By consolidating the substrate and evening out absorption, it improves adhesion for everything applied above it.',
+        features: [
+          'Formaldehyde-free',
+          'Excellent deep penetration',
+          'Strengthens loose and powdery wall surfaces',
+          'Enhances adhesion of subsequent coating systems',
+          'Reduces uneven surface absorption',
+          'Low odour',
+          'High water ponding resistance',
+          'Good adhesion and alkali resistance',
+        ],
+        designUse: [
+          'Loose, powdery or chalky substrates',
+          'Old wall renovation and aged or repaired substrates',
+          'Occupied sites where solvent fumes are not tolerated',
+          'Porous masonry and high-absorption surfaces',
+        ],
+        specs: [
+          { label: 'Type', value: 'Water-based acrylic polymer emulsion' },
+          { label: 'Finish', value: 'Clear to slight sheen / natural' },
+          { label: 'Application method', value: 'Roller, brush or spray' },
+          { label: 'Theoretical coverage', value: '10–12 m²/L (30–35 microns DFT)' },
+          {
+            label: 'Dilution',
+            value:
+              'Ready to use. Not recommended for weak or powdery surfaces; normal porous surfaces up to 10% with clean water if required',
+          },
+          { label: 'Surface drying time', value: '30–60 mins at 25°C' },
+          { label: 'Cleaning solvent', value: 'Clean water' },
+          { label: 'Solid content', value: '16 ± 2% by weight' },
+          { label: 'Specific gravity', value: '1.05 ± 2% kg/L' },
+          { label: 'Packing', value: '5 and 20 litres' },
+          { label: 'Shelf life', value: 'Up to 24 months in a tightly sealed container' },
+          { label: 'Storage', value: 'Tightly sealed, in a cool dry place' },
+        ],
+        image: '/images/product-deepseal-placeholder.webp',
+        recommendation:
+          'For areas with severe powdery or chalky surfaces, we recommend applying DeepSeal first to strengthen the wall before applying MouldSeal + Care Interior.',
+      },
+    ] as PaintProduct[],
+
+    /**
+     * Shared surface preparation, identical across the data sheets. Shown once
+     * rather than repeated on every product.
+     */
+    surfacePrep: {
+      heading: 'Surface Preparation',
+      intro:
+        'Every product above depends on the same groundwork. Skipping it is the most common reason a coating fails early.',
+      steps: [
+        {
+          title: 'Moisture',
+          detail:
+            'No water residue on the substrate. Moisture must be below 5% on a moisture content meter before application.',
+        },
+        {
+          title: 'Contaminants',
+          detail: 'Remove dust and foreign matter by cleaning with a damp cloth.',
+        },
+        {
+          title: 'Unstable matter',
+          detail:
+            'Remove loose bonding film, dirt and peeling paint by high-pressure water jet or mechanical means such as a power brush or scraper.',
+        },
+        {
+          title: 'Fungus and algae',
+          detail:
+            'Wash the affected area, then apply anti-fungus solution and leave on for at least two hours.',
+        },
+        {
+          title: 'Hairline cracks',
+          detail:
+            'Fill cracks with a suitable exterior-grade water-resistant putty or filler.',
+        },
+      ],
+    },
+
+    /** Shown at the foot of the technical section. */
+    disclaimer:
+      'The figures above describe product performance under specific test conditions. Conditions on site vary, so actual results may differ. Product data may be revised without notice — confirm current figures before specifying.',
+  },
+
+  /* ---- Painting FAQ ------------------------------------------------------ */
+  /** Shown on /paint-products. Condensed from the full customer FAQ. */
+  paintFaq: [
+    {
+      question: 'What types of properties do you paint?',
+      answer:
+        'Residential homes, condominiums, HDB flats, offices, retail premises, commercial buildings, industrial facilities, warehouses, schools and institutions, and common areas. The approach is tailored to the size, condition and requirements of each property.',
+    },
+    {
+      question: 'Do you handle both interior and exterior painting?',
+      answer:
+        'Yes. Interior covers walls, ceilings, offices, corridors, doors and frames, feature walls and commercial interiors. Exterior covers external walls, facades, roof structures, industrial buildings, carparks, boundary walls and external metal. The right paint system depends on the surface and its exposure.',
+    },
+    {
+      question: 'How often should a building be repainted?',
+      answer:
+        'There is no fixed interval. It depends on the paint used, surface condition, weather exposure, location, traffic, previous workmanship and maintenance. Regular inspection is the reliable way to tell when repainting or touch-ups are due.',
+    },
+    {
+      question: 'How much does painting cost in Singapore?',
+      answer:
+        'It depends on property size, total area, number of coats, existing paint condition, surface preparation, height and access, paint type and quality, interior or exterior application, and any repair work. For an accurate figure, send us the property details and photos, or arrange a site assessment.',
+    },
+    {
+      question: 'Do you inspect the site before quoting?',
+      answer:
+        'Yes, where the scope or site condition warrants it. An inspection establishes surface condition, areas needing work, existing paint deterioration, cracks or damage, access and preparation requirements, the suitable paint system, and the manpower and duration involved — so the quote reflects the actual job.',
+    },
+    {
+      question: 'Is surface preparation included?',
+      answer:
+        'Yes, and it is the part that determines how long the finish lasts. Depending on condition it can include cleaning, scraping loose paint, sanding, filling holes and imperfections, crack treatment, removing contaminants and applying primer.',
+    },
+    {
+      question: 'Can you paint over existing paint?',
+      answer:
+        'Often yes, after inspection. If the existing coating is sound, well bonded and compatible with the new system, repainting can proceed after suitable preparation. Extensive peeling, blistering, cracking or deterioration means additional preparation or removal first.',
+    },
+    {
+      question: 'Can you repair cracks and damaged walls first?',
+      answer:
+        'Yes, for suitable non-structural repairs — small cracks, holes and surface imperfections are handled as part of preparation. Significant or structural cracks should be assessed separately by an appropriately qualified professional before painting proceeds.',
+    },
+    {
+      question: 'What type of paint do you use?',
+      answer:
+        'It depends on the application and the surface. Different jobs call for interior durability, exterior weather resistance, mould resistance, washability, moisture resistance, anti-corrosion protection, or low-odour and low-VOC characteristics. We recommend a system based on the property and how the space is used.',
+    },
+    {
+      question: 'Can you help with colour selection and matching?',
+      answer:
+        'Yes. Bring your preferred colours, references or existing scheme, and we can discuss combinations suited to the space — including company branding for commercial projects. Matching an existing colour is usually possible, though age, fading, lighting and product differences affect accuracy. A physical sample gives the closest match.',
+    },
+    {
+      question: 'How long does a painting project take?',
+      answer:
+        'It varies with property size, number of areas, surface condition, preparation, number of coats, drying and curing times, access, working hours, and weather for external work. We provide a schedule once the scope is assessed.',
+    },
+    {
+      question: 'Can you work while the building is occupied?',
+      answer:
+        'Usually yes. We plan works in stages where practical — section-by-section painting, protection of furniture and equipment, controlled work areas, coordination around operating hours, ventilation and daily housekeeping. Commercial and industrial schedules can be arranged around site operations.',
+    },
+    {
+      question: 'Do you take on commercial and industrial projects?',
+      answer:
+        'Yes — offices, retail units, warehouses, factories, workshops, industrial buildings, carparks, common areas and building exteriors. Larger projects are planned around access, safety, working hours, site operations and coordination with other contractors.',
+    },
+    {
+      question: 'Do you carry out high-level and external work?',
+      answer:
+        'Yes. Where painting is at height, access is assessed per site and may involve suitable access equipment, scaffolding or other approved methods.',
+    },
+    {
+      question: 'Can painting be combined with other maintenance works?',
+      answer:
+        'Yes, and it usually saves money. Painting coordinates well with waterproofing, concrete repair, crack repair, surface restoration, scaffolding, roof maintenance and general building maintenance — combining them avoids paying to mobilise twice.',
+    },
+    {
+      question: 'What should I do before the painters arrive?',
+      answer:
+        'Remove valuable or fragile items, clear furniture from work areas, provide access, flag anything needing special attention, confirm colour selections, and tell us about any site restrictions. Commercial and industrial sites can discuss specific requirements before we start.',
+    },
+    {
+      question: 'Do you do touch-up painting?',
+      answer:
+        'Yes — scuffed walls, minor damage, doors and frames, high-traffic and common areas. Whether a localised touch-up or a full repaint is better depends on the existing paint condition and whether the colour is still available.',
+    },
+    {
+      question: 'Can you paint metal surfaces?',
+      answer:
+        'Yes. Metal needs specialised preparation and coatings, especially outdoors or in damp conditions — typically cleaning, removing loose coatings or rust, suitable priming, then a compatible protective coating.',
+    },
+    {
+      question: 'How do I get a quotation?',
+      answer:
+        'Send us the property type, location, approximate size, areas to be painted, interior or exterior requirements, current surface condition, preferred timeframe, and photos where available. We will assess it and advise whether a site visit is appropriate.',
+    },
+  ] as FaqItem[],
+
   /* ---- Service areas ----------------------------------------------------- */
   serviceArea: {
     heading: 'Areas We Serve',
@@ -683,6 +1059,11 @@ export const client = {
         title: 'Our Services | Painting & Waterproofing Singapore',
         description:
           'Interior and exterior painting, waterproofing, leak detection and repair, protective coatings and surface preparation across Singapore.',
+      },
+      paintProducts: {
+        title: 'Paint Products | Low-VOC & Anti-Mould Coatings Singapore',
+        description:
+          'Low-VOC, formaldehyde-free paint products for Singapore properties — anti-mould sealers, air-purifying interior paint and penetrating sealers, with full technical specifications.',
       },
       gallery: {
         title: 'Project Gallery | Goal Green World',

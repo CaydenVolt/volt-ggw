@@ -1,0 +1,509 @@
+---
+/**
+ * /paint-products — paint products and painting services.
+ *
+ * Structure follows goalgreen.world/pages/paint-products: hero with tagline,
+ * "What We Offer", the product range, a value-proposition band, and a closing
+ * enquiry CTA. Extended with the technical data from the supplied data sheets.
+ *
+ * ⚠️ The source data sheets carry a supplier's company name, UEN, phone and
+ * domain. None of it appears here. Product names and technical figures are
+ * retained; manufacturer attribution is deliberately not.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import SmartImage from '../components/SmartImage.astro';
+import TrustBar from '../components/TrustBar.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import EstimateForm from '../components/EstimateForm.astro';
+import CTABanner from '../components/CTABanner.astro';
+import client from '../config/client.ts';
+
+const { paintProducts, paintFaq, contact } = client;
+const { products, systems, surfacePrep } = paintProducts;
+
+/** Look a product up by slug so systems can render real product data. */
+const bySlug = new Map(products.map((product) => [product.slug, product]));
+---
+
+<BaseLayout pageKey="paintProducts">
+  <PageHero
+    eyebrow={paintProducts.eyebrow}
+    title={paintProducts.heading}
+    subtitle={paintProducts.intro}
+    image={paintProducts.heroImage}
+  >
+    <p class="mt-6 text-xl font-bold text-brand-accent sm:text-2xl">
+      {paintProducts.tagline}
+    </p>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#enquire" class="btn btn-accent px-7 py-3.5">Enquire Now</a>
+      <a href="#products" class="btn btn-outline-light px-7 py-3.5">
+        Browse Products
+      </a>
+    </div>
+  </PageHero>
+
+  <TrustBar />
+
+  {/* ── What we offer ── */}
+  <section class="section-y bg-white" aria-labelledby="offer-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">What We Offer</p>
+        <h2 id="offer-heading" class="heading-section mt-3">
+          Coatings Specified Around the Substrate
+        </h2>
+        <p class="lead mx-auto mt-4">
+          We supply and apply. The system is chosen for the wall in front of us
+          — not whatever happens to be on the shelf.
+        </p>
+      </div>
+
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          [
+            {
+              icon: 'droplet' as const,
+              title: 'Anti-Mould Systems',
+              body: 'Sealer-and-topcoat systems that block mould at the substrate, built for high-humidity interiors.',
+            },
+            {
+              icon: 'leaf' as const,
+              title: 'Low-VOC Interior Paint',
+              body: 'VOC-free and odourless formulations safe for homes, schools and occupied commercial interiors.',
+            },
+            {
+              icon: 'sparkles' as const,
+              title: 'Penetrating Sealers',
+              body: 'Deep-penetrating primers that bind chalky, powdery and weak substrates before anything goes over them.',
+            },
+            {
+              icon: 'shield' as const,
+              title: 'Protective Coatings',
+              body: 'Heavy-duty systems for warehouses, factories and infrastructure, engineered for long-term durability.',
+            },
+          ].map((item) => (
+            <li class="rounded-2xl bg-brand-bg-alt p-6 ring-1 ring-slate-900/5">
+              <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                <Icon name={item.icon} size={24} />
+              </span>
+              <h3 class="mt-5 text-lg font-bold leading-snug text-brand-primary">
+                {item.title}
+              </h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-brand-muted">
+                {item.body}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* ── Systems ── */}
+  {
+    systems.map((system) => (
+      <section class="section-y bg-brand-primary" aria-labelledby="system-heading">
+        <div class="container-x">
+          <div class="mx-auto max-w-2xl text-center">
+            <p class="eyebrow">Complete System</p>
+            <h2 id="system-heading" class="heading-section mt-3 text-white">
+              {system.name}
+            </h2>
+            <p class="mt-4 text-lg leading-relaxed text-white/70">
+              {system.description}
+            </p>
+            <p class="mt-5 inline-flex items-start gap-2 rounded-xl border border-brand-accent/40 bg-brand-accent/10 px-5 py-3 text-left text-sm font-semibold text-brand-accent">
+              <Icon name="badge-check" size={18} class="mt-px shrink-0" />
+              <span>Best for: {system.bestFor}</span>
+            </p>
+          </div>
+
+          {/* Application order */}
+          <ol class="mt-12 grid gap-6 md:grid-cols-3">
+            {system.steps.map((step, index) => {
+              const product = bySlug.get(system.productSlugs[index]);
+              return (
+                <li class="relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6">
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-brand-accent text-sm font-extrabold text-brand-accent">
+                      {index + 1}
+                    </span>
+                    <h3 class="text-lg font-bold text-white">{step.product}</h3>
+                  </div>
+
+                  {product && (
+                    <div class="mt-5 overflow-hidden rounded-xl bg-white/5">
+                      <SmartImage
+                        src={product.image}
+                        alt={`${product.name} container`}
+                        width={900}
+                        height={900}
+                        sizes="(min-width: 768px) 340px, 90vw"
+                        class="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <p class="mt-5 flex-1 text-[15px] leading-relaxed text-white/65">
+                    {step.role}
+                  </p>
+
+                  {product && (
+                    <a
+                      href={`#${product.slug}`}
+                      class="mt-4 inline-flex items-center gap-1.5 self-start text-sm font-bold text-brand-accent transition-colors hover:text-white"
+                    >
+                      <span>Full specifications</span>
+                      <Icon name="arrow-right" size={16} />
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
+    ))
+  }
+
+  {/* ── Product range with full specs ── */}
+  <section id="products" class="section-y scroll-mt-20 bg-white" aria-labelledby="products-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Product Range</p>
+        <h2 id="products-heading" class="heading-section mt-3">
+          Technical Specifications
+        </h2>
+        <p class="lead mx-auto mt-4">
+          Full data for every product we specify, so you can compare like for
+          like.
+        </p>
+      </div>
+
+      {/* Quick jump */}
+      <ul class="mt-8 flex flex-wrap justify-center gap-2.5">
+        {
+          products.map((product) => (
+            <li>
+              <a
+                href={`#${product.slug}`}
+                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10"
+              >
+                {product.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-12 space-y-12">
+        {
+          products.map((product) => (
+            <article
+              id={product.slug}
+              class="scroll-mt-20 overflow-hidden rounded-2xl bg-brand-bg-alt ring-1 ring-slate-900/5"
+              aria-labelledby={`${product.slug}-heading`}
+            >
+              {/*
+                `minmax(0,…)` on every track, including the single mobile
+                column. Without it an `auto` track takes its min-content size
+                from the widest unwrappable child — a long `.btn` label, which
+                is `white-space: nowrap` — and the card's `overflow-hidden`
+                silently clips the excess.
+              */}
+              <div class="grid grid-cols-[minmax(0,1fr)] gap-0 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+                {/* Product image */}
+                <div class="bg-white p-6 lg:p-8">
+                  <div class="overflow-hidden rounded-xl">
+                    <SmartImage
+                      src={product.image}
+                      alt={`${product.name} container`}
+                      width={900}
+                      height={900}
+                      sizes="(min-width: 1024px) 300px, 90vw"
+                      class="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Detail */}
+                <div class="p-6 sm:p-8">
+                  <span class="inline-block rounded-full bg-brand-accent px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-accent-text">
+                    {product.category}
+                  </span>
+
+                  <h3
+                    id={`${product.slug}-heading`}
+                    class="mt-4 text-2xl font-extrabold leading-tight text-brand-primary sm:text-3xl"
+                  >
+                    {product.name}
+                  </h3>
+                  <p class="mt-2 text-[15px] font-semibold text-brand-accent-hover">
+                    {product.tagline}
+                  </p>
+
+                  <p class="mt-4 text-[15px] leading-relaxed text-brand-muted">
+                    {product.description}
+                  </p>
+
+                  {/* Recommendation */}
+                  {product.recommendation && (
+                    <div class="mt-6 rounded-xl border-l-4 border-brand-accent bg-white p-5">
+                      <p class="flex items-start gap-2.5 text-[15px] font-medium leading-relaxed text-brand-text">
+                        <Icon
+                          name="target"
+                          size={19}
+                          class="mt-0.5 shrink-0 text-brand-accent"
+                        />
+                        <span>{product.recommendation}</span>
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Features + design use */}
+                  <div class="mt-7 grid gap-7 sm:grid-cols-2">
+                    <div>
+                      <h4 class="text-sm font-bold uppercase tracking-wider text-brand-primary">
+                        Product features
+                      </h4>
+                      <ul class="mt-3 space-y-2">
+                        {product.features.map((feature) => (
+                          <li class="flex items-start gap-2.5">
+                            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                              <Icon name="check" size={13} />
+                            </span>
+                            <span class="text-sm leading-relaxed text-brand-text">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 class="text-sm font-bold uppercase tracking-wider text-brand-primary">
+                        Design use
+                      </h4>
+                      <ul class="mt-3 space-y-2">
+                        {product.designUse.map((use) => (
+                          <li class="flex items-start gap-2.5">
+                            <span class="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-accent" />
+                            <span class="text-sm leading-relaxed text-brand-muted">
+                              {use}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Spec table */}
+                  <h4 class="mt-8 text-sm font-bold uppercase tracking-wider text-brand-primary">
+                    Technical data
+                  </h4>
+                  <div class="mt-3 overflow-hidden rounded-xl bg-white ring-1 ring-slate-900/5">
+                    <table class="w-full text-left text-sm">
+                      <caption class="sr-only">
+                        Technical data for {product.name}
+                      </caption>
+                      <tbody>
+                        {product.specs.map((spec) => (
+                          <tr class="border-b border-slate-100 last:border-0">
+                            <th
+                              scope="row"
+                              class="w-2/5 px-4 py-3 align-top font-semibold text-brand-primary"
+                            >
+                              {spec.label}
+                            </th>
+                            <td class="px-4 py-3 align-top leading-relaxed text-brand-muted">
+                              {spec.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {product.specsIncomplete && (
+                    <p class="mt-3 flex items-start gap-2 rounded-lg bg-white px-4 py-3 text-xs leading-relaxed text-brand-muted ring-1 ring-slate-900/5">
+                      <Icon name="clock" size={15} class="mt-px shrink-0 text-brand-accent" />
+                      <span>
+                        Full technical data sheet for this product is being
+                        finalised. Contact us for complete specifications.
+                      </span>
+                    </p>
+                  )}
+
+                  <div class="mt-7 flex flex-wrap gap-3">
+                    {/*
+                      Label kept short because `.btn` is `white-space: nowrap`;
+                      the product name goes to assistive tech instead so the
+                      link is still unambiguous out of context.
+                    */}
+                    <a href="#enquire" class="btn btn-accent px-6 py-3">
+                      Enquire Now
+                      <span class="sr-only">about {product.name}</span>
+                    </a>
+                    <a
+                      href={`tel:${contact.phoneHref}`}
+                      class="btn btn-outline-dark px-6 py-3"
+                    >
+                      <Icon name="phone" size={17} />
+                      <span>Call Us</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="mx-auto mt-10 max-w-3xl rounded-xl bg-brand-bg-alt p-5 text-center text-sm leading-relaxed text-brand-muted">
+        {paintProducts.disclaimer}
+      </p>
+    </div>
+  </section>
+
+  {/* ── Surface preparation ── */}
+  <section class="section-y bg-brand-bg-alt" aria-labelledby="prep-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Before Any Coating</p>
+        <h2 id="prep-heading" class="heading-section mt-3">
+          {surfacePrep.heading}
+        </h2>
+        <p class="lead mx-auto mt-4">{surfacePrep.intro}</p>
+      </div>
+
+      <ol class="mx-auto mt-10 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          surfacePrep.steps.map((step, index) => (
+            <li class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-primary text-sm font-extrabold text-brand-accent">
+                {index + 1}
+              </span>
+              <h3 class="mt-4 text-base font-bold text-brand-primary">
+                {step.title}
+              </h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-brand-muted">
+                {step.detail}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* ── Why green coatings ── */}
+  <section class="section-y bg-white" aria-labelledby="why-green-heading">
+    <div class="container-x">
+      <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p class="eyebrow">Why Choose Green Coatings</p>
+          <h2 id="why-green-heading" class="heading-section mt-3">
+            Better for Buildings, Better for People.
+          </h2>
+          <p class="lead mt-5">
+            Conventional paints release volatile organic compounds and
+            formaldehyde into the air long after they look dry. In an occupied
+            home, a school or an office, that matters — and in Singapore’s
+            humidity it compounds with the mould problem rather than solving it.
+          </p>
+          <p class="lead mt-4">
+            Every product we specify is low-VOC or VOC-free and
+            formaldehyde-free, which means rooms can be reoccupied sooner and
+            there is no lingering odour for staff, residents or children.
+          </p>
+
+          <ul class="mt-7 space-y-3">
+            {
+              [
+                'VOC-free and ultra-low VOC formulations',
+                'Formaldehyde-free across the range',
+                'Low odour — occupied sites need no shutdown',
+                'Aligned with green building standards',
+              ].map((point) => (
+                <li class="flex items-start gap-3">
+                  <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                    <Icon name="check" size={15} />
+                  </span>
+                  <span class="text-[15px] font-medium leading-relaxed text-brand-text">
+                    {point}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="rounded-2xl bg-brand-primary p-8 sm:p-10">
+          <span class="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+            <Icon name="leaf" size={28} />
+          </span>
+          <h3 class="mt-6 text-2xl font-extrabold leading-tight text-white">
+            Supply and application, from one contractor
+          </h3>
+          <p class="mt-4 text-[15px] leading-relaxed text-white/70">
+            We do not just sell the tin. We assess the substrate, specify the
+            system, prepare the surface and apply it — so if the coating fails
+            there is no argument about whether it was the product or the
+            workmanship.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a href="/services" class="btn btn-accent px-6 py-3">
+              Our Painting Services
+            </a>
+            <a href="#enquire" class="btn btn-outline-light px-6 py-3">
+              Enquire
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FAQAccordion
+    items={paintFaq}
+    heading="Painting Services FAQ"
+    eyebrow="Common Questions"
+    groupName="paint-faq"
+    variant="alt"
+  />
+
+  {/* ── Enquiry form ── */}
+  <section id="enquire" class="section-y scroll-mt-20 bg-white" aria-labelledby="enquire-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl">
+        <div class="text-center">
+          <p class="eyebrow">Have a Project in Mind?</p>
+          <h2 id="enquire-heading" class="heading-section mt-3">
+            Enquire About Paint Products
+          </h2>
+          <p class="lead mx-auto mt-4 max-w-xl">
+            Tell us the property type, the areas involved and the current
+            surface condition, and we will recommend a system and quote it.
+          </p>
+        </div>
+
+        <div class="mt-10">
+          <EstimateForm
+            variant="full"
+            heading="Product & Project Enquiry"
+            subheading=""
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    headline="Not Sure Which System You Need?"
+    subtext="Send us photos of the affected area, or book a free site assessment. We will tell you what the substrate actually needs."
+  />
+</BaseLayout>
