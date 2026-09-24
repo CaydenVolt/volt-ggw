@@ -13,6 +13,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import SmartImage from '../components/SmartImage.astro';
 import CTABanner from '../components/CTABanner.astro';
+import VideoGallery from '../components/VideoGallery.astro';
 import client from '../config/client.ts';
 
 const { gallery } = client;
@@ -114,12 +115,18 @@ const key = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       </ul>
 
       <p class="mt-10 text-center text-[15px] text-brand-muted">
-        These are placeholder images. Replace them in
-        <code class="rounded bg-brand-bg-alt px-1.5 py-0.5 text-sm">src/assets/images/</code>
-        before launch.
+        Every project shown is our own work.{' '}
+        <a
+          href="/contact"
+          class="font-bold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
+        >
+          Ask about a similar job
+        </a>.
       </p>
     </div>
   </section>
+
+  <VideoGallery variant="alt" />
 
   <CTABanner />
 </BaseLayout>

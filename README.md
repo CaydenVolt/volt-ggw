@@ -44,13 +44,13 @@ Opens on <http://localhost:4321>.
 
 ## Site map
 
-34 pages build from the config. Everything is static HTML.
+35 pages build from the config. Everything is static HTML.
 
 | Route | Source | Notes |
 | --- | --- | --- |
 | `/` | `pages/index.astro` | Split hero with the estimate form card |
 | `/services` | `pages/services.astro` | One anchored section per service |
-| `/paint-products` | `pages/paint-products.astro` | Product specs + painting FAQ |
+| `/painting` | `pages/painting.astro` | Product specs + painting FAQ |
 | `/gallery` | `pages/gallery.astro` | Filterable by category |
 | `/pricing` | `pages/pricing.astro` | Indicative pricing cards + pricing FAQ |
 | `/resources` | `pages/resources/index.astro` | Article listing |
@@ -79,12 +79,13 @@ commented. See [Config reference](#config-reference).
 
 ### 2. Replace `src/data/reviews.ts`
 
-Ships with **placeholder testimonials** (`name: 'Placeholder Name'`). Replace
-them with real, attributable reviews. Inventing testimonials is a
-consumer-protection problem in most jurisdictions, not just a trust one.
+Now holds the client's **two real Google reviews**, transcribed as text. For a
+new client, replace them with that client's own reviews — and only real,
+attributable ones. Inventing testimonials is a consumer-protection problem in
+most jurisdictions, not just a trust one.
 
-The aggregate rating block stays hidden while `reviewSummary.count` is `0`, so
-nothing false is claimed until you set a real number.
+Keep `reviewSummary.count` equal to the real number of reviews. Set it to `0`
+and the aggregate rating block hides itself, so nothing false is claimed.
 
 ### 3. Replace `src/data/articles.ts`
 
@@ -118,7 +119,7 @@ icon is caught by `npm run check` rather than silently rendering nothing.
 | `hero` | Headline (+ accent half), subheadline, location badge, service line, background image, trust badges |
 | `contact` | Phone, `phoneHref`, email, WhatsApp, address, business hours |
 | `social` | Platform + URL pairs |
-| `nav` | The 7 page links. `Nav.astro` marks the current one automatically |
+| `nav` | The 8 page links. `Nav.astro` marks the current one automatically |
 | `services` | `slug`, `name`, `shortDescription`, `longDescription`, `includedItems[]`, `icon`, `image` |
 | `process` | Numbered steps. 4–5 works best |
 | `trust` | The icon row |
@@ -156,6 +157,41 @@ a unique title and description automatically.
 the client has confirmed. Publishing invented prices for a real business is a
 misrepresentation problem, and the "every project is different" disclaimer does
 not cover it.
+
+### Adding videos
+
+Clips live in `public/videos/` — Astro's asset pipeline handles images, not
+video, so they are served as-is and must be compressed **before** they go in.
+Phone footage straight from WhatsApp is roughly 1 MB per second; the three
+clips shipped here came from 22 MB of source and total under 4 MB.
+
+Each clip needs two files with matching names: `<name>.mp4` and
+`<name>-poster.webp`. Then add an entry to `videos.items` in the config.
+
+With `ffmpeg` on your PATH:
+
+```bash
+ffmpeg -ss 1 -i input.mp4 -t 14 -an -c:v libx264 -profile:v high -preset slow -crf 30 -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2,fps=30" -movflags +faststart public/videos/my-clip.mp4
+```
+
+```bash
+ffmpeg -ss 6 -i input.mp4 -frames:v 1 -vf scale=540:960 public/videos/my-clip-poster.webp
+```
+
+What the flags are doing, and why:
+
+- `-ss 1 … -t 14` trims to a 14-second window. Long clips are the main cause
+  of bloat and almost nobody watches past ten seconds.
+- `-an` strips audio. Job-site sound is wind and compressor noise, and silent
+  b-roll avoids startling anyone who taps play.
+- `-crf 30` is aggressive, which is fine for 480px-wide phone footage.
+- `-movflags +faststart` moves the index to the front of the file so playback
+  can begin before the whole thing has downloaded.
+
+`VideoGallery.astro` sets `preload="none"`, so **no video data is fetched until
+a visitor presses play** — only the poster images load. Verified: a gallery page
+view makes zero `.mp4` requests. Do not switch these to `autoplay`; three clips
+starting at once is a real problem on mobile data.
 
 ### ⚠️ Paint product data and attribution
 

@@ -1,0 +1,76 @@
+---
+/**
+ * Video strip of real job footage.
+ *
+ * PERFORMANCE
+ * `preload="none"` means not a single byte of video is fetched until someone
+ * presses play. What loads on page view is three small poster images. That
+ * matters: these clips are ~1MB each and most visitors will never play one.
+ *
+ * No autoplay — three clips playing at once would be both a bandwidth problem
+ * and hostile on mobile data.
+ *
+ * Zero JavaScript: native <video controls> does all of it.
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+
+export interface Props {
+  variant?: 'white' | 'alt';
+}
+
+const { variant = 'alt' } = Astro.props;
+const { videos } = client;
+---
+
+<section
+  id="videos"
+  class:list={['section-y scroll-mt-20', variant === 'white' ? 'bg-white' : 'bg-brand-bg-alt']}
+  aria-labelledby="videos-heading"
+>
+  <div class="container-x">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow">{videos.eyebrow}</p>
+      <h2 id="videos-heading" class="heading-section mt-3">{videos.heading}</h2>
+      <p class="lead mx-auto mt-4">{videos.intro}</p>
+    </div>
+
+    <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        videos.items.map((video) => (
+          <li class="overflow-hidden rounded-2xl bg-white shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5">
+            <div class="relative bg-brand-primary">
+              <video
+                class="block aspect-[9/16] w-full object-cover"
+                src={video.src}
+                poster={video.poster}
+                controls
+                muted
+                playsinline
+                preload="none"
+                aria-label={video.title}
+              />
+              <span class="pointer-events-none absolute right-3 top-3 rounded-full bg-brand-primary/85 px-2.5 py-1 text-xs font-bold text-white">
+                {video.duration}
+              </span>
+            </div>
+
+            <div class="p-5">
+              <h3 class="flex items-start gap-2 text-base font-bold leading-snug text-brand-primary">
+                <Icon name="roller" size={18} class="mt-0.5 shrink-0 text-brand-accent-deep" />
+                <span>{video.title}</span>
+              </h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-brand-muted">
+                {video.caption}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8 text-center text-sm text-brand-muted">
+      Clips are silent and play on tap. Nothing downloads until you press play.
+    </p>
+  </div>
+</section>

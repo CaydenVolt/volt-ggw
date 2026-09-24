@@ -394,7 +394,7 @@ export const client = {
         'Alkali and moisture testing before priming',
       ],
       icon: 'sparkles',
-      image: '/images/job-pressure-wash-43.webp',
+      image: '/images/job-facade-works-43.webp',
     },
   ] as Service[],
 
@@ -631,9 +631,54 @@ export const client = {
       { image: '/images/job-exterior-repaint-sq.webp', alt: 'Exterior repainting of a three-storey terrace house, Singapore', category: 'Residential' },
       { image: '/images/job-facade-access-sq.webp', alt: 'Facade works in progress with scaffold access to upper floors', category: 'Residential' },
       { image: '/images/job-highlevel-scaffold-sq.webp', alt: 'High-level works from a suspended scaffold at roof gable', category: 'Painting' },
-      { image: '/images/job-pressure-wash-sq.webp', alt: 'Pressure washing a weathered facade before repainting', category: 'Painting' },
+      { image: '/images/job-facade-works-sq.webp', alt: 'Exterior works in progress from scaffold access', category: 'Painting' },
       { image: '/images/job-crew-at-work-sq.webp', alt: 'Crew repainting the exterior of a multi-storey house', category: 'Residential' },
     ] as GalleryItem[],
+  },
+
+  /* ---- Site videos ------------------------------------------------------- */
+  /**
+   * Short silent clips of real jobs, shown on /gallery.
+   *
+   * Files live in `public/videos/` — Astro's image pipeline does not process
+   * video, so they are served as-is. They were trimmed to ~14s and re-encoded
+   * from the originals (55MB of phone footage down to under 4MB total); see
+   * README → "Adding videos" for the command.
+   *
+   * Audio is stripped deliberately: the originals are wind and compressor
+   * noise, and silent b-roll avoids startling anyone who hits play.
+   */
+  videos: {
+    eyebrow: 'On Site',
+    heading: 'Watch Us Work',
+    intro:
+      'Short clips from live jobs. Roof spray painting, coating and exterior repainting — filmed on site, not staged.',
+    items: [
+      {
+        src: '/videos/roof-spray-painting.mp4',
+        poster: '/videos/roof-spray-painting-poster.webp',
+        title: 'Spray Painting a Terracotta Roof',
+        caption:
+          'Mid-pass on a tiled roof, with the new grey coating going on over the original terracotta.',
+        duration: '0:14',
+      },
+      {
+        src: '/videos/roof-coating.mp4',
+        poster: '/videos/roof-coating-poster.webp',
+        title: 'Roof Coating Application',
+        caption:
+          'Working across the roof section by section, harnessed, with the neighbouring untreated roof still visible behind.',
+        duration: '0:14',
+      },
+      {
+        src: '/videos/exterior-repaint.mp4',
+        poster: '/videos/exterior-repaint-poster.webp',
+        title: 'Exterior Repainting in Progress',
+        caption:
+          'Scaffold access to the upper storeys of a landed property during a full exterior repaint.',
+        duration: '0:14',
+      },
+    ],
   },
 
   /* ---- FAQ --------------------------------------------------------------- */
