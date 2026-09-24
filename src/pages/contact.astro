@@ -8,6 +8,7 @@ import Icon from '../components/Icon.astro';
 import EstimateForm from '../components/EstimateForm.astro';
 import TrustBar from '../components/TrustBar.astro';
 import client from '../config/client.ts';
+import Schema from '../components/Schema.astro';
 
 const { contact, company, social } = client;
 
@@ -19,9 +20,10 @@ const address = [
 ---
 
 <BaseLayout pageKey="contact">
+  <Schema slot="head" />
   <PageHero
     eyebrow="Get In Touch"
-    title="Request a Free Estimate"
+    title="Request a Free Painting or Waterproofing Estimate"
     subtitle="Tell us what you need done and we will come back to you within one business day. Site assessments are free and carry no obligation."
   />
 

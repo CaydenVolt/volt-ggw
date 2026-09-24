@@ -19,6 +19,7 @@ import FAQAccordion from '../components/FAQAccordion.astro';
 import EstimateForm from '../components/EstimateForm.astro';
 import CTABanner from '../components/CTABanner.astro';
 import client from '../config/client.ts';
+import Schema from '../components/Schema.astro';
 
 const { paintProducts, paintFaq, contact } = client;
 const { products, systems, surfacePrep, offerings } = paintProducts;
@@ -28,6 +29,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
 ---
 
 <BaseLayout pageKey="painting">
+  <Schema slot="head" faqs={paintFaq} />
   <PageHero
     eyebrow={paintProducts.eyebrow}
     title={paintProducts.heading}

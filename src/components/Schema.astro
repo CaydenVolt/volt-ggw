@@ -1,0 +1,184 @@
+---
+/**
+ * JSON-LD structured data.
+ *
+ * This is the machine-readable half of "so Google knows what GGW does".
+ * Prose tells a reader; this tells a crawler in terms it does not have to
+ * infer — business type, location, service area, services offered, ratings and
+ * FAQ entries.
+ *
+ * Emitted into <head> via `<Schema slot="head" … />`.
+ *
+ * ── HONESTY RULES, DO NOT LOOSEN ──
+ * `aggregateRating` is emitted only when `reviewSummary.count > 0`, and the
+ * numbers come from real reviews in `src/data/reviews.ts`. Inflating a rating
+ * or a review count in structured data is review fraud, and Google issues
+ * manual actions for it. Do not hardcode a rating here.
+ *
+ * `priceRange` is deliberately omitted while pricing is a placeholder.
+ */
+import client from '../config/client.ts';
+import type { Service, FaqItem } from '../config/client.ts';
+import { reviews, reviewSummary } from '../data/reviews.ts';
+
+export interface Props {
+  /** `organization` for sitewide pages, `service` for a service page. */
+  type?: 'organization' | 'service';
+  service?: Service;
+  /**
+   * FAQ entries to emit as a FAQPage node.
+   *
+   * Only pass this on a page that ACTUALLY RENDERS those questions. Emitting
+   * FAQ markup for content a visitor cannot see on the page is exactly what
+   * Google's structured data guidelines call out, and it risks a manual
+   * action rather than a rich result.
+   *
+   * Service pages supply their own and do not need this.
+   */
+  faqs?: readonly FaqItem[];
+}
+
+const { type = 'organization', service, faqs } = Astro.props;
+
+const { company, contact, seo, social, serviceArea, services, faq } = client;
+const origin = seo.siteUrl.replace(/\/$/, '');
+
+const businessId = `${origin}/#business`;
+
+/* ── The business itself ── */
+const business: Record<string, unknown> = {
+  '@type': 'HomeAndConstructionBusiness',
+  '@id': businessId,
+  name: `${company.name} — ${company.division}`,
+  legalName: company.legalName,
+  url: origin,
+  telephone: contact.phone,
+  email: contact.email,
+  description: seo.description,
+  slogan: company.tagline,
+  foundingDate: String(company.foundedYear),
+  image: `${origin}${seo.ogImage}`,
+  logo: `${origin}${client.logo.src}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: [contact.address.line1, contact.address.line2].filter(Boolean).join(', '),
+    addressLocality: contact.address.city,
+    postalCode: contact.address.postalCode,
+    addressCountry: 'SG',
+  },
+  areaServed: serviceArea.areas.map((area) => ({
+    '@type': 'Place',
+    name: `${area.name}, Singapore`,
+  })),
+  sameAs: social.map((s) => s.url),
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday'],
+      opens: '09:00',
+      closes: '13:00',
+    },
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: `${company.division} Services`,
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Service',
+        name: s.name,
+        description: s.shortDescription,
+        url: `${origin}/services/${s.slug}`,
+      },
+    })),
+  },
+};
+
+if (company.registrationNumber) {
+  business.identifier = company.registrationNumber;
+}
+
+/*
+ * Ratings only when there are genuine reviews behind them. `count: 0` in
+ * reviews.ts means no aggregateRating block is emitted at all.
+ */
+if (reviewSummary.count > 0 && reviews.length > 0) {
+  business.aggregateRating = {
+    '@type': 'AggregateRating',
+    ratingValue: String(reviewSummary.rating),
+    reviewCount: String(reviewSummary.count),
+    bestRating: '5',
+    worstRating: '1',
+  };
+  business.review = reviews.map((r) => ({
+    '@type': 'Review',
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: String(r.stars),
+      bestRating: '5',
+    },
+    author: { '@type': 'Person', name: r.name },
+    reviewBody: r.quote,
+  }));
+}
+
+/* ── Page-level graph ── */
+const graph: Record<string, unknown>[] = [business];
+
+if (type === 'service' && service) {
+  graph.push({
+    '@type': 'Service',
+    '@id': `${origin}/services/${service.slug}/#service`,
+    name: service.name,
+    serviceType: service.name,
+    description: service.metaDescription,
+    url: `${origin}/services/${service.slug}`,
+    provider: { '@id': businessId },
+    areaServed: { '@type': 'Country', name: 'Singapore' },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: `${service.name} — what's included`,
+      itemListElement: service.includedItems.map((item) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: item },
+      })),
+    },
+  });
+
+  if (service.faqs.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${origin}/services/${service.slug}/#faq`,
+      mainEntity: service.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    });
+  }
+} else {
+  /* Explicit `faqs` wins; otherwise the homepage's own FAQ set. */
+  const entries = faqs ?? (Astro.url.pathname === '/' ? faq.items : undefined);
+  if (entries && entries.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${origin}${Astro.url.pathname}#faq`,
+      mainEntity: entries.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    });
+  }
+}
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+
+<script type="application/ld+json" is:inline set:html={jsonLd} />

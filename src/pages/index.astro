@@ -17,9 +17,13 @@ import ReviewCarousel from '../components/ReviewCarousel.astro';
 import FAQAccordion from '../components/FAQAccordion.astro';
 import ServiceArea from '../components/ServiceArea.astro';
 import CTABanner from '../components/CTABanner.astro';
+import Schema from '../components/Schema.astro';
 ---
 
 <BaseLayout pageKey="home">
+  {/* LocalBusiness + services + ratings + FAQ, machine-readable. */}
+  <Schema slot="head" />
+
   <Hero />
   <TrustBar />
   <ServicesGrid />

@@ -12,11 +12,13 @@ import FAQAccordion from '../components/FAQAccordion.astro';
 import CTABanner from '../components/CTABanner.astro';
 import ProcessSteps from '../components/ProcessSteps.astro';
 import client from '../config/client.ts';
+import Schema from '../components/Schema.astro';
 
 const { pricing } = client;
 ---
 
 <BaseLayout pageKey="pricing">
+  <Schema slot="head" faqs={pricing.faq} />
   <PageHero
     eyebrow="Pricing Centre"
     title={pricing.heading}

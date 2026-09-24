@@ -15,6 +15,7 @@ import SmartImage from '../components/SmartImage.astro';
 import CTABanner from '../components/CTABanner.astro';
 import VideoGallery from '../components/VideoGallery.astro';
 import client from '../config/client.ts';
+import Schema from '../components/Schema.astro';
 
 const { gallery } = client;
 
@@ -31,9 +32,10 @@ const key = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 
 <BaseLayout pageKey="gallery">
+  <Schema slot="head" />
   <PageHero
     eyebrow="Our Work"
-    title="Project Gallery"
+    title="Painting & Waterproofing Projects in Singapore"
     subtitle={gallery.subheading}
   />
 

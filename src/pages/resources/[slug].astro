@@ -13,6 +13,7 @@ import SmartImage from '../../components/SmartImage.astro';
 import EstimateForm from '../../components/EstimateForm.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import { articles, articlesByDate } from '../../data/articles.ts';
+import Schema from '../../components/Schema.astro';
 
 export const getStaticPaths = (() =>
   articles.map((article) => ({
@@ -39,6 +40,7 @@ const related = articlesByDate
   description={article.excerpt}
   ogImage={article.image}
 >
+  <Schema slot="head" />
   <PageHero
     title={article.title}
     backLink={{ href: '/resources', label: 'All guides' }}

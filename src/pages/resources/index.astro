@@ -8,6 +8,7 @@ import Icon from '../../components/Icon.astro';
 import SmartImage from '../../components/SmartImage.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import { articlesByDate } from '../../data/articles.ts';
+import Schema from '../../components/Schema.astro';
 
 const dateFormat = new Intl.DateTimeFormat('en-SG', {
   day: 'numeric',
@@ -17,9 +18,10 @@ const dateFormat = new Intl.DateTimeFormat('en-SG', {
 ---
 
 <BaseLayout pageKey="resources">
+  <Schema slot="head" />
   <PageHero
     eyebrow="Resource Centre"
-    title="Guides & Advice"
+    title="Painting & Waterproofing Guides for Singapore Properties"
     subtitle="Practical, non-salesy answers to the questions we get asked on site. Written for Singapore properties and Singapore weather."
   />
 

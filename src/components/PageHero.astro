@@ -77,14 +77,21 @@ const imageOpacity = isClean ? 'opacity-100' : isBold ? 'opacity-70' : 'opacity-
 
   <div class="container-x">
     <div class="max-w-3xl py-14 md:py-20">
+      {/*
+        The back link needs its own block. `.eyebrow` is inline-block, so an
+        inline <a> directly before it runs onto the same line — which read as
+        "← All servicesOUR SERVICES".
+      */}
       {
         backLink && (
-          <a
-            href={backLink.href}
-            class="text-sm font-semibold text-brand-accent transition-colors hover:text-white"
-          >
-            ← {backLink.label}
-          </a>
+          <p>
+            <a
+              href={backLink.href}
+              class="text-sm font-semibold text-brand-accent transition-colors hover:text-white"
+            >
+              ← {backLink.label}
+            </a>
+          </p>
         )
       }
       {eyebrow && <p class:list={['eyebrow eyebrow-light', backLink && 'mt-4']}>{eyebrow}</p>}

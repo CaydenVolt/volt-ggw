@@ -21,6 +21,7 @@ import TrustBar from '../../components/TrustBar.astro';
 import ReviewCarousel from '../../components/ReviewCarousel.astro';
 import CTABanner from '../../components/CTABanner.astro';
 import client from '../../config/client.ts';
+import Schema from '../../components/Schema.astro';
 
 export const getStaticPaths = (() =>
   client.serviceArea.areas.map((area) => ({
@@ -45,6 +46,7 @@ const nearby = others.slice(0, 8);
 ---
 
 <BaseLayout title={title} description={description}>
+  <Schema slot="head" />
   <PageHero
     eyebrow="Service Area"
     title={`Painting & Waterproofing in ${area.name}`}
@@ -84,7 +86,7 @@ const nearby = others.slice(0, 8);
               services.map((service) => (
                 <li>
                   <a
-                    href={`/services#${service.slug}`}
+                    href={`/services/${service.slug}`}
                     class="flex h-full items-start gap-3.5 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
                   >
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-accent text-brand-accent-text">

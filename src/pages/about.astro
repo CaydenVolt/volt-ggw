@@ -10,12 +10,14 @@ import TrustBar from '../components/TrustBar.astro';
 import ReviewCarousel from '../components/ReviewCarousel.astro';
 import CTABanner from '../components/CTABanner.astro';
 import client from '../config/client.ts';
+import Schema from '../components/Schema.astro';
 
 const { about, company } = client;
 const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
 ---
 
 <BaseLayout pageKey="about">
+  <Schema slot="head" />
   <PageHero
     eyebrow="About Us"
     title={about.heading}
