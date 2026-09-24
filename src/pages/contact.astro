@@ -1,0 +1,208 @@
+---
+/**
+ * /contact — full-width estimate form, contact details, hours, map slot.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import EstimateForm from '../components/EstimateForm.astro';
+import TrustBar from '../components/TrustBar.astro';
+import client from '../config/client.ts';
+
+const { contact, company, social } = client;
+
+const address = [
+  contact.address.line1,
+  contact.address.line2,
+  [contact.address.city, contact.address.postalCode].filter(Boolean).join(' '),
+].filter(Boolean);
+---
+
+<BaseLayout pageKey="contact">
+  <PageHero
+    eyebrow="Get In Touch"
+    title="Request a Free Estimate"
+    subtitle="Tell us what you need done and we will come back to you within one business day. Site assessments are free and carry no obligation."
+  />
+
+  <section class="section-y bg-white" aria-labelledby="contact-heading">
+    <div class="container-x">
+      <h2 id="contact-heading" class="sr-only">Contact details and estimate form</h2>
+
+      <div class="grid gap-10 lg:grid-cols-[1fr_minmax(0,480px)] lg:gap-14">
+        {/* ─────────── Left: details ─────────── */}
+        <div>
+          <h3 class="heading-section">Talk to Us Directly</h3>
+          <p class="lead mt-4">
+            Prefer to speak to someone? Call or WhatsApp during business hours
+            and you will get a person, not a queue.
+          </p>
+
+          <ul class="mt-8 space-y-4">
+            <li>
+              <a
+                href={`tel:${contact.phoneHref}`}
+                class="flex items-start gap-4 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
+              >
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                  <Icon name="phone" size={22} />
+                </span>
+                <span>
+                  <span class="block text-sm font-bold uppercase tracking-wider text-brand-muted">
+                    Phone
+                  </span>
+                  <span class="mt-0.5 block text-lg font-bold text-brand-primary">
+                    {contact.phone}
+                  </span>
+                </span>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href={contact.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-start gap-4 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
+              >
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                  <Icon name="whatsapp" size={22} />
+                </span>
+                <span>
+                  <span class="block text-sm font-bold uppercase tracking-wider text-brand-muted">
+                    WhatsApp
+                  </span>
+                  <span class="mt-0.5 block text-lg font-bold text-brand-primary">
+                    Message us
+                  </span>
+                </span>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href={`mailto:${contact.email}`}
+                class="flex items-start gap-4 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
+              >
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                  <Icon name="mail" size={22} />
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-sm font-bold uppercase tracking-wider text-brand-muted">
+                    Email
+                  </span>
+                  <span class="mt-0.5 block break-all text-lg font-bold text-brand-primary">
+                    {contact.email}
+                  </span>
+                </span>
+              </a>
+            </li>
+
+            <li class="flex items-start gap-4 rounded-xl bg-brand-bg-alt p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                <Icon name="map-pin" size={22} />
+              </span>
+              <span>
+                <span class="block text-sm font-bold uppercase tracking-wider text-brand-muted">
+                  Address
+                </span>
+                <address class="mt-0.5 not-italic text-[15px] font-semibold leading-relaxed text-brand-primary">
+                  {address.map((line) => <span class="block">{line}</span>)}
+                </address>
+              </span>
+            </li>
+          </ul>
+
+          {/* ── Hours ── */}
+          <div class="mt-8 rounded-xl border border-slate-200 p-6">
+            <h4 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-brand-primary">
+              <Icon name="clock" size={18} class="text-brand-accent" />
+              Business Hours
+            </h4>
+            <dl class="mt-4 space-y-2.5">
+              {
+                contact.hours.map((entry) => (
+                  <div class="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-slate-100 pb-2.5 last:border-0 last:pb-0">
+                    <dt class="text-[15px] text-brand-muted">{entry.days}</dt>
+                    <dd class="text-[15px] font-semibold text-brand-text">
+                      {entry.hours}
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {
+            social.length > 0 && (
+              <div class="mt-8">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-brand-primary">
+                  Follow Us
+                </h4>
+                <ul class="mt-3 flex gap-3">
+                  {social.map((item) => (
+                    <li>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-primary text-white transition-colors hover:bg-brand-accent hover:text-brand-accent-text"
+                      >
+                        <Icon name={item.platform} size={20} />
+                        <span class="sr-only">
+                          {company.name} on {item.platform}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+
+        {/* ─────────── Right: form ─────────── */}
+        <div class="lg:sticky lg:top-24 lg:self-start">
+          <EstimateForm variant="full" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Map slot ── */}
+  <section class="section-y bg-brand-bg-alt" aria-labelledby="map-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Find Us</p>
+        <h2 id="map-heading" class="heading-section mt-3">Our Location</h2>
+        <p class="lead mt-4">{address.join(', ')}</p>
+      </div>
+
+      {/*
+        Placeholder for a per-client map embed. Replace this whole div with the
+        client's Google Maps iframe. It is left out deliberately: a hardcoded
+        embed would load third-party cookies on every page view and point at
+        the wrong address for the next client.
+      */}
+      <div
+        class="mt-10 flex aspect-[21/9] w-full items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white"
+      >
+        <div class="px-6 text-center">
+          <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent">
+            <Icon name="map-pin" size={28} />
+          </span>
+          <p class="mt-4 text-lg font-bold text-brand-primary">
+            Map embed goes here
+          </p>
+          <p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-brand-muted">
+            Paste the client’s Google Maps iframe into
+            <code class="rounded bg-brand-bg-alt px-1.5 py-0.5">src/pages/contact.astro</code>
+            to replace this block.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <TrustBar />
+</BaseLayout>

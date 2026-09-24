@@ -1,27 +1,42 @@
 ---
 /**
- * Project gallery (section 8).
- *
- * Grid of images with a category chip. No lightbox — the brief marks it
- * optional for v1, and skipping it keeps the page at zero extra JS.
+ * Homepage gallery teaser — a subset of the gallery, linking to /gallery.
  */
 import client from '../config/client.ts';
+import Icon from './Icon.astro';
 import SmartImage from './SmartImage.astro';
 
+export interface Props {
+  /** How many tiles to show. */
+  limit?: number;
+}
+
+const { limit = 6 } = Astro.props;
 const { gallery } = client;
+const items = gallery.items.slice(0, limit);
 ---
 
 <section id="gallery" class="section-y bg-brand-bg-alt" aria-labelledby="gallery-heading">
   <div class="container-x">
-    <div class="max-w-2xl">
-      <p class="eyebrow">Our Work</p>
-      <h2 id="gallery-heading" class="heading-section mt-3">{gallery.heading}</h2>
-      <p class="lead mt-4">{gallery.subheading}</p>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow">Our Work</p>
+        <h2 id="gallery-heading" class="heading-section mt-3">{gallery.heading}</h2>
+        <p class="lead mt-4">{gallery.subheading}</p>
+      </div>
+
+      <a
+        href="/gallery"
+        class="inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
+      >
+        <span>View full gallery</span>
+        <Icon name="arrow-right" size={16} />
+      </a>
     </div>
 
     <ul class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {
-        gallery.items.map((item) => (
+        items.map((item) => (
           <li class="group relative overflow-hidden rounded-xl bg-brand-primary shadow-md shadow-slate-900/5">
             <div class="aspect-square">
               <SmartImage
@@ -51,5 +66,11 @@ const { gallery } = client;
         ))
       }
     </ul>
+
+    <div class="mt-10 text-center">
+      <a href="/gallery" class="btn btn-outline-dark px-7 py-3.5">
+        View Full Gallery
+      </a>
+    </div>
   </div>
 </section>

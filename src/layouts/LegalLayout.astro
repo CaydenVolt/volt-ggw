@@ -2,12 +2,11 @@
 /**
  * Shared shell for the compliance pages (/privacy, /terms).
  *
- * Content is passed as a slot and styled by the scoped block at the bottom,
- * so the page files stay as plain readable prose.
+ * Nav and footer come from BaseLayout; this adds the page banner and the
+ * prose styling for the slotted content.
  */
 import BaseLayout from './BaseLayout.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
 import client from '../config/client.ts';
 
 export interface Props {
@@ -25,45 +24,21 @@ const { company, legal } = client;
   description={`${title} for ${company.legalName}.`}
   noindex={true}
 >
-  <Nav />
+  <PageHero title={title} subtitle={intro} backLink={{ href: '/', label: 'Back to home' }}>
+    <p class="mt-5 text-sm text-white/50">Last updated: {legal.lastUpdated}</p>
+  </PageHero>
 
-  <main id="main">
-    {/* ── Page header ── */}
-    <header class="bg-brand-primary py-14 md:py-20">
-      <div class="container-x">
-        <div class="mx-auto max-w-3xl">
-          <a
-            href="/"
-            class="text-sm font-semibold text-brand-accent transition-colors hover:text-white"
-          >
-            ← Back to home
-          </a>
-          <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            {title}
-          </h1>
-          {intro && <p class="mt-4 text-lg leading-relaxed text-white/70">{intro}</p>}
-          <p class="mt-4 text-sm text-white/50">
-            Last updated: {legal.lastUpdated}
-          </p>
-        </div>
-      </div>
-    </header>
-
-    {/* ── Body ── */}
-    <div class="section-y bg-white">
-      <div class="container-x">
-        <div class="legal-prose mx-auto max-w-3xl">
-          {/*
-            PLACEHOLDER LEGAL TEXT — see the notice rendered on each page.
-            This is scaffolding, not legal advice.
-          */}
-          <slot />
-        </div>
+  <div class="section-y bg-white">
+    <div class="container-x">
+      <div class="legal-prose mx-auto max-w-3xl">
+        {/*
+          PLACEHOLDER LEGAL TEXT — see the notice rendered on each page.
+          This is scaffolding, not legal advice.
+        */}
+        <slot />
       </div>
     </div>
-  </main>
-
-  <Footer />
+  </div>
 </BaseLayout>
 
 <style>

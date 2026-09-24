@@ -1,0 +1,173 @@
+---
+/**
+ * /pricing — indicative pricing cards, disclaimer, pricing-specific FAQ.
+ *
+ * NOT a calculator. Structured guidance so a visitor can budget before they
+ * call, with a prominent reminder that the quotation is the only real number.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import CTABanner from '../components/CTABanner.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import client from '../config/client.ts';
+
+const { pricing } = client;
+---
+
+<BaseLayout pageKey="pricing">
+  <PageHero
+    eyebrow="Pricing Centre"
+    title={pricing.heading}
+    subtitle={pricing.subheading}
+  />
+
+  {/* ── Pricing cards ── */}
+  <section class="section-y bg-white" aria-labelledby="pricing-cards-heading">
+    <div class="container-x">
+      <h2 id="pricing-cards-heading" class="sr-only">Indicative pricing</h2>
+
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          pricing.cards.map((card) => (
+            <li
+              class:list={[
+                'relative flex flex-col rounded-2xl bg-white p-6 shadow-md shadow-slate-900/5 ring-1',
+                card.featured
+                  ? 'ring-2 ring-brand-accent'
+                  : 'ring-slate-900/5',
+              ]}
+            >
+              {card.featured && (
+                <span class="absolute -top-3 left-6 rounded-full bg-brand-accent px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-accent-text">
+                  Most requested
+                </span>
+              )}
+
+              <h3 class="text-lg font-bold leading-snug text-brand-primary">
+                {card.name}
+              </h3>
+
+              <div class="mt-4 border-y border-slate-100 py-4">
+                <p class="text-xs font-bold uppercase tracking-wider text-brand-muted">
+                  Starting from
+                </p>
+                <p class="mt-1 text-3xl font-extrabold leading-none text-brand-primary">
+                  {card.startingFrom}
+                </p>
+                <p class="mt-1.5 text-xs text-brand-muted">{card.priceNote}</p>
+              </div>
+
+              <ul class="mt-5 flex-1 space-y-2.5">
+                {card.includes.map((item) => (
+                  <li class="flex items-start gap-2.5">
+                    <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                      <Icon name="check" size={13} />
+                    </span>
+                    <span class="text-sm leading-relaxed text-brand-muted">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href="/contact"
+                class:list={[
+                  'btn mt-6 w-full',
+                  card.featured ? 'btn-accent' : 'btn-outline-dark',
+                ]}
+              >
+                Get Exact Price
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {/* ── Disclaimer ── */}
+      <div class="mx-auto mt-12 max-w-3xl rounded-2xl border-l-4 border-brand-accent bg-brand-bg-alt p-6 sm:p-8">
+        <h3 class="flex items-center gap-2.5 text-lg font-bold text-brand-primary">
+          <Icon name="target" size={22} class="shrink-0 text-brand-accent" />
+          Every Project Is Different
+        </h3>
+        <p class="mt-3 text-[15px] leading-relaxed text-brand-muted">
+          {pricing.disclaimer}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── What moves the price ── */}
+  <section class="section-y bg-brand-bg-alt" aria-labelledby="factors-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Before You Compare Quotes</p>
+        <h2 id="factors-heading" class="heading-section mt-3">
+          What Actually Moves the Number
+        </h2>
+        <p class="lead mx-auto mt-4 max-w-xl">
+          If two quotes are far apart, it is almost always one of these — not
+          the paint.
+        </p>
+      </div>
+
+      <ul class="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
+        {
+          [
+            {
+              icon: 'sparkles' as const,
+              title: 'How much preparation is quoted',
+              body: 'The single biggest variable, and the easiest to leave out of a cheap quote. Ask what is included.',
+            },
+            {
+              icon: 'droplet' as const,
+              title: 'The condition of the substrate',
+              body: 'Sound plaster is a repaint. Spalling concrete or a live leak is a repair job with painting attached.',
+            },
+            {
+              icon: 'building' as const,
+              title: 'Access and height',
+              body: 'Ground-floor interior work is straightforward. Scaffolding, gondolas and permits are not.',
+            },
+            {
+              icon: 'shield' as const,
+              title: 'The specified system',
+              body: 'Coats, film thickness and product grade. A two-coat job and a three-coat job are different products.',
+            },
+          ].map((factor) => (
+            <li class="flex items-start gap-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-primary/5 text-brand-accent">
+                <Icon name={factor.icon} size={22} />
+              </span>
+              <div>
+                <h3 class="text-base font-bold leading-snug text-brand-primary">
+                  {factor.title}
+                </h3>
+                <p class="mt-1.5 text-[15px] leading-relaxed text-brand-muted">
+                  {factor.body}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <ProcessSteps showCta={false} />
+
+  <FAQAccordion
+    items={pricing.faq}
+    heading="Pricing Questions"
+    eyebrow="Straight Answers"
+    groupName="pricing-faq"
+    variant="white"
+  />
+
+  <CTABanner
+    headline="Get a Fixed Price, Not an Estimate Range"
+    subtext="A free site visit turns all of this into one itemised number you can hold us to."
+  />
+</BaseLayout>

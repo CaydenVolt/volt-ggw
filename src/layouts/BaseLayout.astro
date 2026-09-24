@@ -1,42 +1,55 @@
 ---
 /**
- * Base document shell for every page.
+ * The document shell for every page: <head>, nav, page content, footer.
  *
- * Two jobs worth knowing about:
+ * Three jobs worth knowing about:
  *
  *  1. It emits the brand colour palette from `client.ts` as CSS custom
  *     properties on `:root`. `global.css` maps those onto Tailwind utility
  *     names, so changing a hex in the config re-skins the entire site.
  *
- *  2. It holds the commented-out slots for GA4 / Meta Pixel / Google Ads.
+ *  2. It resolves per-page SEO. Pass `pageKey` to pull a title/description
+ *     from `seo.pages`, or pass `title`/`description` directly to override.
+ *     Anything missing falls back to the site-wide `seo` defaults.
+ *
+ *  3. It holds the commented-out slots for GA4 / Meta Pixel / Google Ads.
  *     Per the brief these are NOT injected yet — only the IDs are wired up.
  */
 import '../styles/global.css';
 import client from '../config/client.ts';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 
 export interface Props {
+  /** Key into `seo.pages`. Ignored if `title`/`description` are passed. */
+  pageKey?: string;
+  /** Explicit override — wins over `pageKey`. Used by dynamic routes. */
   title?: string;
   description?: string;
-  /** Set true on /privacy and /terms so they stay out of search results. */
+  /** Social share image path, overriding `seo.ogImage`. */
+  ogImage?: string;
+  /** Set true on pages that should stay out of search results. */
   noindex?: boolean;
 }
 
 const {
-  title = client.seo.title,
-  description = client.seo.description,
+  pageKey,
+  title: titleProp,
+  description: descriptionProp,
+  ogImage: ogImageProp,
   noindex = false,
 } = Astro.props;
 
 const { brand, analytics, seo } = client;
 
-/* Canonical URL. Falls back to the configured origin when Astro.site is unset. */
-const canonical = new URL(Astro.url.pathname, seo.siteUrl).href;
-const ogImage = new URL(seo.ogImage, seo.siteUrl).href;
+/* Explicit prop → page config → site default. */
+const pageMeta = pageKey ? (seo.pages as Record<string, { title?: string; description?: string }>)[pageKey] : undefined;
+const title = titleProp ?? pageMeta?.title ?? seo.title;
+const description = descriptionProp ?? pageMeta?.description ?? seo.description;
 
-/*
- * Palette → CSS custom properties. This is the single bridge between the
- * TypeScript config and the stylesheet.
- */
+const canonical = new URL(Astro.url.pathname, seo.siteUrl).href;
+const ogImage = new URL(ogImageProp ?? seo.ogImage, seo.siteUrl).href;
+
 /*
  * Dormant tracking slots. Rendering the configured IDs into the page source
  * makes it trivial to confirm the config is wired up before the real vendor
@@ -50,6 +63,10 @@ const trackingSlots = [
   .map(([label, id]) => `<!-- ${label} SLOT — id: ${id || '(not set)'} -->`)
   .join('\n    ');
 
+/*
+ * Palette → CSS custom properties. This is the single bridge between the
+ * TypeScript config and the stylesheet.
+ */
 const brandVars = [
   `--brand-primary:${brand.primary}`,
   `--brand-primary-light:${brand.primaryLight}`,
@@ -107,26 +124,18 @@ const brandVars = [
       ─────────────────────────────────────────────────────────────────────
        TRACKING SLOTS — intentionally NOT active yet.
       ─────────────────────────────────────────────────────────────────────
-       The IDs below are read from `client.analytics`. To go live, replace
-       the matching comment block with the real vendor snippet.
+       The IDs below come from `client.analytics`. To go live, replace the
+       matching comment with the real vendor snippet.
 
-       GA4 measurement ID ........ analytics.ga4Id
-       Meta Pixel ID ............. analytics.metaPixelId
-       Google Ads conversion ID .. analytics.googleAdsId
-
-       Current values are rendered into this comment at build time so you
-       can confirm the config is wired up by viewing page source.
-    */}
-    {/*
-      Emitted via set:html because Astro passes literal HTML comments through
-      verbatim — an expression inside `<!-- -->` would never be evaluated.
+       Emitted via set:html because Astro passes literal HTML comments
+       through verbatim — an expression inside `<!-- -->` never evaluates.
     */}
     <Fragment set:html={trackingSlots} />
 
     <slot name="head" />
   </head>
 
-  <body class="bg-brand-bg text-brand-text antialiased">
+  <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text antialiased">
     {/* Keyboard users land here first. */}
     <a
       href="#main"
@@ -135,6 +144,12 @@ const brandVars = [
       Skip to content
     </a>
 
-    <slot />
+    <Nav />
+
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
   </body>
 </html>

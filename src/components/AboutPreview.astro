@@ -1,6 +1,6 @@
 ---
 /**
- * About section (section 7) — copy + photo + differentiator list.
+ * Homepage About teaser — short blurb, photo, ticked list, link to /about.
  */
 import client from '../config/client.ts';
 import Icon from './Icon.astro';
@@ -8,7 +8,7 @@ import SmartImage from './SmartImage.astro';
 
 const { about, company } = client;
 
-/* "5+ years" rather than a hardcoded number that silently goes stale. */
+/* Derived rather than hardcoded, so it never goes stale. */
 const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
 ---
 
@@ -28,7 +28,6 @@ const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
           />
         </div>
 
-        {/* Floating stat badge */}
         {
           yearsInBusiness > 0 && (
             <div class="absolute -bottom-5 left-5 rounded-xl bg-brand-accent px-5 py-3 shadow-lg sm:left-8">
@@ -48,9 +47,7 @@ const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
         <p class="eyebrow">About Us</p>
         <h2 id="about-heading" class="heading-section mt-3">{about.heading}</h2>
 
-        <div class="mt-5 space-y-4">
-          {about.body.map((paragraph) => <p class="lead">{paragraph}</p>)}
-        </div>
+        <p class="lead mt-5">{about.preview}</p>
 
         <ul class="mt-7 space-y-3">
           {
@@ -68,8 +65,8 @@ const yearsInBusiness = new Date().getFullYear() - company.foundedYear;
         </ul>
 
         <div class="mt-8">
-          <a href="#quote" class="btn btn-outline-dark px-7 py-3.5">
-            Get a Free Quote
+          <a href="/about" class="btn btn-outline-dark px-7 py-3.5">
+            Learn More About Us
           </a>
         </div>
       </div>

@@ -5,8 +5,10 @@
  *
  *  To clone this template for a new client:
  *    1. Edit every value in this file.
- *    2. Replace the images in `public/images/` (keep the same filenames).
- *    3. Run `npm run build`.
+ *    2. Replace the images in `src/assets/images/` (keep the same filenames).
+ *    3. Rewrite `src/pages/privacy.astro` and `src/pages/terms.astro`.
+ *    4. Replace the placeholder reviews in `src/data/reviews.ts`.
+ *    5. Run `npm run build`.
  *
  *  Nothing client-specific should live in a component. If you find yourself
  *  editing a component to change copy, add a field here instead.
@@ -33,19 +35,23 @@ export type IconName =
   | 'star'
   | 'phone'
   | 'mail'
-  | 'map-pin';
+  | 'map-pin'
+  | 'target'
+  | 'heart'
+  | 'thumbs-up';
 
 export interface Service {
-  /** Stable slug — used for anchors and image filenames. */
-  id: string;
+  /** URL-safe id. Drives `/services#<slug>` anchors. Must be unique. */
+  slug: string;
   name: string;
-  /** One line. Keep it under ~110 characters so cards stay even. */
-  description: string;
+  /** One line for the homepage cards. Keep under ~110 characters. */
+  shortDescription: string;
+  /** Full paragraph for the service section on `/services`. */
+  longDescription: string;
+  /** Rendered as a ticked "what's included" list on `/services`. */
+  includedItems: string[];
   icon: IconName;
-  /** Path under `public/`. */
   image: string;
-  /** Where "Learn more" points. A hash anchor today; a real page later. */
-  href: string;
 }
 
 export interface ProcessStep {
@@ -55,7 +61,6 @@ export interface ProcessStep {
 
 export interface TrustPoint {
   label: string;
-  /** Optional supporting line — shown in the trust bar, not in hero badges. */
   detail?: string;
   icon: IconName;
 }
@@ -63,7 +68,7 @@ export interface TrustPoint {
 export interface GalleryItem {
   image: string;
   alt: string;
-  /** Free-text tag, e.g. "Waterproofing". Used as the overlay chip. */
+  /** Must match one of `gallery.categories` for filtering to work. */
   category: string;
 }
 
@@ -82,21 +87,57 @@ export interface SocialLink {
   url: string;
 }
 
+export interface NavLink {
+  label: string;
+  href: string;
+}
+
+export interface ValueCard {
+  title: string;
+  description: string;
+  icon: IconName;
+}
+
+export interface PricingCard {
+  /** Usually matches a service slug, but does not have to. */
+  slug: string;
+  name: string;
+  /** Shown verbatim. Include the currency. */
+  startingFrom: string;
+  /** Qualifier under the price, e.g. "per room, 2 coats". */
+  priceNote: string;
+  includes: string[];
+  /** Adds a highlighted border. At most one card should set this. */
+  featured?: boolean;
+}
+
+export interface ServiceArea {
+  /** Drives `/areas/<slug>`. Lowercase, hyphenated. */
+  slug: string;
+  name: string;
+  /**
+   * Optional bespoke intro for that area's page. When omitted, the page falls
+   * back to `serviceArea.descriptionTemplate` with `{area}` substituted.
+   */
+  description?: string;
+}
+
+/** Per-page SEO. Any page may be omitted — it falls back to `seo`. */
+export interface PageMeta {
+  title?: string;
+  description?: string;
+}
+
 /* ── Config ─────────────────────────────────────────────────────────────── */
 
 export const client = {
   /* ---- Identity ---------------------------------------------------------- */
   company: {
-    /** Trading name shown in the nav, footer and copyright line. */
     name: 'Goal Green World',
-    /** Full legal name — used in the footer and on the compliance pages. */
     legalName: 'Goal Green World Pte Ltd',
-    /** The division this site sells. Appears next to the logo. */
     division: 'Painting & Waterproofing',
     tagline: 'Build a Greener World with Us',
-    /** Singapore business registration number. Leave '' to hide it. */
     registrationNumber: 'UEN 202009752D',
-    /** Year the business started — drives the "X+ years" copy. */
     foundedYear: 2020,
   },
 
@@ -105,52 +146,51 @@ export const client = {
     /**
      * These feed CSS custom properties, which Tailwind reads as
      * `bg-brand-primary`, `text-brand-accent`, etc.
-     * Any valid CSS colour works. Keep contrast in mind: `accent` sits on
-     * `primary`, and `accentText` sits on `accent`.
      *
      * Goal Green World's own palette is green (#1E7A46 / #8DC63F) — swap
      * `primary` and `accent` below when the client signs off on brand colours.
      */
-    primary: '#0B1F3A',       // deep navy — nav, hero, footer, dark bands
-    primaryLight: '#15305A',  // lifted navy — cards and borders on dark
-    secondary: '#1E3A5F',     // mid navy — secondary surfaces
-    accent: '#F0A81C',        // amber — CTAs, numbers, highlights
+    primary: '#0B1F3A',
+    primaryLight: '#15305A',
+    secondary: '#1E3A5F',
+    accent: '#F0A81C',
     accentHover: '#D9940F',
-    /** Text colour that sits *on top of* `accent`. */
     accentText: '#11203A',
-    background: '#FFFFFF',    // light content sections
-    backgroundAlt: '#F5F7FA', // alternating light band
-    text: '#1A2233',          // body copy on light
-    textMuted: '#5A6779',     // supporting copy on light
+    background: '#FFFFFF',
+    backgroundAlt: '#F5F7FA',
+    text: '#1A2233',
+    textMuted: '#5A6779',
   },
 
-  /** Logo lives in `public/images/`. Swap the file, keep the path. */
   logo: {
     src: '/images/logo-placeholder.svg',
     alt: 'Goal Green World',
-    /** Rendered height in px; width scales automatically. */
     height: 38,
   },
 
   /* ---- Above the fold ---------------------------------------------------- */
   hero: {
-    headline: 'Singapore Painting & Waterproofing That Actually Lasts',
-    subheadline:
-      'Low-VOC eco paints, proper surface preparation and certified waterproofing for HDB, condo and commercial properties. bizSAFE and ISO certified.',
-    image: '/images/hero-placeholder.webp',
-    imageAlt: 'Painting and waterproofing crew at work on a Singapore building facade',
-    /** Short badges shown in a row under the hero CTAs. Aim for 3-5. */
-    badges: ['bizSAFE Certified', 'ISO 9001 & 45001', 'Low-VOC Eco Paints', '5.0 on Google'],
+    heroHeadline: 'We Don’t Paint Over Problems.',
+    /** Rendered in the accent colour on its own line, under the headline. */
+    heroHeadlineAccent: 'We Fix Them.',
+    heroSubheadline:
+      'Singapore painting and waterproofing done the slow way — proper diagnosis, proper preparation, low-VOC eco coatings. For HDB, condo and commercial properties.',
+    /** Small pill above the headline. */
+    locationBadge: 'bizSAFE Certified · Singapore',
+    /** Dot-separated capability line under the headline. */
+    serviceLine: 'Painting · Waterproofing · Leak Repair · Protective Coatings',
+    /** Subtle background image behind the dark hero. */
+    backgroundImage: '/images/hero-placeholder.webp',
+    backgroundImageAlt: '',
+    badges: ['bizSAFE Certified', 'ISO 9001 & 45001', 'Low-VOC Eco Paints', 'Written Warranty'],
   },
 
   /* ---- Contact ----------------------------------------------------------- */
   contact: {
-    /** Human-readable. */
     phone: '+65 6816 2069',
-    /** Dial string for the tel: link — digits and a leading + only. */
+    /** Dial string for tel: links — digits and a leading + only. */
     phoneHref: '+6568162069',
     email: 'info@goalgreen.world',
-    /** Full wa.me link including any prefilled text. */
     whatsapp:
       'https://wa.me/6568162069?text=Hi%20Goal%20Green%20World%2C%20I%27d%20like%20a%20quote%20for%20painting%20%2F%20waterproofing.',
     address: {
@@ -160,7 +200,6 @@ export const client = {
       postalCode: '768441',
       country: 'Singapore',
     },
-    /** Shown in the footer. */
     hours: [
       { days: 'Monday – Friday', hours: '9:00am – 6:00pm' },
       { days: 'Saturday', hours: '9:00am – 1:00pm' },
@@ -174,71 +213,124 @@ export const client = {
   ] as SocialLink[],
 
   /* ---- Navigation -------------------------------------------------------- */
-  /** Centre links in the sticky nav. `href` must match a section id. */
+  /**
+   * Real page links. `Nav.astro` marks the current page automatically by
+   * comparing these against the request path, so order is the only thing that
+   * matters here.
+   */
   nav: [
-    { label: 'Services', href: '#services' },
-    { label: 'Process', href: '#process' },
-    { label: 'About', href: '#about' },
-    { label: 'Projects', href: '#gallery' },
-    { label: 'Reviews', href: '#reviews' },
-    { label: 'FAQ', href: '#faq' },
-  ],
+    { label: 'Home', href: '/' },
+    { label: 'Services', href: '/services' },
+    { label: 'Gallery', href: '/gallery' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Resources', href: '/resources' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ] as NavLink[],
 
   /* ---- Services ---------------------------------------------------------- */
   services: [
     {
-      id: 'interior-painting',
+      slug: 'interior-painting',
       name: 'Interior Painting',
-      description:
+      shortDescription:
         'Low-VOC repainting for homes and offices, with full furniture protection and same-day cleanup.',
+      longDescription:
+        'We repaint occupied homes and working offices without turning your life upside down. Every job starts with protection — furniture sheeted, floors covered, edges masked — then surface repair, priming and two finish coats of low-VOC paint. We work room by room and clean up at the end of each day, so the rest of the property stays usable throughout.',
+      includedItems: [
+        'Full furniture and flooring protection',
+        'Crack filling, sanding and skim coating',
+        'Primer plus two coats of low-VOC paint',
+        'Colour consultation and sample patches',
+        'Daily cleanup and final walkthrough',
+      ],
       icon: 'roller',
       image: '/images/service-1-placeholder.webp',
-      href: '#quote',
     },
     {
-      id: 'exterior-painting',
+      slug: 'exterior-painting',
       name: 'Exterior & Facade Painting',
-      description:
+      shortDescription:
         'Weather-resistant coatings built for Singapore humidity, UV and monsoon rain.',
+      longDescription:
+        'Singapore weather is brutal on exterior paint — constant UV, high humidity and heavy rain will find every weak spot in a cheap job. We pressure wash, treat any fungal growth, repair spalling concrete and apply anti-carbonation or elastomeric systems rated for tropical exposure. For high-rise and facade work we coordinate scaffolding or gondola access and all the safety documentation that comes with it.',
+      includedItems: [
+        'High-pressure washing and fungal treatment',
+        'Spalling concrete and crack repair',
+        'Anti-carbonation or elastomeric coating systems',
+        'Scaffolding or gondola access coordination',
+        'Full safety documentation and permits',
+      ],
       icon: 'building',
       image: '/images/service-2-placeholder.webp',
-      href: '#quote',
     },
     {
-      id: 'waterproofing',
+      slug: 'waterproofing',
       name: 'Waterproofing',
-      description:
+      shortDescription:
         'Membrane and liquid-applied systems for roofs, balconies, planters and wet areas.',
+      longDescription:
+        'Waterproofing fails at the details — upstands, drains, corners and joints — not in the middle of a flat surface. We specify the right system for the substrate and exposure, prepare properly, and pay attention to exactly those details. Roofs, balconies, planter boxes, bathrooms and basement walls all get different treatments, and we will tell you which one yours needs and why.',
+      includedItems: [
+        'Substrate assessment and system specification',
+        'Torch-on membrane or liquid-applied options',
+        'Detailing at upstands, drains and corners',
+        'Water ponding test before handover',
+        'Written warranty on completed works',
+      ],
       icon: 'droplet',
       image: '/images/service-3-placeholder.webp',
-      href: '#quote',
     },
     {
-      id: 'leak-repair',
+      slug: 'leak-repair',
       name: 'Leak Detection & Repair',
-      description:
+      shortDescription:
         'We trace the source of ceiling and wall leaks, then fix the cause — not just the stain.',
+      longDescription:
+        'A damp patch on your ceiling is rarely directly under the problem. Water travels along slabs, conduits and beams before it shows itself. We trace leaks back to the actual source using moisture meters and thermal inspection, tell you what we found, and repair the cause. Painting over a stain without doing this just buys you a few months.',
+      includedItems: [
+        'Moisture meter and thermal imaging survey',
+        'Written diagnosis of the actual source',
+        'Targeted repair at the point of failure',
+        'Reinstatement and repainting of the affected area',
+        'Follow-up inspection after the next heavy rain',
+      ],
       icon: 'wrench',
       image: '/images/service-4-placeholder.webp',
-      href: '#quote',
     },
     {
-      id: 'protective-coatings',
+      slug: 'protective-coatings',
       name: 'Protective & Industrial Coatings',
-      description:
+      shortDescription:
         'Anti-mould, anti-carbonation and epoxy systems for plants, car parks and warehouses.',
+      longDescription:
+        'Industrial surfaces need coatings that do a job beyond looking clean — chemical resistance, abrasion resistance, slip resistance, or protecting reinforcement from carbonation. We handle epoxy and polyurethane floor systems for warehouses and car parks, anti-mould coatings for humid plant rooms, and protective systems for structural steel and concrete.',
+      includedItems: [
+        'Epoxy and polyurethane floor systems',
+        'Anti-mould and anti-bacterial coatings',
+        'Anti-carbonation protection for concrete',
+        'Line marking and slip-resistant finishes',
+        'Work scheduled around your operations',
+      ],
       icon: 'shield',
       image: '/images/service-5-placeholder.webp',
-      href: '#quote',
     },
     {
-      id: 'surface-prep',
+      slug: 'surface-prep',
       name: 'Surface Repair & Preparation',
-      description:
+      shortDescription:
         'Crack filling, spalling concrete repair and skim coating before a single drop of paint.',
+      longDescription:
+        'Preparation is where a paint job is actually won or lost, and it is the first thing a cheap quote cuts. We treat it as its own scope of work: removing failed coatings, filling and sanding cracks, repairing spalling concrete back to sound reinforcement, and skim coating to a flat finish. If the substrate is not right, no amount of good paint will save it.',
+      includedItems: [
+        'Removal of failed and flaking coatings',
+        'Spalling concrete repair to sound reinforcement',
+        'Crack routing, filling and sanding',
+        'Full skim coating to a flat finish',
+        'Alkali and moisture testing before priming',
+      ],
       icon: 'sparkles',
       image: '/images/service-6-placeholder.webp',
-      href: '#quote',
     },
   ] as Service[],
 
@@ -290,14 +382,18 @@ export const client = {
   /* ---- About ------------------------------------------------------------- */
   about: {
     heading: 'Part of Singapore’s Greener Building Movement',
-    /** Each string is a paragraph. */
-    body: [
-      'Goal Green World Pte Ltd is an ethical, sustainability-driven group delivering green solutions across energy, infrastructure and essential services in Singapore.',
-      'Our Painting & Waterproofing division brings that same standard to buildings: eco-aware, low-VOC coatings applied by bizSAFE-certified crews who prepare surfaces properly the first time. Whether it is an HDB flat, a condominium block or an industrial facility, we specify the system that suits the substrate and the climate.',
+    /** Short version for the homepage preview block. */
+    preview:
+      'Goal Green World Pte Ltd is an ethical, sustainability-driven group delivering green solutions across energy, infrastructure and essential services in Singapore. Our Painting & Waterproofing division brings that same standard to buildings.',
+    /** Full story for /about. Each string is a paragraph. */
+    story: [
+      'Goal Green World Pte Ltd is an ethical, sustainability-driven group delivering green solutions across energy, infrastructure and essential services in Singapore. We started in 2020 with a simple conviction: that doing building work properly and doing it responsibly are the same problem, not competing ones.',
+      'Our Painting & Waterproofing division brings that standard to buildings. Eco-aware, low-VOC coatings applied by bizSAFE-certified crews who prepare surfaces properly the first time. Whether it is an HDB flat, a condominium block or an industrial facility, we specify the system that suits the substrate and the climate — not whatever is cheapest to apply.',
+      'We do not subcontract your job out to whoever is free that week. The crew that quotes is the crew that turns up, and the same people are accountable from the first site visit to the final walkthrough.',
     ],
     image: '/images/about-placeholder.webp',
     imageAlt: 'The Goal Green World painting and waterproofing team',
-    /** Differentiators — rendered as a ticked list beside the photo. */
+    /** Ticked list, used on the homepage preview and /about. */
     points: [
       'ISO 9001:2015 and ISO 45001:2018 certified processes',
       'Low-VOC, eco-aware paints and coatings as standard',
@@ -305,19 +401,53 @@ export const client = {
       'Direct crews — we do not subcontract your job out',
       'Detailed, itemised quotes with no variation surprises',
     ],
+    /** Mission / values cards on /about. */
+    values: [
+      {
+        title: 'Diagnose Before You Coat',
+        description:
+          'We find out why a surface failed before we cover it. Painting over a symptom is not a repair.',
+        icon: 'target',
+      },
+      {
+        title: 'Sustainability, Not Slogans',
+        description:
+          'Low-VOC materials and responsible waste handling on every job, not just the ones that get photographed.',
+        icon: 'leaf',
+      },
+      {
+        title: 'Safety Is Non-Negotiable',
+        description:
+          'bizSAFE and ISO 45001 certified. Every crew works to documented method statements and risk assessments.',
+        icon: 'shield',
+      },
+      {
+        title: 'Answer For Our Own Work',
+        description:
+          'Direct crews, written warranties, and a name to call if something is not right after we leave.',
+        icon: 'heart',
+      },
+    ] as ValueCard[],
   },
 
   /* ---- Gallery ----------------------------------------------------------- */
   gallery: {
     heading: 'Recent Projects',
     subheading: 'A sample of painting and waterproofing work completed across Singapore.',
+    /**
+     * Filter buttons on /gallery, in order. "All" is added automatically.
+     * Every `items[].category` below must appear in this list.
+     */
+    categories: ['Painting', 'Waterproofing', 'Commercial', 'Residential'],
     items: [
-      { image: '/images/gallery-1-placeholder.webp', alt: 'Repainted HDB living room', category: 'Painting' },
+      { image: '/images/gallery-1-placeholder.webp', alt: 'Repainted HDB living room', category: 'Residential' },
       { image: '/images/gallery-2-placeholder.webp', alt: 'Roof waterproofing membrane application', category: 'Waterproofing' },
       { image: '/images/gallery-3-placeholder.webp', alt: 'Condominium facade repainting', category: 'Commercial' },
       { image: '/images/gallery-4-placeholder.webp', alt: 'Bathroom wet area waterproofing', category: 'Waterproofing' },
       { image: '/images/gallery-5-placeholder.webp', alt: 'Office interior repaint', category: 'Painting' },
       { image: '/images/gallery-6-placeholder.webp', alt: 'Warehouse epoxy floor coating', category: 'Commercial' },
+      { image: '/images/gallery-7-placeholder.webp', alt: 'Balcony waterproofing and tiling', category: 'Residential' },
+      { image: '/images/gallery-8-placeholder.webp', alt: 'Exterior facade repaint, low-rise block', category: 'Painting' },
     ] as GalleryItem[],
   },
 
@@ -328,7 +458,7 @@ export const client = {
       {
         question: 'How much does it cost to repaint an HDB flat?',
         answer:
-          'It depends on the flat type, the number of coats and how much repair work the walls need. Most 4-room repaints fall within a predictable range, and we give you a fixed, itemised quote after a free site visit — so the number you see is the number you pay.',
+          'It depends on the flat type, the number of coats and how much repair work the walls need. We give you a fixed, itemised quote after a free site visit — so the number you see is the number you pay. See our pricing guide for indicative starting figures.',
       },
       {
         question: 'How long will the work take?',
@@ -353,37 +483,147 @@ export const client = {
       {
         question: 'Which areas of Singapore do you cover?',
         answer:
-          'We serve the whole of Singapore, including all HDB towns, private condominiums and industrial estates. See the coverage list below.',
+          'We serve the whole of Singapore, including all HDB towns, private condominiums and industrial estates.',
       },
     ] as FaqItem[],
   },
 
-  /* ---- Service area ------------------------------------------------------ */
+  /* ---- Pricing ----------------------------------------------------------- */
+  pricing: {
+    heading: 'Pricing Guide',
+    subheading:
+      'Indicative starting prices so you can budget before you call. Every quote is fixed and itemised after a free site visit.',
+    /**
+     * ⚠️ PLACEHOLDER PRICES — these numbers are invented for layout purposes.
+     * Replace every one of them with figures the client has confirmed before
+     * this site goes anywhere near production. Publishing made-up prices for a
+     * real business is a misrepresentation problem, not just an accuracy one.
+     */
+    cards: [
+      {
+        slug: 'interior-painting',
+        name: 'Interior Painting',
+        startingFrom: 'S$--',
+        priceNote: 'per room · primer + 2 coats',
+        includes: [
+          'Furniture and floor protection',
+          'Minor crack filling and sanding',
+          'Primer plus two coats, low-VOC',
+          'Daily cleanup',
+        ],
+      },
+      {
+        slug: 'waterproofing',
+        name: 'Waterproofing',
+        startingFrom: 'S$--',
+        priceNote: 'per m² · system dependent',
+        includes: [
+          'Substrate assessment',
+          'System specification in writing',
+          'Full detailing at upstands and drains',
+          'Ponding test before handover',
+          'Written warranty',
+        ],
+        featured: true,
+      },
+      {
+        slug: 'leak-repair',
+        name: 'Leak Detection & Repair',
+        startingFrom: 'S$--',
+        priceNote: 'per survey · offset against works',
+        includes: [
+          'Moisture meter and thermal survey',
+          'Written diagnosis of the source',
+          'Repair quotation with fixed price',
+          'Reinstatement and repainting',
+        ],
+      },
+      {
+        slug: 'exterior-painting',
+        name: 'Exterior & Facade',
+        startingFrom: 'S$--',
+        priceNote: 'per m² · access dependent',
+        includes: [
+          'Pressure washing and fungal treatment',
+          'Spalling and crack repair',
+          'Anti-carbonation coating system',
+          'Access and safety documentation',
+        ],
+      },
+    ] as PricingCard[],
+    disclaimer:
+      'Every project is different. Substrate condition, access, height, the number of coats and how much repair work is needed all move the final figure — sometimes substantially. These starting prices are a budgeting guide, not a quotation. The only number that means anything is the fixed, itemised quote we give you after a free site visit.',
+    /** Pricing-specific FAQ, shown on /pricing only. */
+    faq: [
+      {
+        question: 'Why can’t you quote over the phone?',
+        answer:
+          'We can give you a range, but not a price. Until we have seen the substrate we do not know whether we are looking at a repaint or a repair — and those are very different numbers. The site visit is free precisely so nobody is guessing.',
+      },
+      {
+        question: 'Is the quotation fixed, or will it change?',
+        answer:
+          'Fixed. The only thing that changes the price after you accept is additional work you approve in writing — for example concealed water damage found once we open up a surface. We will never do extra work and invoice you for it afterwards.',
+      },
+      {
+        question: 'Do you ask for a deposit?',
+        answer:
+          'Payment terms are set out in your quotation before you commit. They vary with the size and duration of the job.',
+      },
+      {
+        question: 'Why is the cheapest quote usually the most expensive?',
+        answer:
+          'Because preparation is invisible and it is the first thing a low quote cuts. A job that skips crack repair, priming and proper coats looks identical on handover day and starts failing within a year. You then pay twice.',
+      },
+    ] as FaqItem[],
+  },
+
+  /* ---- Service areas ----------------------------------------------------- */
   serviceArea: {
     heading: 'Areas We Serve',
     subheading: 'Island-wide coverage across Singapore.',
-    /** Rendered as a tag cloud. */
-    cities: [
-      'Yishun', 'Woodlands', 'Sembawang', 'Ang Mo Kio', 'Bishan', 'Toa Payoh',
-      'Serangoon', 'Hougang', 'Sengkang', 'Punggol', 'Tampines', 'Bedok',
-      'Pasir Ris', 'Jurong East', 'Jurong West', 'Clementi', 'Bukit Batok',
-      'Choa Chu Kang', 'Bukit Panjang', 'Queenstown', 'Novena', 'Central Business District',
-    ],
+    /** `{area}` is replaced with the area name on each /areas/<slug> page. */
+    descriptionTemplate:
+      'Professional painting and waterproofing services in {area}. Free site assessment, fixed itemised quotes, and bizSAFE-certified crews across every HDB block, condominium and commercial unit in the area.',
+    areas: [
+      { slug: 'yishun', name: 'Yishun', description: 'Our home ground — our office is on Yishun Street 23, so {area} jobs get the fastest response times we offer. Painting, waterproofing and leak repair across the whole estate.' },
+      { slug: 'woodlands', name: 'Woodlands' },
+      { slug: 'sembawang', name: 'Sembawang' },
+      { slug: 'ang-mo-kio', name: 'Ang Mo Kio' },
+      { slug: 'bishan', name: 'Bishan' },
+      { slug: 'toa-payoh', name: 'Toa Payoh' },
+      { slug: 'serangoon', name: 'Serangoon' },
+      { slug: 'hougang', name: 'Hougang' },
+      { slug: 'sengkang', name: 'Sengkang' },
+      { slug: 'punggol', name: 'Punggol' },
+      { slug: 'tampines', name: 'Tampines' },
+      { slug: 'bedok', name: 'Bedok' },
+      { slug: 'pasir-ris', name: 'Pasir Ris' },
+      { slug: 'jurong-east', name: 'Jurong East' },
+      { slug: 'jurong-west', name: 'Jurong West' },
+      { slug: 'clementi', name: 'Clementi' },
+      { slug: 'bukit-batok', name: 'Bukit Batok' },
+      { slug: 'choa-chu-kang', name: 'Choa Chu Kang' },
+      { slug: 'bukit-panjang', name: 'Bukit Panjang' },
+      { slug: 'queenstown', name: 'Queenstown' },
+      { slug: 'novena', name: 'Novena' },
+      { slug: 'cbd', name: 'Central Business District' },
+    ] as ServiceArea[],
   },
 
-  /* ---- Final CTA --------------------------------------------------------- */
+  /* ---- Reusable CTA banner ----------------------------------------------- */
   finalCta: {
     headline: 'Ready to Get Started?',
     subtext:
       'Book a free site assessment. We will inspect, advise and quote — with no obligation to proceed.',
-    buttonLabel: 'Get My Free Quote',
+    buttonLabel: 'Get My Free Estimate',
   },
 
-  /* ---- Quote form -------------------------------------------------------- */
+  /* ---- Estimate form ----------------------------------------------------- */
   form: {
-    heading: 'Get a Free Quote',
+    heading: 'Get a Free Estimate',
     subheading: 'Tell us about your project and we will come back to you within one business day.',
-    submitLabel: 'Request My Free Quote',
+    submitLabel: 'Request My Free Estimate',
     successMessage:
       'Thank you — your request is in. We will contact you within one business day.',
     /**
@@ -392,7 +632,7 @@ export const client = {
      * Drop the GoHighLevel webhook / form endpoint in here to go live.
      */
     endpoint: '',
-    /** Text beside the consent checkbox. `{company}` is replaced at render. */
+    /** `{company}` is replaced at render. */
     consentText:
       'I agree to receive SMS and WhatsApp messages from {company} about my enquiry. Message and data rates may apply. Reply STOP to opt out.',
     consentRequired: true,
@@ -400,8 +640,7 @@ export const client = {
 
   /* ---- Compliance -------------------------------------------------------- */
   legal: {
-    /** Shown on /privacy and /terms as the "last updated" date. */
-    lastUpdated: '23 September 2026',
+    lastUpdated: '24 September 2026',
     privacyEmail: 'info@goalgreen.world',
   },
 
@@ -412,22 +651,65 @@ export const client = {
    * for them. Leave a value as '' to keep that slot dormant.
    */
   analytics: {
-    ga4Id: '',       // e.g. 'G-XXXXXXXXXX'
-    metaPixelId: '', // e.g. '1234567890'
-    googleAdsId: '', // e.g. 'AW-123456789'
+    ga4Id: '',
+    metaPixelId: '',
+    googleAdsId: '',
     googleAdsConversionLabel: '',
   },
 
   /* ---- SEO --------------------------------------------------------------- */
   seo: {
-    /** Production origin, no trailing slash. Used for canonical + sitemap. */
+    /** Production origin, no trailing slash. Drives canonicals + sitemap. */
     siteUrl: 'https://example.com',
+    /** Site-wide fallbacks, used when a page sets nothing of its own. */
     title: 'Painting & Waterproofing Singapore | Goal Green World',
     description:
-      'Certified painting and waterproofing contractor in Singapore. Low-VOC eco paints, proper surface prep, written warranty. bizSAFE and ISO certified. Free quote.',
-    /** Social share image under `public/`. */
+      'Certified painting and waterproofing contractor in Singapore. Low-VOC eco paints, proper surface prep, written warranty. bizSAFE and ISO certified. Free estimate.',
     ogImage: '/images/hero-placeholder.webp',
     locale: 'en_SG',
+    /**
+     * Per-page overrides. Any key may be omitted, and any page may omit either
+     * field — both fall back to the values above. The dynamic routes
+     * (/areas/<slug>, /resources/<slug>) build their own metadata from the
+     * area or article, so they are not listed here.
+     */
+    pages: {
+      home: {
+        title: 'Painting & Waterproofing Singapore | Goal Green World',
+        description:
+          'Certified painting and waterproofing contractor in Singapore. Low-VOC eco paints, proper surface prep, written warranty. Free site assessment.',
+      },
+      services: {
+        title: 'Our Services | Painting & Waterproofing Singapore',
+        description:
+          'Interior and exterior painting, waterproofing, leak detection and repair, protective coatings and surface preparation across Singapore.',
+      },
+      gallery: {
+        title: 'Project Gallery | Goal Green World',
+        description:
+          'Recent painting and waterproofing projects across Singapore — residential, commercial and industrial.',
+      },
+      pricing: {
+        title: 'Pricing Guide | Painting & Waterproofing Singapore',
+        description:
+          'Indicative starting prices for painting and waterproofing in Singapore, plus what moves the final figure. Fixed itemised quotes after a free site visit.',
+      },
+      resources: {
+        title: 'Resource Centre | Painting & Waterproofing Guides',
+        description:
+          'Practical guides on painting, waterproofing and leak repair for Singapore properties.',
+      },
+      about: {
+        title: 'About Us | Goal Green World Painting & Waterproofing',
+        description:
+          'An ethical, sustainability-driven contractor in Singapore. bizSAFE and ISO certified, low-VOC materials, direct crews and written warranties.',
+      },
+      contact: {
+        title: 'Contact Us | Free Estimate | Goal Green World',
+        description:
+          'Get a free painting or waterproofing estimate in Singapore. Call, WhatsApp or send us your project details.',
+      },
+    } as Record<string, PageMeta>,
   },
 } as const;
 

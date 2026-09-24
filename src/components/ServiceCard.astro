@@ -1,8 +1,8 @@
 ---
 /**
- * One service card. Image, icon badge, name, one-line description,
- * "Learn more" link.
+ * One service card for the homepage grid.
  *
+ * "Learn more" deep-links to that service's section on /services via its slug.
  * The whole card is clickable via a stretched-link overlay on the anchor, so
  * there is still exactly one link in the accessibility tree.
  */
@@ -15,6 +15,7 @@ export interface Props {
 }
 
 const { service } = Astro.props;
+const href = `/services#${service.slug}`;
 ---
 
 <article
@@ -41,11 +42,11 @@ const { service } = Astro.props;
       {service.name}
     </h3>
     <p class="mt-2 flex-1 text-[15px] leading-relaxed text-brand-muted">
-      {service.description}
+      {service.shortDescription}
     </p>
 
     <a
-      href={service.href}
+      href={href}
       class="mt-4 inline-flex items-center gap-1.5 self-start text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
     >
       {/* Stretches the hit area to the whole card without nesting links. */}

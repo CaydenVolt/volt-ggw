@@ -1,9 +1,12 @@
 ---
 /**
- * Sticky top navigation.
+ * Sticky top navigation, used on every page via BaseLayout.
  *
- * Layout: logo left · anchor links centre · Call Now + Get a Free Quote right.
+ * Layout: logo left · page links centre · Call Now + Free Estimate right.
  * Below `lg` the links collapse into a hamburger panel.
+ *
+ * The current page is detected from the request path and marked with both a
+ * visual state and `aria-current="page"`.
  *
  * JS budget: one small inline script for the mobile toggle. Nothing else.
  */
@@ -11,10 +14,26 @@ import client from '../config/client.ts';
 import Icon from './Icon.astro';
 
 const { company, logo, nav, contact } = client;
+
+/* Normalise away trailing slashes so "/services/" matches "/services". */
+const stripSlash = (path: string) =>
+  path.length > 1 ? path.replace(/\/+$/, '') : path;
+
+const current = stripSlash(Astro.url.pathname);
+
+/**
+ * A nav item is "current" for its own page and for anything beneath it, so
+ * `/resources/some-article` still highlights Resources. `/` only ever matches
+ * itself — otherwise it would match everything.
+ */
+const isCurrent = (href: string) => {
+  const target = stripSlash(href);
+  if (target === '/') return current === '/';
+  return current === target || current.startsWith(`${target}/`);
+};
 ---
 
 <header
-  id="site-nav"
   class="sticky top-0 z-50 border-b border-white/10 bg-brand-primary/95 backdrop-blur supports-[backdrop-filter]:bg-brand-primary/85"
 >
   <div class="container-x">
@@ -33,22 +52,26 @@ const { company, logo, nav, contact } = client;
           class="w-auto"
           style={`height:${logo.height}px`}
         />
-        <span class="hidden border-l border-white/20 pl-3 text-[11px] font-semibold uppercase leading-tight tracking-wider text-white/70 xl:block">
+        <span class="hidden border-l border-white/20 pl-3 text-[11px] font-semibold uppercase leading-tight tracking-wider text-white/70 2xl:block">
           {company.division}
         </span>
       </a>
 
       {/* ── Desktop links ── */}
-      {/* `flex-1` lets this column absorb the slack so the links sit centred
-          between the logo and the CTAs, rather than butting up to the logo. */}
       <nav aria-label="Main" class="hidden flex-1 justify-center lg:flex">
-        <ul class="flex items-center gap-1">
+        <ul class="flex items-center gap-0.5">
           {
             nav.map((item) => (
               <li>
                 <a
                   href={item.href}
-                  class="rounded-md px-3 py-2 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  class:list={[
+                    'rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white xl:px-3',
+                    isCurrent(item.href)
+                      ? 'bg-white/10 text-brand-accent'
+                      : 'text-white/85',
+                  ]}
                 >
                   {item.label}
                 </a>
@@ -64,7 +87,7 @@ const { company, logo, nav, contact } = client;
           <Icon name="phone" size={17} />
           <span>Call Now</span>
         </a>
-        <a href="#quote" class="btn btn-accent">Get a Free Quote</a>
+        <a href="/contact" class="btn btn-accent">Free Estimate</a>
       </div>
 
       {/* ── Mobile: call + hamburger ── */}
@@ -95,7 +118,7 @@ const { company, logo, nav, contact } = client;
   <div
     id="nav-mobile"
     hidden
-    class="border-t border-white/10 bg-brand-primary lg:hidden"
+    class="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-white/10 bg-brand-primary lg:hidden"
   >
     <nav aria-label="Mobile" class="container-x py-4">
       <ul class="flex flex-col gap-1">
@@ -104,7 +127,13 @@ const { company, logo, nav, contact } = client;
             <li>
               <a
                 href={item.href}
-                class="nav-mobile-link block rounded-md px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+                class:list={[
+                  'nav-mobile-link block rounded-md px-3 py-3 text-base font-medium transition-colors hover:bg-white/10 hover:text-white',
+                  isCurrent(item.href)
+                    ? 'bg-white/10 text-brand-accent'
+                    : 'text-white/90',
+                ]}
               >
                 {item.label}
               </a>
@@ -113,8 +142,8 @@ const { company, logo, nav, contact } = client;
         }
       </ul>
       <div class="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4">
-        <a href="#quote" class="nav-mobile-link btn btn-accent w-full">
-          Get a Free Quote
+        <a href="/contact" class="nav-mobile-link btn btn-accent w-full">
+          Free Estimate
         </a>
         <a
           href={`tel:${contact.phoneHref}`}

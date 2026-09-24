@@ -1,19 +1,32 @@
 ---
 /**
- * Service area tag cloud (section 11).
+ * Service area tag cloud. Each area links to its own `/areas/<slug>` page.
  */
 import client from '../config/client.ts';
 import Icon from './Icon.astro';
 
+export interface Props {
+  variant?: 'white' | 'alt';
+  /** Cap the number shown; the rest collapse into a "+N more" link. */
+  limit?: number;
+}
+
+const { variant = 'white', limit } = Astro.props;
 const { serviceArea, contact } = client;
+
+const all = serviceArea.areas;
+const shown = limit ? all.slice(0, limit) : all;
+const remaining = all.length - shown.length;
 ---
 
-<section id="service-area" class="section-y bg-white" aria-labelledby="area-heading">
+<section
+  id="service-area"
+  class:list={['section-y', variant === 'white' ? 'bg-white' : 'bg-brand-bg-alt']}
+  aria-labelledby="area-heading"
+>
   <div class="container-x">
     <div class="mx-auto max-w-3xl text-center">
-      <span
-        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent"
-      >
+      <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent">
         <Icon name="map-pin" size={24} />
       </span>
       <p class="eyebrow mt-4">Coverage</p>
@@ -23,11 +36,25 @@ const { serviceArea, contact } = client;
 
     <ul class="mx-auto mt-9 flex max-w-4xl flex-wrap justify-center gap-2.5">
       {
-        serviceArea.cities.map((city) => (
-          <li class="rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10">
-            {city}
+        shown.map((area) => (
+          <li>
+            <a
+              href={`/areas/${area.slug}`}
+              class="block rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10 hover:text-brand-primary"
+            >
+              {area.name}
+            </a>
           </li>
         ))
+      }
+      {
+        remaining > 0 && (
+          <li>
+            <span class="block rounded-full border border-dashed border-slate-300 px-4 py-2 text-sm font-medium text-brand-muted">
+              +{remaining} more
+            </span>
+          </li>
+        )
       }
     </ul>
 

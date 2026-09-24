@@ -1,12 +1,18 @@
 ---
 /**
- * Numbered process steps (section 6).
+ * Numbered process steps.
  *
  * Vertical timeline on mobile, horizontal row from `lg` up. The connecting
- * line is a pseudo-element on the list, hidden when a step is last.
+ * line is hidden on the last step.
  */
 import client from '../config/client.ts';
 
+export interface Props {
+  /** Hide the closing CTA button when the page already ends with one. */
+  showCta?: boolean;
+}
+
+const { showCta = true } = Astro.props;
 const { process } = client;
 const steps = process.steps;
 ---
@@ -27,24 +33,17 @@ const steps = process.steps;
       {
         steps.map((step, index) => (
           <li class="relative flex gap-5 lg:flex-col lg:gap-0">
-            {/* Number + connector */}
             <div class="relative flex shrink-0 flex-col items-center lg:w-full lg:flex-row">
               <span class="z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 border-brand-accent bg-brand-primary text-lg font-extrabold text-brand-accent">
                 {index + 1}
               </span>
-              {/* Vertical line (mobile) */}
+              {/* Vertical connector (mobile) */}
               {index < steps.length - 1 && (
-                <span
-                  class="mt-1 w-0.5 flex-1 bg-white/15 lg:hidden"
-                  aria-hidden="true"
-                />
+                <span class="mt-1 w-0.5 flex-1 bg-white/15 lg:hidden" aria-hidden="true" />
               )}
-              {/* Horizontal line (desktop) */}
+              {/* Horizontal connector (desktop) */}
               {index < steps.length - 1 && (
-                <span
-                  class="ml-3 hidden h-0.5 flex-1 bg-white/15 lg:block"
-                  aria-hidden="true"
-                />
+                <span class="ml-3 hidden h-0.5 flex-1 bg-white/15 lg:block" aria-hidden="true" />
               )}
             </div>
 
@@ -61,10 +60,14 @@ const steps = process.steps;
       }
     </ol>
 
-    <div class="mt-10 lg:mt-12">
-      <a href="#quote" class="btn btn-accent px-7 py-4 text-base">
-        Start With a Free Assessment
-      </a>
-    </div>
+    {
+      showCta && (
+        <div class="mt-10 lg:mt-12">
+          <a href="/contact" class="btn btn-accent px-7 py-4 text-base">
+            Start With a Free Assessment
+          </a>
+        </div>
+      )
+    }
   </div>
 </section>

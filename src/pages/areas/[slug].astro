@@ -1,0 +1,178 @@
+---
+/**
+ * /areas/<slug> — one page per entry in `serviceArea.areas`.
+ *
+ * Built for local SEO: each page gets a unique title, meta description and H1
+ * naming the area. Copy comes from that area's own `description` when set, and
+ * otherwise from `serviceArea.descriptionTemplate` with `{area}` substituted.
+ *
+ * NOTE ON THIN CONTENT
+ * Template-generated location pages carry a real risk of being treated as
+ * doorway pages if every one is identical bar the place name. Give the areas
+ * that matter a bespoke `description` in the config — the more of these that
+ * carry genuinely local detail, the better the whole set performs.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import EstimateForm from '../../components/EstimateForm.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import ReviewCarousel from '../../components/ReviewCarousel.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import client from '../../config/client.ts';
+
+export const getStaticPaths = (() =>
+  client.serviceArea.areas.map((area) => ({
+    params: { slug: area.slug },
+    props: { area },
+  }))) satisfies GetStaticPaths;
+
+const { area } = Astro.props;
+const { services, company, contact, serviceArea } = client;
+
+/** `{area}` is the one token both the bespoke and template copy support. */
+const fill = (text: string) => text.replaceAll('{area}', area.name);
+
+const intro = fill(area.description ?? serviceArea.descriptionTemplate);
+
+const title = `Painting & Waterproofing in ${area.name} | ${company.name}`;
+const description = `Professional painting and waterproofing services in ${area.name}, Singapore. Free site assessment, fixed itemised quotes, bizSAFE-certified crews. Call ${contact.phone}.`;
+
+/* Nearby areas for internal linking — keeps the set crawlable. */
+const others = serviceArea.areas.filter((entry) => entry.slug !== area.slug);
+const nearby = others.slice(0, 8);
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHero
+    eyebrow="Service Area"
+    title={`Painting & Waterproofing in ${area.name}`}
+    subtitle={intro}
+    backLink={{ href: '/#service-area', label: 'All areas' }}
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/contact" class="btn btn-accent px-7 py-3.5">
+        Get a Free Estimate
+      </a>
+      <a href={`tel:${contact.phoneHref}`} class="btn btn-outline-light px-7 py-3.5">
+        <Icon name="phone" size={17} />
+        <span>{contact.phone}</span>
+      </a>
+    </div>
+  </PageHero>
+
+  <TrustBar />
+
+  {/* ── Services available here ── */}
+  <section class="section-y bg-white" aria-labelledby="area-services-heading">
+    <div class="container-x">
+      <div class="grid gap-10 lg:grid-cols-[1fr_minmax(0,400px)] lg:gap-14">
+        <div>
+          <p class="eyebrow">What We Do Here</p>
+          <h2 id="area-services-heading" class="heading-section mt-3">
+            Our Services in {area.name}
+          </h2>
+          <p class="lead mt-4">
+            The full range, available across {area.name} and the surrounding
+            estates. Same crews, same certifications, same fixed-price
+            quotations.
+          </p>
+
+          <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+            {
+              services.map((service) => (
+                <li>
+                  <a
+                    href={`/services#${service.slug}`}
+                    class="flex h-full items-start gap-3.5 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
+                  >
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-accent text-brand-accent-text">
+                      <Icon name={service.icon} size={20} />
+                    </span>
+                    <span>
+                      <span class="block text-[15px] font-bold leading-snug text-brand-primary">
+                        {service.name}
+                      </span>
+                      <span class="mt-1 block text-sm leading-relaxed text-brand-muted">
+                        {service.shortDescription}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          {/* ── Why local matters ── */}
+          <div class="mt-10 rounded-2xl border-l-4 border-brand-accent bg-brand-bg-alt p-6">
+            <h3 class="text-lg font-bold text-brand-primary">
+              Why use a contractor who works in {area.name}?
+            </h3>
+            <p class="mt-2.5 text-[15px] leading-relaxed text-brand-muted">
+              Because we have already seen how the blocks in this area are
+              built, which estates have recurring ceiling leak patterns, and
+              what the management corporations will and will not approve. That
+              shortens diagnosis and avoids surprises once work starts.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Form ── */}
+        <div class="lg:sticky lg:top-24 lg:self-start">
+          <EstimateForm
+            variant="card"
+            heading={`Free Estimate in ${area.name}`}
+            subheading="One business day turnaround."
+            showLogo={false}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ReviewCarousel variant="alt" uid="area-reviews" />
+
+  {/* ── Nearby areas ── */}
+  <section class="section-y bg-white" aria-labelledby="nearby-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent">
+          <Icon name="map-pin" size={24} />
+        </span>
+        <p class="eyebrow mt-4">Nearby</p>
+        <h2 id="nearby-heading" class="heading-section mt-3">
+          We Also Serve
+        </h2>
+      </div>
+
+      <ul class="mx-auto mt-8 flex max-w-4xl flex-wrap justify-center gap-2.5">
+        {
+          nearby.map((entry) => (
+            <li>
+              <a
+                href={`/areas/${entry.slug}`}
+                class="block rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10 hover:text-brand-primary"
+              >
+                {entry.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="mt-8 text-center text-[15px] text-brand-muted">
+        <a
+          href="/#service-area"
+          class="font-bold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
+        >
+          See all {serviceArea.areas.length} areas we cover
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <CTABanner
+    headline={`Need a Painter or Waterproofing Specialist in ${area.name}?`}
+  />
+</BaseLayout>

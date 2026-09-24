@@ -1,0 +1,39 @@
+---
+/**
+ * Homepage services overview. Cards deep-link into /services anchors.
+ */
+import client from '../config/client.ts';
+import ServiceCard from './ServiceCard.astro';
+import Icon from './Icon.astro';
+
+const { services } = client;
+---
+
+<section id="services" class="section-y bg-brand-bg-alt" aria-labelledby="services-heading">
+  <div class="container-x">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow">What We Do</p>
+        <h2 id="services-heading" class="heading-section mt-3">
+          Painting & Waterproofing Services
+        </h2>
+        <p class="lead mt-4">
+          One contractor for the whole job — diagnosis, preparation, coating and
+          handover.
+        </p>
+      </div>
+
+      <a
+        href="/services"
+        class="inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
+      >
+        <span>All services</span>
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {services.map((service) => <ServiceCard service={service} />)}
+    </div>
+  </div>
+</section>

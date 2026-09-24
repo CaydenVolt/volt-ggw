@@ -1,0 +1,74 @@
+---
+/**
+ * Dark banner at the top of every inner page.
+ *
+ * Gives the whole site a consistent page-title treatment and carries the
+ * breadcrumb-ish "back" affordance on deep pages.
+ */
+import client from '../config/client.ts';
+import SmartImage from './SmartImage.astro';
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  /** Small uppercase label above the title. */
+  eyebrow?: string;
+  /** Optional back link, e.g. { href: '/resources', label: 'All guides' }. */
+  backLink?: { href: string; label: string };
+  /** Background image path. Defaults to the hero image. */
+  image?: string;
+}
+
+const {
+  title,
+  subtitle,
+  eyebrow,
+  backLink,
+  image = client.hero.backgroundImage,
+} = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden bg-brand-primary">
+  <div class="absolute inset-0 -z-10">
+    <SmartImage
+      src={image}
+      alt=""
+      width={1920}
+      height={1080}
+      loading="eager"
+      sizes="100vw"
+      class="h-full w-full object-cover opacity-20"
+    />
+    <div class="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary/95 to-brand-primary/85"></div>
+  </div>
+
+  <div class="container-x">
+    <div class="max-w-3xl py-14 md:py-20">
+      {
+        backLink && (
+          <a
+            href={backLink.href}
+            class="text-sm font-semibold text-brand-accent transition-colors hover:text-white"
+          >
+            ← {backLink.label}
+          </a>
+        )
+      }
+      {eyebrow && <p class:list={['eyebrow', backLink && 'mt-4']}>{eyebrow}</p>}
+      <h1
+        class:list={[
+          'text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl',
+          (eyebrow || backLink) && 'mt-3',
+        ]}
+      >
+        {title}
+      </h1>
+      {
+        subtitle && (
+          <p class="mt-5 text-lg leading-relaxed text-white/75">{subtitle}</p>
+        )
+      }
+      <slot />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,413 @@
+---
+/**
+ * Reusable lead-capture form.
+ *
+ * VARIANTS
+ *  - `card` — compact, white card with the logo on top. Used in the homepage
+ *    hero, sitting on the dark background as the primary conversion point.
+ *  - `full` — wider, roomier version for /contact and /services.
+ *
+ * Both render identical fields, identical hidden attribution fields and the
+ * identical consent checkbox. Only spacing and chrome differ.
+ *
+ * MULTIPLE INSTANCES
+ * Every id is namespaced with a per-instance `uid`, so two forms can coexist
+ * on one page without colliding. The script scopes itself to its own root.
+ *
+ * CURRENT STATE — demo mode.
+ * `client.form.endpoint` is an empty string, so submitting logs the payload to
+ * the console and shows the success message without any network request. Set
+ * that field to a real URL and the same handler POSTs JSON to it instead.
+ *
+ * ATTRIBUTION
+ * Seven hidden fields are populated on load: the five standard UTM params from
+ * the query string, plus `page_url` and `referrer`.
+ */
+import client from '../config/client.ts';
+import Icon from './Icon.astro';
+
+export interface Props {
+  variant?: 'card' | 'full';
+  /** Override the heading. Defaults to `form.heading`. */
+  heading?: string;
+  /** Override the sub-heading. Pass '' to hide it. */
+  subheading?: string;
+  /** Show the logo above the heading. Defaults to true for `card`. */
+  showLogo?: boolean;
+  /** Extra classes on the outer element. */
+  class?: string;
+}
+
+const {
+  variant = 'full',
+  heading = client.form.heading,
+  subheading = client.form.subheading,
+  showLogo = variant === 'card',
+  class: className = '',
+} = Astro.props;
+
+const { form, company, logo } = client;
+
+/* `{company}` is the one token the consent string supports. */
+const consentText = form.consentText.replace('{company}', company.name);
+
+const UTM_FIELDS = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+] as const;
+
+/* Unique per instance so two forms on one page never collide. */
+const uid = `ef-${Math.random().toString(36).slice(2, 9)}`;
+const id = (name: string) => `${uid}-${name}`;
+
+const isCard = variant === 'card';
+
+const fieldBase =
+  'w-full rounded-lg border border-slate-300 bg-white text-brand-text placeholder:text-slate-400 transition-colors focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/40';
+const fieldSize = isCard ? 'px-3.5 py-2.5 text-[15px]' : 'px-4 py-3';
+const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
+---
+
+<div
+  id={uid}
+  data-estimate-form
+  class:list={[
+    'rounded-2xl bg-white',
+    isCard
+      ? 'p-5 shadow-2xl shadow-black/25 ring-1 ring-black/5 sm:p-6'
+      : 'p-6 shadow-lg shadow-slate-900/5 ring-1 ring-slate-900/5 sm:p-8',
+    className,
+  ]}
+>
+  {/* ── Success panel — revealed by the script, replaces the form ── */}
+  <div
+    id={id('success')}
+    hidden
+    role="status"
+    aria-live="polite"
+    class="flex flex-col items-center gap-4 py-10 text-center"
+  >
+    <span class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-accent text-brand-accent-text">
+      <Icon name="check" size={28} />
+    </span>
+    <p class="text-lg font-semibold text-brand-primary">{form.successMessage}</p>
+  </div>
+
+  <div id={id('shell')}>
+    {/* ── Heading ── */}
+    <div class:list={['text-center', isCard ? 'mb-5' : 'mb-6']}>
+      {
+        showLogo && (
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            height={logo.height}
+            width={logo.height * 4}
+            class="mx-auto mb-4 w-auto rounded-lg bg-brand-primary px-3 py-2"
+            style={`height:${logo.height + 16}px`}
+          />
+        )
+      }
+      <h2
+        class:list={[
+          'font-extrabold leading-tight text-brand-primary',
+          isCard ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl',
+        ]}
+      >
+        {heading}
+      </h2>
+      {
+        subheading && (
+          <p class:list={['mx-auto mt-2 text-brand-muted', isCard ? 'text-sm' : 'text-[15px] max-w-md']}>
+            {subheading}
+          </p>
+        )
+      }
+    </div>
+
+    <form id={id('form')} novalidate>
+      {/* Attribution — populated on load, never shown. */}
+      {UTM_FIELDS.map((name) => <input type="hidden" name={name} value="" />)}
+      <input type="hidden" name="page_url" value="" />
+      <input type="hidden" name="referrer" value="" />
+
+      {/*
+        Honeypot. Real people never fill this in; bots usually do.
+        Hidden from sight AND from screen readers, and excluded from tabbing.
+      */}
+      <div class="absolute left-[-9999px]" aria-hidden="true">
+        <label for={id('company-website')}>Do not fill this in</label>
+        <input
+          type="text"
+          id={id('company-website')}
+          name="company_website"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class:list={['grid', isCard ? 'gap-3.5' : 'gap-5 sm:grid-cols-2']}>
+        <div class={isCard ? '' : 'sm:col-span-2'}>
+          <label for={id('fullName')} class={labelClass}>
+            Full Name <span class="text-red-600" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="text"
+            id={id('fullName')}
+            name="fullName"
+            required
+            autocomplete="name"
+            placeholder="Your name"
+            class:list={[fieldBase, fieldSize]}
+            aria-describedby={id('fullName-error')}
+          />
+          <p id={id('fullName-error')} class="field-error mt-1.5 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label for={id('phone')} class={labelClass}>
+            Phone <span class="text-red-600" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="tel"
+            id={id('phone')}
+            name="phone"
+            required
+            autocomplete="tel"
+            inputmode="tel"
+            placeholder="+65 9123 4567"
+            class:list={[fieldBase, fieldSize]}
+            aria-describedby={id('phone-error')}
+          />
+          <p id={id('phone-error')} class="field-error mt-1.5 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label for={id('email')} class={labelClass}>
+            Email <span class="text-red-600" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            id={id('email')}
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+            class:list={[fieldBase, fieldSize]}
+            aria-describedby={id('email-error')}
+          />
+          <p id={id('email-error')} class="field-error mt-1.5 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div class={isCard ? '' : 'sm:col-span-2'}>
+          <label for={id('message')} class={labelClass}>
+            Tell us about your project
+          </label>
+          <textarea
+            id={id('message')}
+            name="message"
+            rows={isCard ? 3 : 4}
+            placeholder="Property type, rough size, and what you need done — painting, waterproofing, or a leak you want looked at."
+            class:list={[fieldBase, fieldSize]}></textarea>
+        </div>
+      </div>
+
+      {/* ── Consent ── */}
+      <div class:list={['rounded-lg bg-brand-bg-alt', isCard ? 'mt-4 p-3' : 'mt-6 p-4']}>
+        <div class="flex gap-3">
+          <input
+            type="checkbox"
+            id={id('consent')}
+            name="consent"
+            value="yes"
+            required={form.consentRequired}
+            class="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-slate-400 accent-brand-accent"
+            aria-describedby={id('consent-error')}
+          />
+          <div>
+            <label
+              for={id('consent')}
+              class:list={[
+                'block cursor-pointer leading-relaxed text-brand-muted',
+                isCard ? 'text-xs' : 'text-sm',
+              ]}
+            >
+              {consentText}
+              {form.consentRequired && <span class="text-red-600" aria-hidden="true"> *</span>}
+            </label>
+            <p class:list={['mt-2 text-brand-muted', isCard ? 'text-[11px]' : 'text-xs']}>
+              See our{' '}
+              <a href="/privacy" class="font-semibold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="/terms" class="font-semibold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover">
+                Terms of Service
+              </a>.
+            </p>
+          </div>
+        </div>
+        <p id={id('consent-error')} class="field-error mt-2 hidden text-sm text-red-600"></p>
+      </div>
+
+      {/* Submission-level error (network / server). */}
+      <p
+        id={id('form-error')}
+        hidden
+        role="alert"
+        class="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+      >
+      </p>
+
+      <button
+        type="submit"
+        class:list={['btn btn-accent mt-5 w-full', isCard ? 'py-3.5' : 'py-4 text-base']}
+      >
+        {form.submitLabel}
+      </button>
+
+      <p class:list={['mt-3 text-center text-brand-muted', isCard ? 'text-[11px]' : 'text-xs']}>
+        Free site assessment · No obligation
+      </p>
+    </form>
+  </div>
+</div>
+
+<script is:inline define:vars={{ uid, endpoint: client.form.endpoint }}>
+  (function () {
+    const root = document.getElementById(uid);
+    if (!root) return;
+
+    const q = (name) => document.getElementById(uid + '-' + name);
+    const form = q('form');
+    const shell = q('shell');
+    const success = q('success');
+    const formError = q('form-error');
+    if (!form || !shell || !success || !formError) return;
+
+    const submit = form.querySelector('button[type=submit]');
+    const originalLabel = submit ? submit.textContent : '';
+
+    /* ── Attribution: UTMs from the query string, plus page and referrer ── */
+    const params = new URLSearchParams(window.location.search);
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach((key) => {
+      const field = form.elements.namedItem(key);
+      if (field) field.value = params.get(key) || '';
+    });
+    const pageUrl = form.elements.namedItem('page_url');
+    if (pageUrl) pageUrl.value = window.location.href;
+    const ref = form.elements.namedItem('referrer');
+    if (ref) ref.value = document.referrer || '';
+
+    /* ── Validation ── */
+    const showError = (name, message) => {
+      const field = q(name);
+      const slot = q(name + '-error');
+      if (slot) {
+        slot.textContent = message;
+        slot.classList.remove('hidden');
+      }
+      if (field) field.setAttribute('aria-invalid', 'true');
+    };
+
+    const clearErrors = () => {
+      form.querySelectorAll('.field-error').forEach((el) => {
+        el.textContent = '';
+        el.classList.add('hidden');
+      });
+      form.querySelectorAll('[aria-invalid]').forEach((el) =>
+        el.removeAttribute('aria-invalid')
+      );
+      formError.hidden = true;
+    };
+
+    const validate = (data) => {
+      let firstBad = null;
+
+      if (!String(data.fullName || '').trim()) {
+        showError('fullName', 'Please enter your name.');
+        firstBad = firstBad || 'fullName';
+      }
+      // Deliberately permissive: international formats vary far too much to
+      // pattern-match safely, so we only require a plausible number of digits.
+      const digits = String(data.phone || '').replace(/\D/g, '');
+      if (digits.length < 7) {
+        showError('phone', 'Please enter a valid phone number.');
+        firstBad = firstBad || 'phone';
+      }
+      if (!/^\S+@\S+\.\S+$/.test(String(data.email || ''))) {
+        showError('email', 'Please enter a valid email address.');
+        firstBad = firstBad || 'email';
+      }
+      const consent = form.elements.namedItem('consent');
+      if (consent && consent.required && !consent.checked) {
+        showError('consent', 'Please tick the box so we can contact you.');
+        firstBad = firstBad || 'consent';
+      }
+
+      return firstBad;
+    };
+
+    /* ── Submit ── */
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // Honeypot tripped — pretend it worked, drop it on the floor.
+      if (data.company_website) {
+        shell.hidden = true;
+        success.hidden = false;
+        return;
+      }
+      delete data.company_website;
+
+      const firstBad = validate(data);
+      if (firstBad) {
+        const field = q(firstBad);
+        if (field) field.focus();
+        return;
+      }
+
+      data.submitted_at = new Date().toISOString();
+
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+      }
+
+      try {
+        if (!endpoint) {
+          // ── Demo mode ──────────────────────────────────────────────────
+          // No endpoint configured. Log the exact payload that would be sent
+          // so the field shape can be verified before the CRM is wired up.
+          console.log('[EstimateForm] Demo mode — payload that would be sent:', data);
+        } else {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          if (!response.ok) throw new Error('Request failed: ' + response.status);
+        }
+
+        shell.hidden = true;
+        success.hidden = false;
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (error) {
+        console.error('[EstimateForm] Submission failed:', error);
+        formError.textContent =
+          'Sorry — something went wrong sending that. Please call or WhatsApp us instead.';
+        formError.hidden = false;
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = originalLabel;
+        }
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,173 @@
+---
+/**
+ * /gallery — filterable project grid.
+ *
+ * Filtering is done client-side by toggling a `hidden` class, so every image
+ * is present in the HTML for crawlers and the page works with JS disabled
+ * (all projects simply show, and the filter bar is hidden).
+ *
+ * No lightbox — the brief marks it optional, and skipping it keeps the page
+ * at one tiny script.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SmartImage from '../components/SmartImage.astro';
+import CTABanner from '../components/CTABanner.astro';
+import client from '../config/client.ts';
+
+const { gallery } = client;
+
+/*
+ * Only offer filters that actually match something — a category listed in
+ * config but unused would otherwise render a button that empties the grid.
+ */
+const usedCategories = gallery.categories.filter((category) =>
+  gallery.items.some((item) => item.category === category)
+);
+
+/** Turns a display label into a safe data attribute value. */
+const key = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+
+<BaseLayout pageKey="gallery">
+  <PageHero
+    eyebrow="Our Work"
+    title="Project Gallery"
+    subtitle={gallery.subheading}
+  />
+
+  <section class="section-y bg-white" aria-labelledby="gallery-grid-heading">
+    <div class="container-x">
+      <h2 id="gallery-grid-heading" class="sr-only">Projects</h2>
+
+      {/* ── Filter bar. Hidden without JS, since it would do nothing. ── */}
+      <div id="gallery-filters" class="hidden flex-wrap justify-center gap-2.5">
+        <button
+          type="button"
+          class="gallery-filter rounded-full border border-brand-primary bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+          data-filter="all"
+          aria-pressed="true"
+        >
+          All
+          <span class="ml-1.5 opacity-60">{gallery.items.length}</span>
+        </button>
+
+        {
+          usedCategories.map((category) => {
+            const count = gallery.items.filter(
+              (item) => item.category === category
+            ).length;
+            return (
+              <button
+                type="button"
+                class="gallery-filter rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-brand-primary transition-colors hover:border-brand-primary"
+                data-filter={key(category)}
+                aria-pressed="false"
+              >
+                {category}
+                <span class="ml-1.5 opacity-50">{count}</span>
+              </button>
+            );
+          })
+        }
+      </div>
+
+      {/* Announces the filtered count to screen readers. */}
+      <p id="gallery-status" role="status" aria-live="polite" class="sr-only"></p>
+
+      <ul
+        id="gallery-grid"
+        class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {
+          gallery.items.map((item) => (
+            <li
+              class="gallery-item group relative overflow-hidden rounded-xl bg-brand-primary shadow-md shadow-slate-900/5"
+              data-category={key(item.category)}
+            >
+              <div class="aspect-square">
+                <SmartImage
+                  src={item.image}
+                  alt={item.alt}
+                  width={900}
+                  height={900}
+                  sizes="(min-width: 1024px) 400px, (min-width: 640px) 45vw, 92vw"
+                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              <div
+                class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-primary/85 via-brand-primary/10 to-transparent"
+                aria-hidden="true"
+              />
+
+              <span class="absolute left-4 top-4 rounded-full bg-brand-accent px-3 py-1 text-xs font-bold uppercase tracking-wide text-brand-accent-text">
+                {item.category}
+              </span>
+
+              <p class="absolute bottom-4 left-4 right-4 text-sm font-semibold leading-snug text-white">
+                {item.alt}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="mt-10 text-center text-[15px] text-brand-muted">
+        These are placeholder images. Replace them in
+        <code class="rounded bg-brand-bg-alt px-1.5 py-0.5 text-sm">src/assets/images/</code>
+        before launch.
+      </p>
+    </div>
+  </section>
+
+  <CTABanner />
+</BaseLayout>
+
+<script>
+  // Client-side filtering. Every item stays in the DOM; we only toggle
+  // visibility, so nothing is hidden from crawlers.
+  const filterBar = document.getElementById('gallery-filters');
+  const status = document.getElementById('gallery-status');
+  const items = Array.from(
+    document.querySelectorAll<HTMLElement>('#gallery-grid .gallery-item')
+  );
+
+  if (filterBar && items.length) {
+    // Reveal the bar now that we know the script runs.
+    filterBar.classList.remove('hidden');
+    filterBar.classList.add('flex');
+
+    const buttons = Array.from(
+      filterBar.querySelectorAll<HTMLButtonElement>('.gallery-filter')
+    );
+
+    const ACTIVE = ['border-brand-primary', 'bg-brand-primary', 'text-white'];
+    const IDLE = ['border-slate-300', 'bg-white', 'text-brand-primary'];
+
+    const apply = (filter: string) => {
+      let shown = 0;
+
+      items.forEach((item) => {
+        const match = filter === 'all' || item.dataset.category === filter;
+        item.classList.toggle('hidden', !match);
+        if (match) shown += 1;
+      });
+
+      buttons.forEach((button) => {
+        const isActive = button.dataset.filter === filter;
+        button.setAttribute('aria-pressed', String(isActive));
+        button.classList.remove(...(isActive ? IDLE : ACTIVE));
+        button.classList.add(...(isActive ? ACTIVE : IDLE));
+      });
+
+      if (status) {
+        status.textContent = `Showing ${shown} project${shown === 1 ? '' : 's'}.`;
+      }
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => apply(button.dataset.filter || 'all'));
+    });
+  }
+</script>

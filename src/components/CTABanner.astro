@@ -1,29 +1,55 @@
 ---
 /**
- * Closing CTA banner (section 12).
+ * Reusable closing CTA band. Used at the bottom of most pages.
+ *
+ * Defaults come from `client.finalCta`; every piece can be overridden so a
+ * page can tailor the message without a new component.
  */
 import client from '../config/client.ts';
 import Icon from './Icon.astro';
 
+export interface Props {
+  headline?: string;
+  subtext?: string;
+  buttonLabel?: string;
+  /** Where the primary button goes. */
+  buttonHref?: string;
+  /** `alt` uses the lighter surface, for pages that end on a dark section. */
+  variant?: 'primary' | 'alt';
+}
+
 const { finalCta, contact } = client;
+
+const {
+  headline = finalCta.headline,
+  subtext = finalCta.subtext,
+  buttonLabel = finalCta.buttonLabel,
+  buttonHref = '/contact',
+  variant = 'primary',
+} = Astro.props;
+
+const isAlt = variant === 'alt';
 ---
 
-<section class="bg-brand-primary py-14 md:py-20" aria-labelledby="final-cta-heading">
+<section
+  class:list={['py-14 md:py-20', isAlt ? 'bg-brand-secondary' : 'bg-brand-primary']}
+  aria-labelledby="cta-banner-heading"
+>
   <div class="container-x">
     <div class="mx-auto max-w-3xl text-center">
       <h2
-        id="final-cta-heading"
+        id="cta-banner-heading"
         class="text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl"
       >
-        {finalCta.headline}
+        {headline}
       </h2>
       <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/75">
-        {finalCta.subtext}
+        {subtext}
       </p>
 
       <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-        <a href="#quote" class="btn btn-accent px-8 py-4 text-base">
-          {finalCta.buttonLabel}
+        <a href={buttonHref} class="btn btn-accent px-8 py-4 text-base">
+          {buttonLabel}
         </a>
         <a
           href={contact.whatsapp}

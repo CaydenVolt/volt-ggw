@@ -1,0 +1,220 @@
+---
+/**
+ * /resources/<slug> — one article per entry in `src/data/articles.ts`.
+ *
+ * Statically generated: `getStaticPaths` emits one page per article at build
+ * time, each with its own title and meta description.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import SmartImage from '../../components/SmartImage.astro';
+import EstimateForm from '../../components/EstimateForm.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { articles, articlesByDate } from '../../data/articles.ts';
+
+export const getStaticPaths = (() =>
+  articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }))) satisfies GetStaticPaths;
+
+const { article } = Astro.props;
+
+const dateFormat = new Intl.DateTimeFormat('en-SG', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+/* Up to two other articles, newest first. */
+const related = articlesByDate
+  .filter((entry) => entry.slug !== article.slug)
+  .slice(0, 2);
+---
+
+<BaseLayout
+  title={`${article.title} | ${'Resource Centre'}`}
+  description={article.excerpt}
+  ogImage={article.image}
+>
+  <PageHero
+    title={article.title}
+    backLink={{ href: '/resources', label: 'All guides' }}
+    eyebrow={article.category}
+  >
+    <p class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/60">
+      <span>{dateFormat.format(new Date(article.publishedAt))}</span>
+      <span aria-hidden="true">·</span>
+      <span>{article.readTime}</span>
+    </p>
+  </PageHero>
+
+  <article class="section-y bg-white">
+    <div class="container-x">
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-14">
+        {/* ── Body ── */}
+        <div>
+          <div class="overflow-hidden rounded-2xl shadow-lg shadow-slate-900/10">
+            <SmartImage
+              src={article.image}
+              alt=""
+              width={1200}
+              height={675}
+              loading="eager"
+              sizes="(min-width: 1024px) 760px, 92vw"
+              class="h-full w-full object-cover"
+            />
+          </div>
+
+          <p class="mt-8 border-l-4 border-brand-accent pl-5 text-lg font-medium leading-relaxed text-brand-text">
+            {article.excerpt}
+          </p>
+
+          <div class="article-body mt-8">
+            {
+              article.body.map((block) => {
+                if (block.type === 'heading') return <h2>{block.text}</h2>;
+                if (block.type === 'paragraph') return <p>{block.text}</p>;
+                return (
+                  <ul>
+                    {block.items.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                );
+              })
+            }
+          </div>
+
+          <div class="mt-10 rounded-2xl bg-brand-bg-alt p-6 sm:p-8">
+            <h2 class="text-xl font-bold text-brand-primary">
+              Want us to take a look?
+            </h2>
+            <p class="mt-2.5 text-[15px] leading-relaxed text-brand-muted">
+              Site assessments are free and carry no obligation. We will tell
+              you what the problem actually is, whether or not you hire us.
+            </p>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <a href="/contact" class="btn btn-accent px-7 py-3.5">
+                Get a Free Estimate
+              </a>
+              <a href="/services" class="btn btn-outline-dark px-7 py-3.5">
+                See Our Services
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Sidebar ── */}
+        <aside class="lg:sticky lg:top-24 lg:self-start">
+          <EstimateForm
+            variant="card"
+            heading="Free Estimate"
+            subheading="One business day turnaround."
+            showLogo={false}
+          />
+
+          {
+            related.length > 0 && (
+              <div class="mt-8">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-brand-primary">
+                  More guides
+                </h2>
+                <ul class="mt-4 space-y-4">
+                  {related.map((entry) => (
+                    <li>
+                      <a
+                        href={`/resources/${entry.slug}`}
+                        class="group flex gap-4 rounded-xl p-2 transition-colors hover:bg-brand-bg-alt"
+                      >
+                        <span class="h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-brand-primary">
+                          <SmartImage
+                            src={entry.image}
+                            alt=""
+                            width={1200}
+                            height={675}
+                            sizes="80px"
+                            class="h-full w-full object-cover"
+                          />
+                        </span>
+                        <span class="min-w-0">
+                          <span class="block text-sm font-bold leading-snug text-brand-primary group-hover:text-brand-accent-hover">
+                            {entry.title}
+                          </span>
+                          <span class="mt-1 block text-xs text-brand-muted">
+                            {entry.readTime}
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          <a
+            href="/resources"
+            class="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
+          >
+            <Icon name="chevron-left" size={16} />
+            <span>Back to all guides</span>
+          </a>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  <CTABanner />
+</BaseLayout>
+
+<style>
+  /*
+   * Article prose. Scoped to this page so it cannot leak into the marketing
+   * sections, which are styled entirely with utilities.
+   */
+  .article-body :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-brand-primary);
+  }
+
+  .article-body :global(p) {
+    margin-bottom: 1.125rem;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-brand-muted);
+  }
+
+  .article-body :global(ul) {
+    margin: 0 0 1.5rem 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .article-body :global(li) {
+    position: relative;
+    margin-bottom: 0.625rem;
+    padding-left: 1.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-brand-muted);
+  }
+
+  /* Accent bullet, drawn rather than listed, so it matches the brand. */
+  .article-body :global(li)::before {
+    content: '';
+    position: absolute;
+    left: 0.375rem;
+    top: 0.72em;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 9999px;
+    background: var(--color-brand-accent);
+  }
+</style>

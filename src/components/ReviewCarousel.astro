@@ -1,28 +1,52 @@
 ---
 /**
- * Review carousel (section 9).
+ * Horizontally-scrolling review carousel.
  *
- * Implemented as a native horizontally-scrolling flex rail with CSS
- * scroll-snap. It works with no JavaScript at all — touch swipe, trackpad and
- * keyboard scrolling are all native. The arrow buttons are a small progressive
- * enhancement layered on top, and hide themselves if the rail does not
- * overflow.
+ * Implemented as a native scrolling flex rail with CSS scroll-snap. It works
+ * with no JavaScript at all — touch swipe, trackpad and keyboard scrolling are
+ * all native. The arrow buttons are a small progressive enhancement layered on
+ * top, and hide themselves if the rail does not overflow.
+ *
+ * Reusable across pages: pass a unique `uid` if two carousels ever share a page.
  */
 import { reviews, reviewSummary } from '../data/reviews.ts';
 import Icon from './Icon.astro';
 
+export interface Props {
+  heading?: string;
+  /** Background band for the section. */
+  variant?: 'white' | 'alt';
+  /** Unique per instance if more than one carousel is on a page. */
+  uid?: string;
+}
+
+const {
+  heading = reviewSummary.heading,
+  variant = 'white',
+  uid = 'reviews',
+} = Astro.props;
+
 /* Aggregate rating is only shown once a real count is set (see reviews.ts). */
 const showSummary = reviewSummary.count > 0;
+
+const bg = variant === 'white' ? 'bg-white' : 'bg-brand-bg-alt';
+const cardBg = variant === 'white' ? 'bg-brand-bg-alt' : 'bg-white';
+
+const railId = `${uid}-rail`;
+const controlsId = `${uid}-controls`;
+const prevId = `${uid}-prev`;
+const nextId = `${uid}-next`;
+
+const arrowClass =
+  'flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-300 text-brand-primary transition-colors hover:border-brand-primary hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:text-brand-primary';
 ---
 
-<section id="reviews" class="section-y bg-white" aria-labelledby="reviews-heading">
+<section id="reviews" class:list={['section-y', bg]} aria-labelledby={`${uid}-heading`}>
   <div class="container-x">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div class="max-w-2xl">
         <p class="eyebrow">Testimonials</p>
-        <h2 id="reviews-heading" class="heading-section mt-3">
-          {reviewSummary.heading}
-        </h2>
+        <h2 id={`${uid}-heading`} class="heading-section mt-3">{heading}</h2>
 
         {
           showSummary && (
@@ -42,22 +66,22 @@ const showSummary = reviewSummary.count > 0;
       </div>
 
       {/* Arrow controls — revealed by script only when the rail overflows. */}
-      <div id="review-controls" class="hidden gap-2">
+      <div id={controlsId} class="hidden gap-2">
         <button
           type="button"
-          id="review-prev"
-          class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-300 text-brand-primary transition-colors hover:border-brand-primary hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:text-brand-primary"
+          id={prevId}
+          class={arrowClass}
           aria-label="Previous reviews"
-          aria-controls="review-rail"
+          aria-controls={railId}
         >
           <Icon name="chevron-left" size={20} />
         </button>
         <button
           type="button"
-          id="review-next"
-          class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-300 text-brand-primary transition-colors hover:border-brand-primary hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:bg-transparent disabled:hover:text-brand-primary"
+          id={nextId}
+          class={arrowClass}
           aria-label="Next reviews"
-          aria-controls="review-rail"
+          aria-controls={railId}
         >
           <Icon name="chevron-right" size={20} />
         </button>
@@ -65,22 +89,27 @@ const showSummary = reviewSummary.count > 0;
     </div>
   </div>
 
-  {/* Full-bleed rail so cards can bleed past the container on wide screens. */}
+  {/*
+    Full-bleed rail so cards can bleed past the container on wide screens.
+    `scroll-px-*` must mirror `px-*`: without it, snap-mandatory aligns the
+    first card past the left padding, so the rail rests at scrollLeft > 0,
+    the left gutter collapses and Previous starts enabled.
+  */}
   <div
-    id="review-rail"
+    id={railId}
     tabindex="0"
     role="group"
     aria-label="Customer reviews, scrollable"
-    {/*
-      `scroll-px-*` must mirror `px-*`. Without it, snap-mandatory aligns the
-      first card past the left padding, so the rail rests at scrollLeft > 0,
-      the left gutter collapses and the Previous button starts enabled.
-    */}
     class="no-scrollbar mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 pb-4 scroll-px-5 md:px-8 md:scroll-px-8 xl:px-[max(2rem,calc((100vw-80rem)/2+2rem))] xl:scroll-px-[max(2rem,calc((100vw-80rem)/2+2rem))]"
   >
     {
       reviews.map((review) => (
-        <figure class="flex w-[300px] shrink-0 snap-start flex-col rounded-2xl bg-brand-bg-alt p-6 ring-1 ring-slate-900/5 sm:w-[360px]">
+        <figure
+          class:list={[
+            'flex w-[300px] shrink-0 snap-start flex-col rounded-2xl p-6 ring-1 ring-slate-900/5 sm:w-[360px]',
+            cardBg,
+          ]}
+        >
           <div
             class="flex gap-0.5 text-brand-accent"
             role="img"
@@ -107,14 +136,15 @@ const showSummary = reviewSummary.count > 0;
   </div>
 </section>
 
-<script>
+<script is:inline define:vars={{ railId, controlsId, prevId, nextId }}>
   // Progressive enhancement only — the rail is fully usable without this.
-  const rail = document.getElementById('review-rail');
-  const controls = document.getElementById('review-controls');
-  const prev = document.getElementById('review-prev') as HTMLButtonElement | null;
-  const next = document.getElementById('review-next') as HTMLButtonElement | null;
+  (function () {
+    const rail = document.getElementById(railId);
+    const controls = document.getElementById(controlsId);
+    const prev = document.getElementById(prevId);
+    const next = document.getElementById(nextId);
+    if (!rail || !controls || !prev || !next) return;
 
-  if (rail && controls && prev && next) {
     const overflows = () => rail.scrollWidth > rail.clientWidth + 4;
 
     const syncControls = () => {
@@ -148,5 +178,5 @@ const showSummary = reviewSummary.count > 0;
     rail.addEventListener('scroll', syncControls, { passive: true });
     window.addEventListener('resize', syncControls);
     syncControls();
-  }
+  })();
 </script>
