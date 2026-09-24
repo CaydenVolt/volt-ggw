@@ -94,7 +94,7 @@ const business: Record<string, unknown> = {
         '@type': 'Service',
         name: s.name,
         description: s.shortDescription,
-        url: `${origin}/services/${s.slug}`,
+        url: `${origin}/${s.category}/${s.slug}`,
       },
     })),
   },
@@ -134,11 +134,11 @@ const graph: Record<string, unknown>[] = [business];
 if (type === 'service' && service) {
   graph.push({
     '@type': 'Service',
-    '@id': `${origin}/services/${service.slug}/#service`,
+    '@id': `${origin}/${service.category}/${service.slug}/#service`,
     name: service.name,
     serviceType: service.name,
     description: service.metaDescription,
-    url: `${origin}/services/${service.slug}`,
+    url: `${origin}/${service.category}/${service.slug}`,
     provider: { '@id': businessId },
     areaServed: { '@type': 'Country', name: 'Singapore' },
     hasOfferCatalog: {
@@ -154,7 +154,7 @@ if (type === 'service' && service) {
   if (service.faqs.length > 0) {
     graph.push({
       '@type': 'FAQPage',
-      '@id': `${origin}/services/${service.slug}/#faq`,
+      '@id': `${origin}/${service.category}/${service.slug}/#faq`,
       mainEntity: service.faqs.map((f) => ({
         '@type': 'Question',
         name: f.question,

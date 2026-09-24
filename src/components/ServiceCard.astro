@@ -2,7 +2,7 @@
 /**
  * One service card for the homepage grid.
  *
- * "Learn more" deep-links to that service's section on /services via its slug.
+ * "Learn more" links to that service's own page under its category hub.
  * The whole card is clickable via a stretched-link overlay on the anchor, so
  * there is still exactly one link in the accessibility tree.
  */
@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const { service } = Astro.props;
-const href = `/services/${service.slug}`;
+const href = `/${service.category}/${service.slug}`;
 ---
 
 <article

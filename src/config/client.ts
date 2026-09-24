@@ -38,11 +38,19 @@ export type IconName =
   | 'map-pin'
   | 'target'
   | 'heart'
-  | 'thumbs-up';
+  | 'thumbs-up'
+  | 'layers';
+
+export type ServiceCategorySlug = 'painting' | 'waterproofing';
 
 export interface Service {
-  /** URL-safe id. Drives the `/services/<slug>` page. Must be unique. */
+  /**
+   * URL-safe id. The page lives at `/<category>/<slug>`, so the slug only
+   * has to be unique within its category.
+   */
   slug: string;
+  /** Which hub this service sits under. Drives the URL and the breadcrumb. */
+  category: ServiceCategorySlug;
   name: string;
   /**
    * The H1 on that service's own page.
@@ -319,8 +327,8 @@ export const client = {
    */
   nav: [
     { label: 'Home', href: '/' },
-    { label: 'Services', href: '/services' },
     { label: 'Painting', href: '/painting' },
+    { label: 'Waterproofing', href: '/waterproofing' },
     { label: 'Gallery', href: '/gallery' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Resources', href: '/resources' },
@@ -328,14 +336,67 @@ export const client = {
     { label: 'Contact', href: '/contact' },
   ] as NavLink[],
 
+  /* ---- Service category hubs --------------------------------------------- */
+  /**
+   * The two top-level hubs. Each ranks for its broad term and hands the
+   * specific searches to its child services at `/<slug>/<service-slug>`.
+   *
+   * `slug` must match a `ServiceCategorySlug` and a pair of page files:
+   * `src/pages/<slug>.astro` for the hub, `src/pages/<slug>/[slug].astro`
+   * for its children.
+   */
+  serviceCategories: [
+    {
+      slug: 'painting' as const,
+      eyebrow: 'Painting',
+      h1: 'Painting Services in Singapore',
+      metaTitle: 'Painting Services Singapore | Interior, Exterior & Industrial',
+      metaDescription:
+        'Painting contractor in Singapore for HDB, condominium, landed and commercial property. Low-VOC interior, weather-rated exterior, industrial coatings and full surface preparation.',
+      intro:
+        'Interior, exterior and industrial painting, plus the surface repair that has to happen before any of it. Low-VOC and VOC-free systems as standard, specified around the substrate rather than the price list.',
+      heroImage: '/images/painting-hero.webp',
+    },
+    {
+      slug: 'waterproofing' as const,
+      eyebrow: 'Waterproofing',
+      h1: 'Waterproofing Contractor in Singapore',
+      metaTitle: 'Waterproofing Contractor Singapore | Roof, Bathroom & Leaks',
+      metaDescription:
+        'Waterproofing contractor in Singapore. Roof and podium membranes, bathroom and wet area systems, and leak detection that finds the source. Ponding tested, written warranty.',
+      intro:
+        'Membrane failure is the leading cause of recurring repair work in Singapore buildings. We diagnose why the last system failed, specify the right one for the substrate, and ponding test it before anything gets covered up.',
+      heroImage: '/images/stock-waterproofing.webp',
+    },
+  ],
+
   /* ---- Services ---------------------------------------------------------- */
+  /**
+   * Every service belongs to one of the two category hubs and is published at
+   * `/<category>/<slug>`. Adding one here creates its page, adds it to that
+   * hub, the footer and the sitemap — no routing to touch.
+   */
   services: [
+    /* ── Painting ── */
     {
       slug: 'interior-painting',
+      category: 'painting',
+      name: 'Interior Painting',
       h1: 'Interior Painting Services in Singapore',
       metaTitle: 'Interior Painting Services Singapore | HDB, Condo & Office',
       metaDescription:
         'Low-VOC interior painting for HDB flats, condominiums and offices in Singapore. Odourless paint, proper undercoat and preparation, fixed itemised quotes.',
+      shortDescription:
+        'Low-VOC repainting for homes and offices, with full furniture protection and same-day cleanup.',
+      longDescription:
+        'We repaint occupied homes and working offices without turning your life upside down. Every job starts with protection — furniture sheeted, floors covered, edges masked — then surface repair, priming and two finish coats of low-VOC paint. We work room by room and clean up at the end of each day, so the rest of the property stays usable throughout.',
+      includedItems: [
+        'Full furniture and flooring protection',
+        'Crack filling, sanding and skim coating',
+        'Primer plus two coats of low-VOC paint',
+        'Colour consultation and sample patches',
+        'Daily cleanup and final walkthrough',
+      ],
       faqs: [
         {
           question: 'Can we stay in the flat while you paint?',
@@ -363,27 +424,28 @@ export const client = {
             'We sheet and shift what is reasonable within the room. Heavy items, valuables and fragile display pieces are better cleared by you before we start — sheeting protects against paint, not against knocks.',
         },
       ],
-      name: 'Interior Painting',
-      shortDescription:
-        'Low-VOC repainting for homes and offices, with full furniture protection and same-day cleanup.',
-      longDescription:
-        'We repaint occupied homes and working offices without turning your life upside down. Every job starts with protection — furniture sheeted, floors covered, edges masked — then surface repair, priming and two finish coats of low-VOC paint. We work room by room and clean up at the end of each day, so the rest of the property stays usable throughout.',
-      includedItems: [
-        'Full furniture and flooring protection',
-        'Crack filling, sanding and skim coating',
-        'Primer plus two coats of low-VOC paint',
-        'Colour consultation and sample patches',
-        'Daily cleanup and final walkthrough',
-      ],
       icon: 'roller',
       image: '/images/stock-interior-painting.webp',
     },
     {
       slug: 'exterior-painting',
+      category: 'painting',
+      name: 'Exterior & Facade Painting',
       h1: 'Exterior & Facade Painting in Singapore',
       metaTitle: 'Exterior Painting Singapore | Facade, Landed & Commercial',
       metaDescription:
         'Exterior and facade painting across Singapore. Anti-carbonation and elastomeric systems built for tropical UV, humidity and monsoon rain. Access and safety handled.',
+      shortDescription:
+        'Weather-resistant coatings built for Singapore humidity, UV and monsoon rain.',
+      longDescription:
+        'Singapore weather is brutal on exterior paint — constant UV, high humidity and heavy rain will find every weak spot in a cheap job. We pressure wash, treat any fungal growth, repair spalling concrete and apply anti-carbonation or elastomeric systems rated for tropical exposure. For high-rise and facade work we coordinate scaffolding or gondola access and all the safety documentation that comes with it.',
+      includedItems: [
+        'High-pressure washing and fungal treatment',
+        'Spalling concrete and crack repair',
+        'Anti-carbonation or elastomeric coating systems',
+        'Scaffolding or gondola access coordination',
+        'Full safety documentation and permits',
+      ],
       faqs: [
         {
           question: 'How long will exterior paint actually last in Singapore?',
@@ -411,32 +473,129 @@ export const client = {
             'Often, if it is sound, well bonded and compatible with the new system. Extensive chalking, peeling or blistering means removal or a stabilising primer first. We test adhesion before quoting rather than assuming.',
         },
       ],
-      name: 'Exterior & Facade Painting',
-      shortDescription:
-        'Weather-resistant coatings built for Singapore humidity, UV and monsoon rain.',
-      longDescription:
-        'Singapore weather is brutal on exterior paint — constant UV, high humidity and heavy rain will find every weak spot in a cheap job. We pressure wash, treat any fungal growth, repair spalling concrete and apply anti-carbonation or elastomeric systems rated for tropical exposure. For high-rise and facade work we coordinate scaffolding or gondola access and all the safety documentation that comes with it.',
-      includedItems: [
-        'High-pressure washing and fungal treatment',
-        'Spalling concrete and crack repair',
-        'Anti-carbonation or elastomeric coating systems',
-        'Scaffolding or gondola access coordination',
-        'Full safety documentation and permits',
-      ],
       icon: 'building',
       image: '/images/job-exterior-repaint-43.webp',
     },
     {
-      slug: 'waterproofing',
-      h1: 'Waterproofing Services in Singapore',
-      metaTitle: 'Waterproofing Contractor Singapore | Roof, Balcony & Wet Areas',
+      slug: 'protective-coatings',
+      category: 'painting',
+      name: 'Protective & Industrial Coatings',
+      h1: 'Protective & Industrial Coatings in Singapore',
+      metaTitle: 'Industrial Coatings Singapore | Epoxy Floors & Anti-Mould',
       metaDescription:
-        'Waterproofing for roofs, balconies, planters and wet areas across Singapore. Membrane and liquid-applied systems, ponding test before handover, written warranty.',
+        'Epoxy and polyurethane floor systems, anti-carbonation and anti-mould coatings for Singapore warehouses, car parks and plant rooms. Scheduled around your operations.',
+      shortDescription:
+        'Anti-mould, anti-carbonation and epoxy systems for plants, car parks and warehouses.',
+      longDescription:
+        'Industrial surfaces need coatings that do a job beyond looking clean — chemical resistance, abrasion resistance, slip resistance, or protecting reinforcement from carbonation. We handle epoxy and polyurethane floor systems for warehouses and car parks, anti-mould coatings for humid plant rooms, and protective systems for structural steel and concrete.',
+      includedItems: [
+        'Epoxy and polyurethane floor systems',
+        'Anti-mould and anti-bacterial coatings',
+        'Anti-carbonation protection for concrete',
+        'Line marking and slip-resistant finishes',
+        'Work scheduled around your operations',
+      ],
       faqs: [
         {
-          question: 'How do I know which waterproofing system I need?',
+          question: 'Can you work around our operations?',
           answer:
-            'It comes down to the substrate, whether it moves, whether it is exposed to UV, whether it will be walked on or tiled over, and how much standing water it has to tolerate. Torch-on membrane, liquid-applied, cementitious coatings and injection grouting each solve a different problem. If a quotation just says "waterproofing" with a price and no named system, you do not yet have enough information to compare it against anything.',
+            'Usually, in phases. We section off areas, work nights or weekends where that suits you better, and sequence bays so the floor never goes entirely out of use. Downtime is the expensive part of an industrial coating job, so it is worth planning properly rather than discovering it halfway through.',
+        },
+        {
+          question: 'How long before we can walk or drive on it?',
+          answer:
+            'Foot traffic is typically earlier than vehicle traffic, and full chemical cure is later than both. Exact times depend on the system and the ambient conditions, and they appear on the programme before we start.',
+        },
+        {
+          question: 'Do you do line marking and anti-slip finishes?',
+          answer:
+            'Yes. Bay marking, walkways, hazard marking and slip-resistant aggregate can all be specified as part of the system rather than bolted on afterwards.',
+        },
+        {
+          question: 'Our floor is oily and has been coated before. Is that a problem?',
+          answer:
+            'It is the single thing that decides whether the new coating sticks. Contaminated or previously coated concrete needs degreasing and mechanical preparation — grinding or shot blasting — before anything is applied. A coating over oil will delaminate regardless of what it cost.',
+        },
+      ],
+      icon: 'layers',
+      image: '/images/stock-protective-coatings.webp',
+    },
+    {
+      slug: 'surface-preparation',
+      category: 'painting',
+      name: 'Surface Repair & Preparation',
+      h1: 'Surface Repair & Preparation in Singapore',
+      metaTitle: 'Surface Preparation & Concrete Repair Singapore',
+      metaDescription:
+        'Crack repair, spalling concrete repair, skim coating and substrate preparation across Singapore — the work that decides whether a paint job lasts or fails.',
+      shortDescription:
+        'Crack filling, spalling concrete repair and skim coating before a single drop of paint.',
+      longDescription:
+        'Preparation is where a paint job is actually won or lost, and it is the first thing a cheap quote cuts. We treat it as its own scope of work: removing failed coatings, filling and sanding cracks, repairing spalling concrete back to sound reinforcement, and skim coating to a flat finish. If the substrate is not right, no amount of good paint will save it.',
+      includedItems: [
+        'Removal of failed and flaking coatings',
+        'Spalling concrete repair to sound reinforcement',
+        'Crack routing, filling and sanding',
+        'Full skim coating to a flat finish',
+        'Alkali and moisture testing before priming',
+      ],
+      faqs: [
+        {
+          question: 'Why is preparation a separate line on the quote?',
+          answer:
+            'Because it is separate work, and itemising it is the only way you can compare quotations honestly. It is also the first thing a cheap quote cuts, precisely because it is invisible on handover day and only shows up a year later.',
+        },
+        {
+          question: 'Can you not just paint over it?',
+          answer:
+            'You can paint over almost anything once. The question is what it looks like in twelve months. Over chalky, damp or failing substrate, new paint fails at the same rate the old one did — and you pay twice.',
+        },
+        {
+          question: 'How do you deal with spalling concrete?',
+          answer:
+            'Break out to sound concrete, expose and treat the corroding reinforcement, then reinstate with a repair mortar before any coating goes on. Cosmetic filling over rusting steel is not a repair, it is a delay.',
+        },
+        {
+          question: 'My walls are powdery and chalky. Is that fixable?',
+          answer:
+            'Yes — that is what a penetrating sealer is for. It soaks in and binds the loose particles so the surface is stable enough to hold putty, skim coat or topcoat. Painting straight onto a powdery wall lifts the paint off along with the dust.',
+        },
+      ],
+      icon: 'sparkles',
+      image: '/images/job-facade-works-43.webp',
+    },
+
+    /* ── Waterproofing ── */
+    {
+      slug: 'roof-waterproofing',
+      category: 'waterproofing',
+      name: 'Roof Waterproofing',
+      h1: 'Roof Waterproofing in Singapore',
+      metaTitle: 'Roof Waterproofing Singapore | Membrane & Liquid Systems',
+      metaDescription:
+        'Roof waterproofing across Singapore. Torch-on membrane and liquid-applied systems, full detailing at upstands and drains, ponding test and written warranty.',
+      shortDescription:
+        'Membrane and liquid-applied systems for flat roofs, gutters, planters and podium decks.',
+      longDescription:
+        'Flat roofs and podium decks take the worst of Singapore weather — standing water after every downpour, then hours of UV. We assess the substrate and the exposure before specifying, because a torch-on membrane and a liquid-applied system fail in completely different ways when either is put in the wrong place. Detailing at upstands, drain outlets and pipe penetrations gets the same attention as the open field, because that is where nearly every roof leak actually starts.',
+      includedItems: [
+        'Substrate assessment and system specification in writing',
+        'Torch-on membrane or liquid-applied polyurethane',
+        'Full detailing at upstands, drains and penetrations',
+        'Protective screed or covering where the system needs it',
+        'Water ponding test before handover',
+        'Written warranty on completed works',
+      ],
+      faqs: [
+        {
+          question: 'How do I know which roof system I need?',
+          answer:
+            'It comes down to the substrate, whether it moves, whether the surface is exposed to UV or covered, whether it will be walked on, and how long water sits on it after rain. Torch-on membrane suits large open flat roofs; liquid-applied suits complex shapes with many penetrations. If a quotation just says "waterproofing" with a price and no named system, you do not yet have enough information to compare it against anything.',
+        },
+        {
+          question: 'Why did the last roof job fail so quickly?',
+          answer:
+            'Membrane failure is the leading cause of recurring repair work in Singapore buildings, and it almost always starts at the details rather than the middle of a flat surface — laps, upstands, drain outlets and pipe penetrations. Exposed membrane left without its protective covering also degrades far faster under Singapore UV than the datasheet suggests. We look at where yours failed before quoting to redo it.',
         },
         {
           question: 'Do you give a warranty?',
@@ -444,42 +603,83 @@ export const client = {
             'Yes, in writing. The term depends on the system and the substrate, and it is stated on your quotation before you commit — not promised verbally and forgotten afterwards.',
         },
         {
-          question: 'Will you need to hack up my tiles or screed?',
+          question: 'Do you test it before handover?',
           answer:
-            'Sometimes. A membrane has to sit on sound substrate and be dressed properly into upstands and drains, which in wet areas often means lifting finishes. Where a topical or injection solution is genuinely appropriate we will say so — but we will not pretend a surface coat fixes a failed membrane underneath it.',
+            'Yes. A water ponding test is the only way to demonstrate the system holds before it is covered up. It is part of the programme, not an extra.',
         },
         {
-          question: 'How long before we can use the area again?',
+          question: 'How long will the roof be out of use?',
           answer:
-            'Curing between coats is the constraint, not application time. Most waterproofing runs three to seven days including cure and a water ponding test. Rushing the cure is one of the most common causes of early failure, so the programme we give you includes it rather than pretending it away.',
+            'Curing between coats is the constraint, not application time. Most roof work runs three to seven days including cure and the ponding test, plus weather allowance. Rushing the cure is one of the most common causes of early failure.',
         },
-        {
-          question: 'Why did the last waterproofing job fail?',
-          answer:
-            'Membrane failure is the leading cause of recurring repair work in Singapore buildings, and it almost always starts at the details rather than the middle of a flat surface — laps, upstands, drain outlets and pipe penetrations. That, or the wrong system on a substrate that moves. We look at where yours failed before quoting to redo it.',
-        },
-      ],
-      name: 'Waterproofing',
-      shortDescription:
-        'Membrane and liquid-applied systems for roofs, balconies, planters and wet areas.',
-      longDescription:
-        'Waterproofing fails at the details — upstands, drains, corners and joints — not in the middle of a flat surface. We specify the right system for the substrate and exposure, prepare properly, and pay attention to exactly those details. Roofs, balconies, planter boxes, bathrooms and basement walls all get different treatments, and we will tell you which one yours needs and why.',
-      includedItems: [
-        'Substrate assessment and system specification',
-        'Torch-on membrane or liquid-applied options',
-        'Detailing at upstands, drains and corners',
-        'Water ponding test before handover',
-        'Written warranty on completed works',
       ],
       icon: 'droplet',
       image: '/images/stock-waterproofing.webp',
     },
     {
-      slug: 'leak-repair',
+      slug: 'wet-area-waterproofing',
+      category: 'waterproofing',
+      name: 'Bathroom & Wet Area Waterproofing',
+      h1: 'Bathroom & Wet Area Waterproofing in Singapore',
+      metaTitle: 'Bathroom Waterproofing Singapore | Wet Areas & Balconies',
+      metaDescription:
+        'Bathroom, kitchen and balcony waterproofing in Singapore. Seamless liquid-applied membrane dressed into upstands and falls, ponding tested before tiling goes back.',
+      shortDescription:
+        'Seamless liquid-applied systems for bathrooms, kitchens, balconies and planter boxes.',
+      longDescription:
+        'Wet areas are all detail and no open field — corners, floor traps, pipe penetrations, door thresholds and the junction where the floor meets the wall. That is why liquid-applied membrane suits them: it cures seamless, so there are no laps to fail. The work usually means lifting finishes, because a membrane has to sit on sound substrate and be dressed up the wall past the splash line. Nothing gets tiled back over it until it has been ponding tested.',
+      includedItems: [
+        'Removal of existing finishes back to sound substrate',
+        'Screed correction so water runs to the floor trap',
+        'Seamless liquid-applied membrane, dressed up the walls',
+        'Detailing at floor traps, penetrations and thresholds',
+        'Water ponding test before tiling is reinstated',
+        'Written warranty on completed works',
+      ],
+      faqs: [
+        {
+          question: 'Will you need to hack up my tiles?',
+          answer:
+            'Usually, yes. A membrane has to sit on sound substrate and be dressed properly into upstands and around floor traps, which in a wet area means lifting the finishes. Where a topical or injection solution is genuinely appropriate we will say so — but we will not pretend a surface coat fixes a failed membrane underneath it.',
+        },
+        {
+          question: 'How long will the bathroom be out of action?',
+          answer:
+            'Typically three to seven days end to end, driven by curing time between coats and the ponding test rather than by how long the application takes. If you only have one bathroom, tell us at the quotation stage and we will sequence the work around that.',
+        },
+        {
+          question: 'My downstairs neighbour is complaining about a damp ceiling. Is that my bathroom?',
+          answer:
+            'Often, but not always — water travels along slabs and conduits before it appears. That is worth diagnosing properly rather than assuming, because inter-floor leakage in Singapore is a shared matter and the documentation matters. Our leak detection service traces the actual source first.',
+        },
+        {
+          question: 'Do you give a warranty?',
+          answer:
+            'Yes, in writing, with the term stated on your quotation before you commit. Wet area work is covered on the same basis as any other waterproofing we carry out.',
+        },
+      ],
+      icon: 'shield',
+      image: '/images/wp-sfs300.webp',
+    },
+    {
+      slug: 'leak-detection-repair',
+      category: 'waterproofing',
+      name: 'Leak Detection & Repair',
       h1: 'Leak Detection & Repair in Singapore',
       metaTitle: 'Water Leak Detection & Repair Singapore | Ceiling & Wall',
       metaDescription:
         'Ceiling and wall leak detection and repair in Singapore. Moisture meter and thermal survey, written diagnosis, and repair at the source rather than a paint-over.',
+      shortDescription:
+        'We trace the source of ceiling and wall leaks, then fix the cause — not just the stain.',
+      longDescription:
+        'A damp patch on your ceiling is rarely directly under the problem. Water travels along slabs, conduits and beams before it shows itself. We trace leaks back to the actual source using moisture meters and thermal inspection, tell you what we found, and repair the cause. Painting over a stain without doing this just buys you a few months.',
+      includedItems: [
+        'Moisture meter and thermal imaging survey',
+        'Written diagnosis of the actual source',
+        'Targeted repair at the point of failure',
+        'Reinstatement and repainting of the affected area',
+        'Follow-up inspection after the next heavy rain',
+      ],
       faqs: [
         {
           question: 'Can you find the leak without hacking everything up?',
@@ -507,106 +707,8 @@ export const client = {
             'We can, and it will come back. A stain on a dry, resolved substrate is a painting job. A stain on a wall that is still wet will push the new paint off within months. We will tell you honestly which one you have.',
         },
       ],
-      name: 'Leak Detection & Repair',
-      shortDescription:
-        'We trace the source of ceiling and wall leaks, then fix the cause — not just the stain.',
-      longDescription:
-        'A damp patch on your ceiling is rarely directly under the problem. Water travels along slabs, conduits and beams before it shows itself. We trace leaks back to the actual source using moisture meters and thermal inspection, tell you what we found, and repair the cause. Painting over a stain without doing this just buys you a few months.',
-      includedItems: [
-        'Moisture meter and thermal imaging survey',
-        'Written diagnosis of the actual source',
-        'Targeted repair at the point of failure',
-        'Reinstatement and repainting of the affected area',
-        'Follow-up inspection after the next heavy rain',
-      ],
       icon: 'wrench',
       image: '/images/stock-leak-repair.webp',
-    },
-    {
-      slug: 'protective-coatings',
-      h1: 'Protective & Industrial Coatings in Singapore',
-      metaTitle: 'Industrial Coatings Singapore | Epoxy Floors & Anti-Mould',
-      metaDescription:
-        'Epoxy and polyurethane floor systems, anti-carbonation and anti-mould coatings for Singapore warehouses, car parks and plant rooms. Scheduled around your operations.',
-      faqs: [
-        {
-          question: 'Can you work around our operations?',
-          answer:
-            'Usually, in phases. We section off areas, work nights or weekends where that suits you better, and sequence bays so the floor never goes entirely out of use. Downtime is the expensive part of an industrial coating job, so it is worth planning properly rather than discovering it halfway through.',
-        },
-        {
-          question: 'How long before we can walk or drive on it?',
-          answer:
-            'Foot traffic is typically earlier than vehicle traffic, and full chemical cure is later than both. Exact times depend on the system and the ambient conditions, and they appear on the programme before we start.',
-        },
-        {
-          question: 'Do you do line marking and anti-slip finishes?',
-          answer:
-            'Yes. Bay marking, walkways, hazard marking and slip-resistant aggregate can all be specified as part of the system rather than bolted on afterwards.',
-        },
-        {
-          question: 'Our floor is oily and has been coated before. Is that a problem?',
-          answer:
-            'It is the single thing that decides whether the new coating sticks. Contaminated or previously coated concrete needs degreasing and mechanical preparation — grinding or shot blasting — before anything is applied. A coating over oil will delaminate regardless of what it cost.',
-        },
-      ],
-      name: 'Protective & Industrial Coatings',
-      shortDescription:
-        'Anti-mould, anti-carbonation and epoxy systems for plants, car parks and warehouses.',
-      longDescription:
-        'Industrial surfaces need coatings that do a job beyond looking clean — chemical resistance, abrasion resistance, slip resistance, or protecting reinforcement from carbonation. We handle epoxy and polyurethane floor systems for warehouses and car parks, anti-mould coatings for humid plant rooms, and protective systems for structural steel and concrete.',
-      includedItems: [
-        'Epoxy and polyurethane floor systems',
-        'Anti-mould and anti-bacterial coatings',
-        'Anti-carbonation protection for concrete',
-        'Line marking and slip-resistant finishes',
-        'Work scheduled around your operations',
-      ],
-      icon: 'shield',
-      image: '/images/stock-protective-coatings.webp',
-    },
-    {
-      slug: 'surface-prep',
-      h1: 'Surface Repair & Preparation in Singapore',
-      metaTitle: 'Surface Preparation & Concrete Repair Singapore',
-      metaDescription:
-        'Crack repair, spalling concrete repair, skim coating and substrate preparation across Singapore — the work that decides whether a paint job lasts or fails.',
-      faqs: [
-        {
-          question: 'Why is preparation a separate line on the quote?',
-          answer:
-            'Because it is separate work, and itemising it is the only way you can compare quotations honestly. It is also the first thing a cheap quote cuts, precisely because it is invisible on handover day and only shows up a year later.',
-        },
-        {
-          question: 'Can you not just paint over it?',
-          answer:
-            'You can paint over almost anything once. The question is what it looks like in twelve months. Over chalky, damp or failing substrate, new paint fails at the same rate the old one did — and you pay twice.',
-        },
-        {
-          question: 'How do you deal with spalling concrete?',
-          answer:
-            'Break out to sound concrete, expose and treat the corroding reinforcement, then reinstate with a repair mortar before any coating goes on. Cosmetic filling over rusting steel is not a repair, it is a delay.',
-        },
-        {
-          question: 'My walls are powdery and chalky. Is that fixable?',
-          answer:
-            'Yes — that is what a penetrating sealer is for. It soaks in and binds the loose particles so the surface is stable enough to hold putty, skim coat or topcoat. Painting straight onto a powdery wall lifts the paint off along with the dust.',
-        },
-      ],
-      name: 'Surface Repair & Preparation',
-      shortDescription:
-        'Crack filling, spalling concrete repair and skim coating before a single drop of paint.',
-      longDescription:
-        'Preparation is where a paint job is actually won or lost, and it is the first thing a cheap quote cuts. We treat it as its own scope of work: removing failed coatings, filling and sanding cracks, repairing spalling concrete back to sound reinforcement, and skim coating to a flat finish. If the substrate is not right, no amount of good paint will save it.',
-      includedItems: [
-        'Removal of failed and flaking coatings',
-        'Spalling concrete repair to sound reinforcement',
-        'Crack routing, filling and sanding',
-        'Full skim coating to a flat finish',
-        'Alkali and moisture testing before priming',
-      ],
-      icon: 'sparkles',
-      image: '/images/job-facade-works-43.webp',
     },
   ] as Service[],
 
@@ -617,7 +719,7 @@ export const client = {
    * "addictive agents", "Advanced Flex1bihty") have been corrected; the
    * technical substance is unchanged.
    *
-   * Rendered as a section on /services, beneath the individual services.
+   * Rendered on the /waterproofing hub.
    */
   waterproofingProducts: {
     eyebrow: 'Concrete Waterproofing',
@@ -1484,16 +1586,6 @@ export const client = {
         title: 'Painting & Waterproofing Singapore | Goal Green World',
         description:
           'Certified painting and waterproofing contractor in Singapore. Low-VOC eco paints, proper surface prep, written warranty. Free site assessment.',
-      },
-      services: {
-        title: 'Our Services | Painting & Waterproofing Singapore',
-        description:
-          'Interior and exterior painting, waterproofing, leak detection and repair, protective coatings and surface preparation across Singapore.',
-      },
-      painting: {
-        title: 'Painting | Low-VOC & Anti-Mould Coatings Singapore',
-        description:
-          'Painting services and low-VOC, formaldehyde-free coatings for Singapore properties — anti-mould sealers, air-purifying interior paint and penetrating sealers, with full technical specifications.',
       },
       gallery: {
         title: 'Project Gallery | Goal Green World',

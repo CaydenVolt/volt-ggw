@@ -1,6 +1,7 @@
 ---
 /**
- * Homepage services overview. Cards deep-link into /services anchors.
+ * Homepage services overview. Cards link to each service page under its
+ * category hub; the header link goes to the painting hub.
  */
 import client from '../config/client.ts';
 import ServiceCard from './ServiceCard.astro';
@@ -24,10 +25,10 @@ const { services } = client;
       </div>
 
       <a
-        href="/services"
+        href="/painting"
         class="inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary transition-colors hover:text-brand-accent-hover"
       >
-        <span>All services</span>
+        <span>All painting services</span>
         <Icon name="arrow-right" size={16} />
       </a>
     </div>

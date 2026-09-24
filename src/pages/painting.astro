@@ -20,21 +20,23 @@ import EstimateForm from '../components/EstimateForm.astro';
 import CTABanner from '../components/CTABanner.astro';
 import client from '../config/client.ts';
 import Schema from '../components/Schema.astro';
+import ServiceHubGrid from '../components/ServiceHubGrid.astro';
 
-const { paintProducts, paintFaq, contact } = client;
+const { paintProducts, paintFaq, serviceCategories, contact } = client;
+const category = serviceCategories.find((c) => c.slug === "painting")!;
 const { products, systems, surfacePrep, offerings } = paintProducts;
 
 /** Look a product up by slug so systems can render real product data. */
 const bySlug = new Map(products.map((product) => [product.slug, product]));
 ---
 
-<BaseLayout pageKey="painting">
+<BaseLayout title={category.metaTitle} description={category.metaDescription}>
   <Schema slot="head" faqs={paintFaq} />
   <PageHero
-    eyebrow={paintProducts.eyebrow}
-    title={paintProducts.heading}
-    subtitle={paintProducts.intro}
-    image={paintProducts.heroImage}
+    eyebrow={category.eyebrow}
+    title={category.h1}
+    subtitle={category.intro}
+    image={category.heroImage}
     imageEmphasis="clean"
   >
     <p class="mt-6 text-xl font-bold text-brand-accent sm:text-2xl">
@@ -50,6 +52,12 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
   </PageHero>
 
   <TrustBar />
+
+  <ServiceHubGrid
+    category="painting"
+    heading="Painting Services"
+    intro="Four specialisms, one contractor — interiors, exteriors and facades, industrial coatings, and the surface repair that has to come first."
+  />
 
   {/* ── What we offer ── */}
   <section class="section-y bg-brand-bg-alt" aria-labelledby="offer-heading">
@@ -444,7 +452,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
             workmanship.
           </p>
           <div class="mt-7 flex flex-wrap gap-3">
-            <a href="/services" class="btn btn-accent px-6 py-3">
+            <a href="#services" class="btn btn-accent px-6 py-3">
               Our Painting Services
             </a>
             <a href="#enquire" class="btn btn-outline-light px-6 py-3">

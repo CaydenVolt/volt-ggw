@@ -1,0 +1,208 @@
+---
+/**
+ * /waterproofing — category hub.
+ *
+ * Ranks for the broad "waterproofing contractor singapore" term and hands the
+ * specific searches to its three child services. The SFS product range lives
+ * here rather than on the painting hub, because these are waterproofing
+ * products.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import SmartImage from '../components/SmartImage.astro';
+import ServiceHubGrid from '../components/ServiceHubGrid.astro';
+import TrustBar from '../components/TrustBar.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import ReviewCarousel from '../components/ReviewCarousel.astro';
+import FAQAccordion from '../components/FAQAccordion.astro';
+import EstimateForm from '../components/EstimateForm.astro';
+import CTABanner from '../components/CTABanner.astro';
+import Schema from '../components/Schema.astro';
+import client from '../config/client.ts';
+
+const { serviceCategories, waterproofingProducts, services } = client;
+const category = serviceCategories.find((c) => c.slug === 'waterproofing')!;
+
+/*
+ * The hub's own FAQ is drawn from its children — one representative question
+ * each — so the page answers the broad objections without duplicating a whole
+ * service page's list. Every question here is also rendered on screen, which
+ * is what keeps the FAQPage markup legitimate.
+ */
+const hubFaqs = services
+  .filter((s) => s.category === 'waterproofing')
+  .flatMap((s) => s.faqs.slice(0, 2));
+---
+
+<BaseLayout title={category.metaTitle} description={category.metaDescription}>
+  <Schema slot="head" faqs={hubFaqs} />
+
+  <PageHero
+    eyebrow={category.eyebrow}
+    title={category.h1}
+    subtitle={category.intro}
+    image={category.heroImage}
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/contact" class="btn btn-accent px-7 py-3.5">Get a Free Estimate</a>
+      <a href="#services" class="btn btn-outline-light px-7 py-3.5">
+        Browse Services
+      </a>
+    </div>
+  </PageHero>
+
+  <TrustBar />
+
+  <ServiceHubGrid
+    category="waterproofing"
+    heading="Waterproofing Services"
+    intro="Three specialisms, one contractor — roofs and podium decks, bathrooms and wet areas, and finding the leak when you do not yet know where it is coming from."
+  />
+
+  {/* ── Why systems fail ── */}
+  <section class="section-y bg-brand-primary" aria-labelledby="why-fail-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow eyebrow-light">Before You Re-Do It</p>
+        <h2 id="why-fail-heading" class="heading-section mt-3 text-white">
+          Why Waterproofing Fails
+        </h2>
+        <p class="mt-4 text-lg leading-relaxed text-white/70">
+          Almost never in the middle of a flat surface. Knowing which of these
+          happened decides what the repair actually is.
+        </p>
+      </div>
+
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          [
+            {
+              icon: 'droplet' as const,
+              title: 'The details, not the field',
+              body: 'Laps, upstands, drain outlets and pipe penetrations. That is where nearly every failure starts.',
+            },
+            {
+              icon: 'shield' as const,
+              title: 'The wrong system',
+              body: 'A rigid cementitious coating on a substrate that moves will crack through, whatever it cost.',
+            },
+            {
+              icon: 'clock' as const,
+              title: 'Cure rushed',
+              body: 'Coats applied before the one beneath has cured never reach the specified thickness or strength.',
+            },
+            {
+              icon: 'sparkles' as const,
+              title: 'Substrate not prepared',
+              body: 'Membrane laid over dust, laitance or a damp slab has nothing sound to bond to.',
+            },
+          ].map((item) => (
+            <li class="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-accent text-brand-accent-text">
+                <Icon name={item.icon} size={22} />
+              </span>
+              <h3 class="mt-4 text-base font-bold leading-snug text-white">
+                {item.title}
+              </h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-white/65">
+                {item.body}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* ── Product range ── */}
+  <section
+    id="products"
+    class="section-y scroll-mt-20 bg-brand-bg-alt"
+    aria-labelledby="wp-products-heading"
+  >
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">{waterproofingProducts.eyebrow}</p>
+        <h2 id="wp-products-heading" class="heading-section mt-3">
+          {waterproofingProducts.heading}
+        </h2>
+        <p class="lead mx-auto mt-4">{waterproofingProducts.intro}</p>
+      </div>
+
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          waterproofingProducts.items.map((product) => (
+            <li class="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5">
+              <div class="bg-white p-4">
+                <SmartImage
+                  src={product.image}
+                  alt={`${product.code} ${product.name}`}
+                  width={700}
+                  height={700}
+                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 90vw"
+                  class="mx-auto h-44 w-auto object-contain"
+                />
+              </div>
+
+              <div class="flex flex-1 flex-col border-t border-slate-100 p-6">
+                <span class="inline-flex self-start rounded-full bg-brand-accent px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-brand-accent-text">
+                  {product.code}
+                </span>
+                <h3 class="mt-3 text-lg font-bold leading-snug text-brand-primary">
+                  {product.name}
+                </h3>
+                <p class="mt-0.5 text-sm font-semibold text-brand-accent-deep">
+                  {product.variant}
+                </p>
+                <p class="mt-3 flex-1 text-[15px] leading-relaxed text-brand-muted">
+                  {product.description}
+                </p>
+                <p class="mt-4 border-t border-slate-100 pt-3 text-sm text-brand-muted">
+                  <span class="font-bold text-brand-primary">Packaging:</span>{' '}
+                  {product.packaging}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <ProcessSteps showCta={false} />
+
+  <FAQAccordion
+    items={hubFaqs}
+    heading="Waterproofing Questions"
+    eyebrow="Straight Answers"
+    groupName="waterproofing-hub-faq"
+    variant="white"
+  />
+
+  <ReviewCarousel variant="alt" uid="wp-hub-reviews" />
+
+  {/* ── Enquiry ── */}
+  <section id="enquire" class="section-y scroll-mt-20 bg-white" aria-labelledby="enquire-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl">
+        <div class="text-center">
+          <p class="eyebrow">Free, no obligation</p>
+          <h2 id="enquire-heading" class="heading-section mt-3">
+            Get a Waterproofing Quote
+          </h2>
+          <p class="lead mx-auto mt-4 max-w-xl">
+            Tell us where the water is getting in and send photos if you have
+            them. We will tell you what failed and quote to fix it.
+          </p>
+        </div>
+
+        <div class="mt-10">
+          <EstimateForm variant="full" heading="Request Your Estimate" subheading="" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTABanner headline="Stop the Leak at Its Source" />
+</BaseLayout>

@@ -44,13 +44,19 @@ Opens on <http://localhost:4321>.
 
 ## Site map
 
-35 pages build from the config. Everything is static HTML.
+42 pages build from the config. Everything is static HTML.
+
+Services sit under two category hubs. A service's `category` field decides
+which hub it appears on and what its URL is — `/<category>/<slug>` — so
+moving a service between hubs is a one-word config change.
 
 | Route | Source | Notes |
 | --- | --- | --- |
 | `/` | `pages/index.astro` | Split hero with the estimate form card |
-| `/services` | `pages/services.astro` | One anchored section per service |
-| `/painting` | `pages/painting.astro` | Product specs + painting FAQ |
+| `/painting` | `pages/painting.astro` | Category hub + paint product specs |
+| `/painting/<slug>` | `pages/painting/[slug].astro` | One per painting service |
+| `/waterproofing` | `pages/waterproofing.astro` | Category hub + SFS product range |
+| `/waterproofing/<slug>` | `pages/waterproofing/[slug].astro` | One per waterproofing service |
 | `/gallery` | `pages/gallery.astro` | Filterable by category |
 | `/pricing` | `pages/pricing.astro` | Indicative pricing cards + pricing FAQ |
 | `/resources` | `pages/resources/index.astro` | Article listing |
@@ -63,8 +69,21 @@ Opens on <http://localhost:4321>.
 Adding a service, an area or an article adds a page or a section
 automatically — you do not touch routing.
 
-> **Anchors:** service cards and the footer deep-link to `/services#<slug>`.
-> Those slugs come from `services[].slug`, so renaming one changes the URL.
+> **URLs:** a service page lives at `/<category>/<slug>`. Both parts come
+> from the config, so renaming either changes the live URL — set up a redirect
+> if the old one has been indexed.
+
+### Why a page per service rather than anchors
+
+Six anchored sections on one page compete with each other: Google has one URL,
+one title and one H1 to rank for six different searches. Split out, each
+service gets its own H1 in the "<service> in Singapore" shape, its own meta
+description and its own FAQ block, so "roof waterproofing singapore" and
+"interior painting singapore" can rank independently.
+
+The H1 pattern is not a guess. The two Singapore sites currently ranking for
+these terms use "Painting Services Singapore" and "Your Trusted Waterproofing
+Contractor in Singapore" — service plus location, no slogan.
 
 ---
 
@@ -120,7 +139,8 @@ icon is caught by `npm run check` rather than silently rendering nothing.
 | `contact` | Phone, `phoneHref`, email, WhatsApp, address, business hours |
 | `social` | Platform + URL pairs |
 | `nav` | The 8 page links. `Nav.astro` marks the current one automatically |
-| `services` | `slug`, `name`, `shortDescription`, `longDescription`, `includedItems[]`, `icon`, `image` |
+| `serviceCategories` | The two hubs: slug, H1, meta, intro, hero image |
+| `services` | `slug`, `category`, `name`, `h1`, `metaTitle`, `metaDescription`, `shortDescription`, `longDescription`, `includedItems[]`, `faqs[]`, `icon`, `image` |
 | `process` | Numbered steps. 4–5 works best |
 | `trust` | The icon row |
 | `about` | `preview` (homepage), `story[]` (/about), `values[]`, `points[]`, photo |

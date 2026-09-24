@@ -1,0 +1,31 @@
+---
+/**
+ * /waterproofing/<slug> — one page per waterproofing service.
+ * Body lives in ServiceDetail so this route and the painting one stay
+ * identical in behaviour.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceDetail from '../../components/ServiceDetail.astro';
+import Schema from '../../components/Schema.astro';
+import client from '../../config/client.ts';
+
+export const getStaticPaths = (() =>
+  client.services
+    .filter((service) => service.category === 'waterproofing')
+    .map((service) => ({
+      params: { slug: service.slug },
+      props: { service },
+    }))) satisfies GetStaticPaths;
+
+const { service } = Astro.props;
+---
+
+<BaseLayout
+  title={service.metaTitle}
+  description={service.metaDescription}
+  ogImage={service.image}
+>
+  <Schema slot="head" type="service" service={service} />
+  <ServiceDetail service={service} />
+</BaseLayout>
