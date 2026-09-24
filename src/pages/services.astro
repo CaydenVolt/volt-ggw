@@ -13,7 +13,7 @@ import ProcessSteps from '../components/ProcessSteps.astro';
 import CTABanner from '../components/CTABanner.astro';
 import client from '../config/client.ts';
 
-const { services } = client;
+const { services, waterproofingProducts } = client;
 ---
 
 <BaseLayout pageKey="services">
@@ -114,6 +114,69 @@ const { services } = client;
       </section>
     ))
   }
+
+  {/* ── Concrete waterproofing product range ── */}
+  <section
+    id="waterproofing-products"
+    class="section-y scroll-mt-20 bg-brand-primary"
+    aria-labelledby="wp-products-heading"
+  >
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow eyebrow-light">{waterproofingProducts.eyebrow}</p>
+        <h2 id="wp-products-heading" class="heading-section mt-3 text-white">
+          {waterproofingProducts.heading}
+        </h2>
+        <p class="mt-4 text-lg leading-relaxed text-white/70">
+          {waterproofingProducts.intro}
+        </p>
+      </div>
+
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          waterproofingProducts.items.map((product) => (
+            <li class="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              <div class="bg-white p-4">
+                <SmartImage
+                  src={product.image}
+                  alt={`${product.code} ${product.name}`}
+                  width={700}
+                  height={700}
+                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 90vw"
+                  class="mx-auto h-44 w-auto object-contain"
+                />
+              </div>
+
+              <div class="flex flex-1 flex-col p-6">
+                <span class="inline-flex self-start rounded-full bg-brand-accent px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-brand-accent-text">
+                  {product.code}
+                </span>
+                <h3 class="mt-3 text-lg font-bold leading-snug text-white">
+                  {product.name}
+                </h3>
+                <p class="mt-0.5 text-sm font-semibold text-brand-accent">
+                  {product.variant}
+                </p>
+                <p class="mt-3 flex-1 text-[15px] leading-relaxed text-white/65">
+                  {product.description}
+                </p>
+                <p class="mt-4 border-t border-white/10 pt-3 text-sm text-white/70">
+                  <span class="font-bold text-white">Packaging:</span>{' '}
+                  {product.packaging}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-10 text-center">
+        <a href="#services-estimate" class="btn btn-accent px-7 py-3.5">
+          Enquire About Waterproofing
+        </a>
+      </div>
+    </div>
+  </section>
 
   <ProcessSteps showCta={false} />
 

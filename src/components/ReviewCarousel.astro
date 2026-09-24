@@ -128,7 +128,10 @@ const arrowClass =
 
           <figcaption class="mt-5 border-t border-slate-300/70 pt-4">
             <p class="text-sm font-bold text-brand-primary">{review.name}</p>
-            <p class="mt-0.5 text-xs text-brand-muted">{review.jobType}</p>
+            <p class="mt-0.5 text-xs text-brand-muted">
+              {review.jobType}
+              {review.when && <span> · {review.when}</span>}
+            </p>
           </figcaption>
         </figure>
       ))

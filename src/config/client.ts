@@ -309,7 +309,7 @@ export const client = {
         'Daily cleanup and final walkthrough',
       ],
       icon: 'roller',
-      image: '/images/service-1-placeholder.webp',
+      image: '/images/stock-interior-painting.webp',
     },
     {
       slug: 'exterior-painting',
@@ -326,7 +326,7 @@ export const client = {
         'Full safety documentation and permits',
       ],
       icon: 'building',
-      image: '/images/service-2-placeholder.webp',
+      image: '/images/job-exterior-repaint-43.webp',
     },
     {
       slug: 'waterproofing',
@@ -343,7 +343,7 @@ export const client = {
         'Written warranty on completed works',
       ],
       icon: 'droplet',
-      image: '/images/service-3-placeholder.webp',
+      image: '/images/stock-waterproofing.webp',
     },
     {
       slug: 'leak-repair',
@@ -360,7 +360,7 @@ export const client = {
         'Follow-up inspection after the next heavy rain',
       ],
       icon: 'wrench',
-      image: '/images/service-4-placeholder.webp',
+      image: '/images/stock-leak-repair.webp',
     },
     {
       slug: 'protective-coatings',
@@ -377,7 +377,7 @@ export const client = {
         'Work scheduled around your operations',
       ],
       icon: 'shield',
-      image: '/images/service-5-placeholder.webp',
+      image: '/images/stock-protective-coatings.webp',
     },
     {
       slug: 'surface-prep',
@@ -394,9 +394,72 @@ export const client = {
         'Alkali and moisture testing before priming',
       ],
       icon: 'sparkles',
-      image: '/images/service-6-placeholder.webp',
+      image: '/images/job-pressure-wash-43.webp',
     },
   ] as Service[],
+
+  /* ---- Concrete waterproofing product range ------------------------------ */
+  /**
+   * The SFS waterproofing line, transcribed from the client's own product
+   * flyers. Obvious scan/typing errors in the source copy ("signal component",
+   * "addictive agents", "Advanced Flex1bihty") have been corrected; the
+   * technical substance is unchanged.
+   *
+   * Rendered as a section on /services, beneath the individual services.
+   */
+  waterproofingProducts: {
+    eyebrow: 'Concrete Waterproofing',
+    heading: 'Our Waterproofing Product Range',
+    intro:
+      'We deliver qualified exterior project coatings, decorative paint, woodcare and adhesives, waterproof paint and paint buckets — supplying more than 8,000 stores internationally.',
+    items: [
+      {
+        code: 'SFS100',
+        name: 'K11 Water-Proof Paint',
+        variant: 'Advanced Flexibility',
+        description:
+          'A two-component polymer-modified waterproof paint built on imported high-polymer waterproof emulsion and multiple assistants. Mixing the powder and liquid components proportionately creates a flexible waterproofing film with strong bonding strength to concrete and mortar, for an excellent waterproofing result.',
+        packaging: '5kg, 18kg, 20kg',
+        image: '/images/wp-sfs100.webp',
+      },
+      {
+        code: 'SFS300',
+        name: 'K11 Water-Proof Paint',
+        variant: 'Flexibility',
+        description:
+          'An eco-friendly product based on high-polymer waterproof emulsion, multiple inorganic materials and additive agents. It uses the permeable mechanism of crystalline material into concrete, combining binding ability, water-preserving capability, flexibility and permeable crystallisation into the pore structure of grouting mortar — doubling the waterproofing function.',
+        packaging: '5kg, 10kg, 20kg',
+        image: '/images/wp-sfs300.webp',
+      },
+      {
+        code: 'SFS600',
+        name: 'K11 Water-Proof Paint',
+        variant: 'General Type',
+        description:
+          'Formulated by combining high-polymer waterproof emulsion, multiple inorganic materials and additive agents proportionately. Intended for common, general-purpose waterproofing work.',
+        packaging: '5kg, 10kg, 18kg',
+        image: '/images/wp-sfs600.webp',
+      },
+      {
+        code: 'SFS400',
+        name: 'Acrylic Ester Water-Proof Paint',
+        variant: 'Multi-functional Type',
+        description:
+          'A single-component high-polymer waterproof paint formulated on an acrylic polymer base with several additive agents and inorganic filler. Suited to roof and multi-surface applications.',
+        packaging: '5kg, 10kg, 20kg',
+        image: '/images/wp-sfs400.webp',
+      },
+      {
+        code: 'SFS500',
+        name: 'Leaking Stoppage Master',
+        variant: 'Rapid Plug',
+        description:
+          'A single-component powder product using water as the binder. Neither toxic nor contaminating, which makes it suitable for use on drinking water projects.',
+        packaging: '1kg, 5kg',
+        image: '/images/wp-sfs500.webp',
+      },
+    ],
+  },
 
   /* ---- Process ----------------------------------------------------------- */
   process: {
@@ -455,8 +518,8 @@ export const client = {
       'Our Painting & Waterproofing division brings that standard to buildings. Eco-aware, low-VOC coatings applied by bizSAFE-certified crews who prepare surfaces properly the first time. Whether it is an HDB flat, a condominium block or an industrial facility, we specify the system that suits the substrate and the climate — not whatever is cheapest to apply.',
       'We do not subcontract your job out to whoever is free that week. The crew that quotes is the crew that turns up, and the same people are accountable from the first site visit to the final walkthrough.',
     ],
-    image: '/images/about-placeholder.webp',
-    imageAlt: 'The Goal Green World painting and waterproofing team',
+    image: '/images/about-team.webp',
+    imageAlt: 'Goal Green World crew working on a building exterior in Singapore',
     /** Ticked list, used on the homepage preview and /about. */
     points: [
       'ISO 9001:2015 and ISO 45001:2018 certified processes',
@@ -557,16 +620,19 @@ export const client = {
      * Filter buttons on /gallery, in order. "All" is added automatically.
      * Every `items[].category` below must appear in this list.
      */
+    /*
+     * Every item below is a REAL photograph of the client's own work.
+     * `/gallery` only renders a filter button for a category that actually
+     * matches something, so adding the first genuine waterproofing or
+     * commercial job here brings those filters back automatically.
+     */
     categories: ['Painting', 'Waterproofing', 'Commercial', 'Residential'],
     items: [
-      { image: '/images/gallery-1-placeholder.webp', alt: 'Repainted HDB living room', category: 'Residential' },
-      { image: '/images/gallery-2-placeholder.webp', alt: 'Roof waterproofing membrane application', category: 'Waterproofing' },
-      { image: '/images/gallery-3-placeholder.webp', alt: 'Condominium facade repainting', category: 'Commercial' },
-      { image: '/images/gallery-4-placeholder.webp', alt: 'Bathroom wet area waterproofing', category: 'Waterproofing' },
-      { image: '/images/gallery-5-placeholder.webp', alt: 'Office interior repaint', category: 'Painting' },
-      { image: '/images/gallery-6-placeholder.webp', alt: 'Warehouse epoxy floor coating', category: 'Commercial' },
-      { image: '/images/gallery-7-placeholder.webp', alt: 'Balcony waterproofing and tiling', category: 'Residential' },
-      { image: '/images/gallery-8-placeholder.webp', alt: 'Exterior facade repaint, low-rise block', category: 'Painting' },
+      { image: '/images/job-exterior-repaint-sq.webp', alt: 'Exterior repainting of a three-storey terrace house, Singapore', category: 'Residential' },
+      { image: '/images/job-facade-access-sq.webp', alt: 'Facade works in progress with scaffold access to upper floors', category: 'Residential' },
+      { image: '/images/job-highlevel-scaffold-sq.webp', alt: 'High-level works from a suspended scaffold at roof gable', category: 'Painting' },
+      { image: '/images/job-pressure-wash-sq.webp', alt: 'Pressure washing a weathered facade before repainting', category: 'Painting' },
+      { image: '/images/job-crew-at-work-sq.webp', alt: 'Crew repainting the exterior of a multi-storey house', category: 'Residential' },
     ] as GalleryItem[],
   },
 
@@ -1147,7 +1213,8 @@ export const client = {
     title: 'Painting & Waterproofing Singapore | Goal Green World',
     description:
       'Certified painting and waterproofing contractor in Singapore. Low-VOC eco paints, proper surface prep, written warranty. bizSAFE and ISO certified. Free estimate.',
-    ogImage: '/images/hero-placeholder.webp',
+    /** Social share card. Uses the homepage hero photograph. */
+    ogImage: '/images/home-hero.webp',
     locale: 'en_SG',
     /**
      * Per-page overrides. Any key may be omitted, and any page may omit either

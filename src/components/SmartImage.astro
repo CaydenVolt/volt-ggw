@@ -9,7 +9,7 @@
  * `public/` is far friendlier for a non-technical person swapping photos.
  *
  * So this component supports both, and the config just writes a normal-looking
- * path like `/images/hero-placeholder.webp`:
+ * path like `/images/home-hero.webp`:
  *
  *   1. If a file with that name exists in `src/assets/images/`, it is run
  *      through <Image> — resized, converted to WebP, hashed, cached forever.
@@ -23,7 +23,7 @@
 import { Image } from 'astro:assets';
 
 export interface Props {
-  /** Config-style path, e.g. `/images/hero-placeholder.webp`. */
+  /** Config-style path, e.g. `/images/home-hero.webp`. */
   src: string;
   alt: string;
   width: number;

@@ -48,7 +48,7 @@ export const articles: Article[] = [
     category: 'Painting',
     readTime: '5 min read',
     publishedAt: '2026-08-14',
-    image: '/images/article-1-placeholder.webp',
+    image: '/images/article-peeling.webp',
     body: [
       {
         type: 'paragraph',
@@ -107,7 +107,7 @@ export const articles: Article[] = [
     category: 'Waterproofing',
     readTime: '7 min read',
     publishedAt: '2026-07-22',
-    image: '/images/article-2-placeholder.webp',
+    image: '/images/stock-article-waterproofing.webp',
     body: [
       {
         type: 'paragraph',
@@ -170,7 +170,7 @@ export const articles: Article[] = [
     category: 'Guides',
     readTime: '4 min read',
     publishedAt: '2026-06-30',
-    image: '/images/article-3-placeholder.webp',
+    image: '/images/article-prep.webp',
     body: [
       {
         type: 'paragraph',
