@@ -27,14 +27,22 @@ const address = [
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
       {/* ── Brand ── */}
       <div class="sm:col-span-2 lg:col-span-1">
-        <img
-          src={logo.src}
-          alt={logo.alt}
-          height={logo.height}
-          width={logo.height * 4}
-          class="w-auto"
-          style={`height:${logo.height}px`}
-        />
+        {/* Light plate so the dark logo artwork reads on the dark footer. */}
+        <span
+          class:list={[
+            'inline-flex items-center',
+            logo.needsLightPlate && 'rounded-lg bg-white px-2.5 py-1.5',
+          ]}
+        >
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            height={logo.height}
+            width={logo.height * 3}
+            class="w-auto"
+            style={`height:${logo.height}px`}
+          />
+        </span>
         <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-brand-accent">
           {company.division}
         </p>

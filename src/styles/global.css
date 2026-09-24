@@ -16,16 +16,18 @@
  */
 
 @theme {
-  --color-brand-primary: var(--brand-primary, #0b1f3a);
-  --color-brand-primary-light: var(--brand-primary-light, #15305a);
-  --color-brand-secondary: var(--brand-secondary, #1e3a5f);
-  --color-brand-accent: var(--brand-accent, #f0a81c);
-  --color-brand-accent-hover: var(--brand-accent-hover, #d9940f);
-  --color-brand-accent-text: var(--brand-accent-text, #11203a);
+  --color-brand-primary: var(--brand-primary, #1f3a2c);
+  --color-brand-primary-light: var(--brand-primary-light, #2c4e3b);
+  --color-brand-secondary: var(--brand-secondary, #35604a);
+  --color-brand-accent: var(--brand-accent, #a6ce39);
+  --color-brand-accent-hover: var(--brand-accent-hover, #93b92c);
+  --color-brand-accent-text: var(--brand-accent-text, #16281c);
+  /* Accent used as text or icons on light backgrounds — darker for contrast. */
+  --color-brand-accent-deep: var(--brand-accent-deep, #5c7d18);
   --color-brand-bg: var(--brand-bg, #ffffff);
-  --color-brand-bg-alt: var(--brand-bg-alt, #f5f7fa);
-  --color-brand-text: var(--brand-text, #1a2233);
-  --color-brand-muted: var(--brand-muted, #5a6779);
+  --color-brand-bg-alt: var(--brand-bg-alt, #f1f4ec);
+  --color-brand-text: var(--brand-text, #242e27);
+  --color-brand-muted: var(--brand-muted, #69726b);
 
   --font-sans:
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
@@ -185,13 +187,23 @@
 
   /* ---- Typography helpers ---- */
 
-  /* Small uppercase label that sits above a section heading. */
+  /*
+   * Small uppercase label that sits above a section heading.
+   *
+   * Defaults to the DARKENED accent, because most sections are light and the
+   * brand lime only reaches ~1.9:1 on white. Add `eyebrow-light` on dark
+   * bands, where the full-strength lime is both legible and on-brand.
+   */
   .eyebrow {
     display: inline-block;
     font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+    color: var(--color-brand-accent-deep);
+  }
+
+  .eyebrow-light {
     color: var(--color-brand-accent);
   }
 

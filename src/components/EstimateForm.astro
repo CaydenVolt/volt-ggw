@@ -99,15 +99,16 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
   <div id={id('shell')}>
     {/* ── Heading ── */}
     <div class:list={['text-center', isCard ? 'mb-5' : 'mb-6']}>
+      {/* Card is white, so the dark logo artwork needs no plate here. */}
       {
         showLogo && (
           <img
             src={logo.src}
             alt={logo.alt}
             height={logo.height}
-            width={logo.height * 4}
-            class="mx-auto mb-4 w-auto rounded-lg bg-brand-primary px-3 py-2"
-            style={`height:${logo.height + 16}px`}
+            width={logo.height * 3}
+            class="mx-auto mb-4 w-auto"
+            style={`height:${logo.height}px`}
           />
         )
       }

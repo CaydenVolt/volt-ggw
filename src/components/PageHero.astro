@@ -20,11 +20,13 @@ export interface Props {
   /**
    * How present the background image is.
    *  - `subtle` (default): a texture behind the type.
-   *  - `bold`: a real photograph you are meant to see. Pairs with a heavier
-   *    left-to-right scrim so white text keeps its contrast over a busy or
-   *    light-coloured image.
+   *  - `bold`: a photograph you are meant to see, dimmed a little.
+   *  - `clean`: the photograph at full strength, nothing washed over it. The
+   *    only overlay is a gradient behind the copy column that clears entirely
+   *    by ~62%, so most of the image stays pixel-clean while white type keeps
+   *    its contrast.
    */
-  imageEmphasis?: 'subtle' | 'bold';
+  imageEmphasis?: 'subtle' | 'bold' | 'clean';
 }
 
 const {
@@ -37,6 +39,9 @@ const {
 } = Astro.props;
 
 const isBold = imageEmphasis === 'bold';
+const isClean = imageEmphasis === 'clean';
+
+const imageOpacity = isClean ? 'opacity-100' : isBold ? 'opacity-70' : 'opacity-20';
 ---
 
 <section class="relative isolate overflow-hidden bg-brand-primary">
@@ -48,13 +53,16 @@ const isBold = imageEmphasis === 'bold';
       height={1080}
       loading="eager"
       sizes="100vw"
-      class:list={[
-        'h-full w-full object-cover',
-        isBold ? 'opacity-70' : 'opacity-20',
-      ]}
+      class:list={['h-full w-full object-cover', imageOpacity]}
     />
     {
-      isBold ? (
+      isClean ? (
+        /*
+         * Copy-column scrim only. Solid at the left edge, gone by 62% — the
+         * right of the photograph is completely untouched.
+         */
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-primary from-15% via-brand-primary/75 via-40% to-transparent to-62%" />
+      ) : isBold ? (
         <>
           {/* Horizontal scrim: solid behind the copy, clearing to the right. */}
           <div class="absolute inset-0 bg-gradient-to-r from-brand-primary via-brand-primary/85 to-brand-primary/30" />
@@ -79,7 +87,7 @@ const isBold = imageEmphasis === 'bold';
           </a>
         )
       }
-      {eyebrow && <p class:list={['eyebrow', backLink && 'mt-4']}>{eyebrow}</p>}
+      {eyebrow && <p class:list={['eyebrow eyebrow-light', backLink && 'mt-4']}>{eyebrow}</p>}
       <h1
         class:list={[
           'text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl',

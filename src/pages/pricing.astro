@@ -62,7 +62,7 @@ const { pricing } = client;
               <ul class="mt-5 flex-1 space-y-2.5">
                 {card.includes.map((item) => (
                   <li class="flex items-start gap-2.5">
-                    <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                    <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-deep">
                       <Icon name="check" size={13} />
                     </span>
                     <span class="text-sm leading-relaxed text-brand-muted">
@@ -89,7 +89,7 @@ const { pricing } = client;
       {/* ── Disclaimer ── */}
       <div class="mx-auto mt-12 max-w-3xl rounded-2xl border-l-4 border-brand-accent bg-brand-bg-alt p-6 sm:p-8">
         <h3 class="flex items-center gap-2.5 text-lg font-bold text-brand-primary">
-          <Icon name="target" size={22} class="shrink-0 text-brand-accent" />
+          <Icon name="target" size={22} class="shrink-0 text-brand-accent-deep" />
           Every Project Is Different
         </h3>
         <p class="mt-3 text-[15px] leading-relaxed text-brand-muted">
@@ -138,7 +138,7 @@ const { pricing } = client;
             },
           ].map((factor) => (
             <li class="flex items-start gap-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-primary/5 text-brand-accent">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-primary/5 text-brand-accent-deep">
                 <Icon name={factor.icon} size={22} />
               </span>
               <div>

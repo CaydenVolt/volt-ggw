@@ -42,15 +42,22 @@ const { hero, contact, logo } = client;
     <div class="grid items-center gap-10 py-12 md:py-16 lg:grid-cols-[1.05fr_minmax(380px,420px)] lg:gap-12 lg:py-20">
       {/* ─────────────── Left: copy ─────────────── */}
       <div>
-        {/* Logo */}
-        <img
-          src={logo.src}
-          alt={logo.alt}
-          height={logo.height}
-          width={logo.height * 4}
-          class="w-auto"
-          style={`height:${logo.height + 10}px`}
-        />
+        {/* Logo — on a light plate, since the artwork is dark on transparent. */}
+        <span
+          class:list={[
+            'inline-flex items-center',
+            logo.needsLightPlate && 'rounded-xl bg-white px-4 py-2.5',
+          ]}
+        >
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            height={logo.height + 10}
+            width={(logo.height + 10) * 3}
+            class="w-auto"
+            style={`height:${logo.height + 10}px`}
+          />
+        </span>
 
         {/* Location / credential badge */}
         {

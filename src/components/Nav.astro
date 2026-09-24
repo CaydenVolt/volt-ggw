@@ -44,14 +44,25 @@ const isCurrent = (href: string) => {
         class="flex shrink-0 items-center gap-3"
         aria-label={`${company.name} — home`}
       >
-        <img
-          src={logo.src}
-          alt={logo.alt}
-          height={logo.height}
-          width={logo.height * 4}
-          class="w-auto"
-          style={`height:${logo.height}px`}
-        />
+        {/*
+          The logo artwork is dark charcoal + lime on transparent, so on the
+          dark nav it needs a light plate to stay legible. Config decides.
+        */}
+        <span
+          class:list={[
+            'inline-flex items-center',
+            logo.needsLightPlate && 'rounded-lg bg-white px-2.5 py-1.5',
+          ]}
+        >
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            height={logo.height}
+            width={logo.height * 3}
+            class="w-auto"
+            style={`height:${logo.height}px`}
+          />
+        </span>
         <span class="hidden border-l border-white/20 pl-3 text-[11px] font-semibold uppercase leading-tight tracking-wider text-white/70 2xl:block">
           {company.division}
         </span>

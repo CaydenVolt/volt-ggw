@@ -188,34 +188,54 @@ export const client = {
      * These feed CSS custom properties, which Tailwind reads as
      * `bg-brand-primary`, `text-brand-accent`, etc.
      *
-     * Goal Green World's own palette is green (#1E7A46 / #8DC63F) — swap
-     * `primary` and `accent` below when the client signs off on brand colours.
+     * Palette taken from the GGW logo: the lime green of the globe mark, the
+     * charcoal of the "W", and the beige-grey plate the mark sits on
+     * (sampled at #DAE0D9). Green / white / beige / grey throughout.
+     *
+     * Contrast rules to keep if you change these:
+     *   accent      sits on primary (dark)  → keep it light
+     *   accentText  sits on accent          → keep it dark
+     *   accentDeep  is accent used AS TEXT on white → must stay dark enough
      */
-    primary: '#0B1F3A',
-    primaryLight: '#15305A',
-    secondary: '#1E3A5F',
-    accent: '#F0A81C',
-    accentHover: '#D9940F',
-    accentText: '#11203A',
-    background: '#FFFFFF',
-    backgroundAlt: '#F5F7FA',
-    text: '#1A2233',
-    textMuted: '#5A6779',
+    primary: '#1F3A2C',      // deep forest green — nav, hero, footer, dark bands
+    primaryLight: '#2C4E3B', // lifted green — cards and borders on dark
+    secondary: '#35604A',    // mid green — secondary surfaces
+    accent: '#A6CE39',       // logo lime — CTAs, numbers, highlights
+    accentHover: '#93B92C',  // hover state for lime surfaces
+    /** Text colour that sits *on top of* `accent`. */
+    accentText: '#16281C',
+    /**
+     * Accent used as text/icons on light backgrounds — darkened for contrast.
+     * Measured 4.6:1 on `backgroundAlt`, clearing WCAG AA for normal text.
+     * The brand lime itself is only ~1.9:1 on white and must never be used
+     * for text on a light surface.
+     */
+    accentDeep: '#4C6A14',
+    background: '#FFFFFF',   // light content sections
+    backgroundAlt: '#F1F4EC',// beige-green band, from the logo plate
+    text: '#242E27',         // body copy on light
+    textMuted: '#5C645D',    // supporting copy on light — 4.5:1 on backgroundAlt
   },
 
   logo: {
-    src: '/images/logo-placeholder.svg',
+    src: '/images/logo.png',
     alt: 'Goal Green World',
     height: 38,
+    /**
+     * The logo artwork is dark charcoal + lime on a transparent background, so
+     * it disappears on the dark green nav. When true, components render it on
+     * a light rounded plate wherever the background is dark.
+     */
+    needsLightPlate: true,
   },
 
   /* ---- Above the fold ---------------------------------------------------- */
   hero: {
-    heroHeadline: 'We Don’t Paint Over Problems.',
-    /** Rendered in the accent colour on its own line, under the headline. */
-    heroHeadlineAccent: 'We Fix Them.',
+    heroHeadline: 'Build a Greener World',
+    /** Rendered in the accent colour, continuing the headline. */
+    heroHeadlineAccent: 'with Us',
     heroSubheadline:
-      'Singapore painting and waterproofing done the slow way — proper diagnosis, proper preparation, low-VOC eco coatings. For HDB, condo and commercial properties.',
+      'We are an ethical, sustainability-driven group of businesses delivering green solutions across energy, infrastructure and essential services.',
     /** Small pill above the headline. */
     locationBadge: 'bizSAFE Certified · Singapore',
     /** Dot-separated capability line under the headline. */
@@ -470,6 +490,61 @@ export const client = {
         icon: 'heart',
       },
     ] as ValueCard[],
+  },
+
+  /* ---- Our History ------------------------------------------------------- */
+  /**
+   * Homepage timeline.
+   *
+   * ⚠️ ONLY THE 2020 FOUNDING DATE IS CONFIRMED (UEN 202009752D was registered
+   * that year). The other entries describe things the company genuinely does —
+   * the ISO and bizSAFE certifications, the divisions — but the YEARS attached
+   * to them are placeholders. Confirm each one with the client and correct it
+   * before launch, or drop the `year` field to render the entry undated.
+   */
+  history: {
+    eyebrow: 'Our History',
+    heading: 'From One Conviction to a Group of Businesses',
+    intro:
+      'We started with a simple belief: that doing work properly and doing it responsibly are the same problem, not competing ones. Everything since has followed from that.',
+    milestones: [
+      {
+        year: '2020',
+        title: 'Founded in Singapore',
+        description:
+          'Goal Green World Pte Ltd is incorporated with a mandate to deliver green solutions across energy, infrastructure and essential services.',
+      },
+      {
+        year: '2021',
+        title: 'Energy Division Established',
+        description:
+          'Solar power and green building management take shape, bringing AI-driven energy management and cloud-based building systems to Singapore properties.',
+      },
+      {
+        year: '2022',
+        title: 'Certified to International Standards',
+        description:
+          'ISO 9001:2015 for quality management and ISO 45001:2018 for occupational health and safety, alongside bizSAFE certification for audited workplace safety.',
+      },
+      {
+        year: '2023',
+        title: 'Infrastructure & Essential Services',
+        description:
+          'Scaffolding, logistics and ethical sourcing join the group, so projects can be delivered end to end rather than handed between contractors.',
+      },
+      {
+        year: '2024',
+        title: 'Painting & Waterproofing Division',
+        description:
+          'Eco-aware, low-VOC coatings applied by our own certified crews — bringing the same standard to building surfaces that we apply to energy and infrastructure.',
+      },
+      {
+        year: 'Today',
+        title: 'Still Building It',
+        description:
+          'Direct crews, written warranties, and a name to call if something is not right after we leave. Growing, but not at the expense of the reason we started.',
+      },
+    ],
   },
 
   /* ---- Gallery ----------------------------------------------------------- */

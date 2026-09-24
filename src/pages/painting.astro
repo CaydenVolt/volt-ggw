@@ -33,7 +33,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
     title={paintProducts.heading}
     subtitle={paintProducts.intro}
     image={paintProducts.heroImage}
-    imageEmphasis="bold"
+    imageEmphasis="clean"
   >
     <p class="mt-6 text-xl font-bold text-brand-accent sm:text-2xl">
       {paintProducts.tagline}
@@ -95,7 +95,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
       <section class="section-y bg-brand-primary" aria-labelledby="system-heading">
         <div class="container-x">
           <div class="mx-auto max-w-2xl text-center">
-            <p class="eyebrow">Complete System</p>
+            <p class="eyebrow eyebrow-light">Complete System</p>
             <h2 id="system-heading" class="heading-section mt-3 text-white">
               {system.name}
             </h2>
@@ -228,7 +228,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
                   >
                     {product.name}
                   </h3>
-                  <p class="mt-2 text-[15px] font-semibold text-brand-accent-hover">
+                  <p class="mt-2 text-[15px] font-semibold text-brand-accent-deep">
                     {product.tagline}
                   </p>
 
@@ -243,7 +243,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
                         <Icon
                           name="target"
                           size={19}
-                          class="mt-0.5 shrink-0 text-brand-accent"
+                          class="mt-0.5 shrink-0 text-brand-accent-deep"
                         />
                         <span>{product.recommendation}</span>
                       </p>
@@ -259,7 +259,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
                       <ul class="mt-3 space-y-2">
                         {product.features.map((feature) => (
                           <li class="flex items-start gap-2.5">
-                            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-deep">
                               <Icon name="check" size={13} />
                             </span>
                             <span class="text-sm leading-relaxed text-brand-text">
@@ -316,7 +316,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
 
                   {product.specsIncomplete && (
                     <p class="mt-3 flex items-start gap-2 rounded-lg bg-white px-4 py-3 text-xs leading-relaxed text-brand-muted ring-1 ring-slate-900/5">
-                      <Icon name="clock" size={15} class="mt-px shrink-0 text-brand-accent" />
+                      <Icon name="clock" size={15} class="mt-px shrink-0 text-brand-accent-deep" />
                       <span>
                         Full technical data sheet for this product is being
                         finalised. Contact us for complete specifications.
@@ -416,7 +416,7 @@ const bySlug = new Map(products.map((product) => [product.slug, product]));
                 'Aligned with green building standards',
               ].map((point) => (
                 <li class="flex items-start gap-3">
-                  <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-hover">
+                  <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent/15 text-brand-accent-deep">
                     <Icon name="check" size={15} />
                   </span>
                   <span class="text-[15px] font-medium leading-relaxed text-brand-text">
