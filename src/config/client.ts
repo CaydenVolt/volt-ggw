@@ -218,15 +218,17 @@ export const client = {
   },
 
   logo: {
+    /** Full-colour mark on a transparent background. For LIGHT surfaces. */
     src: '/images/logo.png',
+    /**
+     * Variant for DARK surfaces (nav, footer, hero). Identical mark, except
+     * the near-black "W" is recoloured white — the red and lime letters are
+     * untouched. Both files have transparent backgrounds, so the mark sits
+     * directly on the page with no plate or box behind it.
+     */
+    srcLight: '/images/logo-light.png',
     alt: 'Goal Green World',
     height: 38,
-    /**
-     * The logo artwork is dark charcoal + lime on a transparent background, so
-     * it disappears on the dark green nav. When true, components render it on
-     * a light rounded plate wherever the background is dark.
-     */
-    needsLightPlate: true,
   },
 
   /* ---- Above the fold ---------------------------------------------------- */
@@ -240,8 +242,8 @@ export const client = {
     locationBadge: 'bizSAFE Certified · Singapore',
     /** Dot-separated capability line under the headline. */
     serviceLine: 'Painting · Waterproofing · Leak Repair · Protective Coatings',
-    /** Subtle background image behind the dark hero. */
-    backgroundImage: '/images/hero-placeholder.webp',
+    /** Background photograph behind the homepage hero. */
+    backgroundImage: '/images/home-hero.webp',
     backgroundImageAlt: '',
     badges: ['bizSAFE Certified', 'ISO 9001 & 45001', 'Low-VOC Eco Paints', 'Written Warranty'],
   },

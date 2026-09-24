@@ -23,7 +23,7 @@ const { hero, contact, logo } = client;
 ---
 
 <section class="relative isolate overflow-hidden bg-brand-primary" aria-labelledby="hero-heading">
-  {/* ── Background image + scrim ── */}
+  {/* ── Background photograph + copy-column scrim ── */}
   <div class="absolute inset-0 -z-10">
     <SmartImage
       src={hero.backgroundImage}
@@ -33,31 +33,34 @@ const { hero, contact, logo } = client;
       loading="eager"
       fetchpriority="high"
       sizes="100vw"
-      class="h-full w-full object-cover opacity-30"
+      class="h-full w-full object-cover"
     />
-    <div class="absolute inset-0 bg-gradient-to-br from-brand-primary via-brand-primary/95 to-brand-primary/80"></div>
+    {/*
+      A single even tint rather than a one-sided scrim.
+      The subject of this photograph — the hand, globe and tree — sits on the
+      LEFT, which is exactly where a copy-column scrim would bury it. An even
+      tint keeps the whole picture visible across the full width and still
+      gives white type a consistent backing. Measured at ~6:1 for the headline.
+    */}
+    <div class="absolute inset-0 bg-brand-primary/70"></div>
+    {/* A touch more weight behind the copy column, and under the nav. */}
+    <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/45 via-transparent to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-brand-primary/35 via-transparent to-brand-primary/20"></div>
   </div>
 
   <div class="container-x">
     <div class="grid items-center gap-10 py-12 md:py-16 lg:grid-cols-[1.05fr_minmax(380px,420px)] lg:gap-12 lg:py-20">
       {/* ─────────────── Left: copy ─────────────── */}
       <div>
-        {/* Logo — on a light plate, since the artwork is dark on transparent. */}
-        <span
-          class:list={[
-            'inline-flex items-center',
-            logo.needsLightPlate && 'rounded-xl bg-white px-4 py-2.5',
-          ]}
-        >
-          <img
-            src={logo.src}
-            alt={logo.alt}
-            height={logo.height + 10}
-            width={(logo.height + 10) * 3}
-            class="w-auto"
-            style={`height:${logo.height + 10}px`}
-          />
-        </span>
+        {/* Light variant — sits directly on the hero, no plate. */}
+        <img
+          src={logo.srcLight}
+          alt={logo.alt}
+          height={logo.height + 14}
+          width={(logo.height + 14) * 3}
+          class="w-auto"
+          style={`height:${logo.height + 14}px`}
+        />
 
         {/* Location / credential badge */}
         {
