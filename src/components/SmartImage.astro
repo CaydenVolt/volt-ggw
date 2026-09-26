@@ -5,14 +5,14 @@
  * WHY THIS EXISTS
  * ───────────────
  * Astro's <Image> can only optimise files that live under `src/`. Files in
- * `public/` are copied verbatim — no resizing, no format conversion. But
+ * `public/` are copied verbatim, no resizing, no format conversion. But
  * `public/` is far friendlier for a non-technical person swapping photos.
  *
  * So this component supports both, and the config just writes a normal-looking
  * path like `/images/home-hero.webp`:
  *
  *   1. If a file with that name exists in `src/assets/images/`, it is run
- *      through <Image> — resized, converted to WebP, hashed, cached forever.
+ *      through <Image>, resized, converted to WebP, hashed, cached forever.
  *      This is what the shipped placeholders use.
  *
  *   2. Otherwise it falls back to a plain <img> pointing at `/images/<file>`
@@ -56,7 +56,7 @@ const filename = src.split('/').pop() ?? '';
 const match = localAssets[`../assets/images/${filename}`];
 const localSrc = match?.default;
 
-/* SVGs are passed through untouched — nothing to optimise. */
+/* SVGs are passed through untouched, nothing to optimise. */
 const isSvg = filename.endsWith('.svg');
 ---
 

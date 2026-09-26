@@ -1,6 +1,6 @@
 ---
 /**
- * /waterproofing — category hub.
+ * /waterproofing, category hub.
  *
  * Ranks for the broad "waterproofing contractor singapore" term and hands the
  * specific searches to its three child services. The SFS product range lives
@@ -25,8 +25,8 @@ const { serviceCategories, waterproofingProducts, services } = client;
 const category = serviceCategories.find((c) => c.slug === 'waterproofing')!;
 
 /*
- * The hub's own FAQ is drawn from its children — one representative question
- * each — so the page answers the broad objections without duplicating a whole
+ * The hub's own FAQ is drawn from its children, one representative question
+ * each, so the page answers the broad objections without duplicating a whole
  * service page's list. Every question here is also rendered on screen, which
  * is what keeps the FAQPage markup legitimate.
  */
@@ -58,7 +58,7 @@ const hubFaqs = services
   <ServiceHubGrid
     category="waterproofing"
     heading="Waterproofing Services"
-    intro="Three specialisms, one contractor — roofs and podium decks, bathrooms and wet areas, and finding the leak when you do not yet know where it is coming from."
+    intro="Three specialisms, one contractor, roofs and podium decks, bathrooms and wet areas, and finding the leak when you do not yet know where it is coming from."
   />
 
   {/* ── Why systems fail ── */}

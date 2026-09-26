@@ -22,7 +22,7 @@
   --color-brand-accent: var(--brand-accent, #a6ce39);
   --color-brand-accent-hover: var(--brand-accent-hover, #93b92c);
   --color-brand-accent-text: var(--brand-accent-text, #16281c);
-  /* Accent used as text or icons on light backgrounds — darker for contrast. */
+  /* Accent used as text or icons on light backgrounds, darker for contrast. */
   --color-brand-accent-deep: var(--brand-accent-deep, #5c7d18);
   --color-brand-bg: var(--brand-bg, #ffffff);
   --color-brand-bg-alt: var(--brand-bg-alt, #f1f4ec);
@@ -151,7 +151,7 @@
     transform: translateY(1px);
   }
 
-  /* Primary action — amber on anything. */
+  /* Primary action, amber on anything. */
   .btn-accent {
     background-color: var(--color-brand-accent);
     color: var(--color-brand-accent-text);

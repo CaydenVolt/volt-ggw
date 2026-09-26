@@ -24,7 +24,7 @@ const current = stripSlash(Astro.url.pathname);
 /**
  * A nav item is "current" for its own page and for anything beneath it, so
  * `/resources/some-article` still highlights Resources. `/` only ever matches
- * itself — otherwise it would match everything.
+ * itself, otherwise it would match everything.
  */
 const isCurrent = (href: string) => {
   const target = stripSlash(href);
@@ -42,9 +42,9 @@ const isCurrent = (href: string) => {
       <a
         href="/"
         class="flex shrink-0 items-center gap-3"
-        aria-label={`${company.name} — home`}
+        aria-label={`${company.name}, home`}
       >
-        {/* Light variant — sits directly on the dark nav, no plate. */}
+        {/* Light variant, sits directly on the dark nav, no plate. */}
         <img
           src={logo.srcLight}
           alt={logo.alt}

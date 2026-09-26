@@ -13,17 +13,17 @@
  *     Anything missing falls back to the site-wide `seo` defaults.
  *
  *  3. It holds the commented-out slots for GA4 / Meta Pixel / Google Ads.
- *     Per the brief these are NOT injected yet — only the IDs are wired up.
+ *     Per the brief these are NOT injected yet, only the IDs are wired up.
  */
 import '../styles/global.css';
-import client from '../config/client.ts';
+import client, { siteUrl, isPreview } from '../config/client.ts';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 
 export interface Props {
   /** Key into `seo.pages`. Ignored if `title`/`description` are passed. */
   pageKey?: string;
-  /** Explicit override — wins over `pageKey`. Used by dynamic routes. */
+  /** Explicit override, wins over `pageKey`. Used by dynamic routes. */
   title?: string;
   description?: string;
   /** Social share image path, overriding `seo.ogImage`. */
@@ -47,8 +47,14 @@ const pageMeta = pageKey ? (seo.pages as Record<string, { title?: string; descri
 const title = titleProp ?? pageMeta?.title ?? seo.title;
 const description = descriptionProp ?? pageMeta?.description ?? seo.description;
 
-const canonical = new URL(Astro.url.pathname, seo.siteUrl).href;
-const ogImage = new URL(ogImageProp ?? seo.ogImage, seo.siteUrl).href;
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = new URL(ogImageProp ?? seo.ogImage, siteUrl).href;
+
+/*
+ * A preview build is noindex everywhere, regardless of what a page asked for.
+ * The per-page `noindex` prop can only ever add the tag, never remove it.
+ */
+const blockIndexing = isPreview || noindex;
 
 /*
  * Dormant tracking slots. Rendering the configured IDs into the page source
@@ -60,7 +66,7 @@ const trackingSlots = [
   ['META PIXEL', analytics.metaPixelId],
   ['GOOGLE ADS', analytics.googleAdsId],
 ]
-  .map(([label, id]) => `<!-- ${label} SLOT — id: ${id || '(not set)'} -->`)
+  .map(([label, id]) => `<!-- ${label} SLOT, id: ${id || '(not set)'} -->`)
   .join('\n    ');
 
 /*
@@ -92,7 +98,14 @@ const brandVars = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {
+      blockIndexing && (
+        <meta
+          name="robots"
+          content={isPreview ? 'noindex, nofollow' : 'noindex, follow'}
+        />
+      )
+    }
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content={brand.primary} />
@@ -110,7 +123,7 @@ const brandVars = [
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* Inter — the only external asset the page loads. */}
+    {/* Inter, the only external asset the page loads. */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -123,13 +136,13 @@ const brandVars = [
 
     {/*
       ─────────────────────────────────────────────────────────────────────
-       TRACKING SLOTS — intentionally NOT active yet.
+       TRACKING SLOTS, intentionally NOT active yet.
       ─────────────────────────────────────────────────────────────────────
        The IDs below come from `client.analytics`. To go live, replace the
        matching comment with the real vendor snippet.
 
        Emitted via set:html because Astro passes literal HTML comments
-       through verbatim — an expression inside `<!-- -->` never evaluates.
+       through verbatim, an expression inside `<!-- -->` never evaluates.
     */}
     <Fragment set:html={trackingSlots} />
 

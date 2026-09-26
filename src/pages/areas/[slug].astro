@@ -1,6 +1,6 @@
 ---
 /**
- * /areas/<slug> — one page per entry in `serviceArea.areas`.
+ * /areas/<slug>, one page per entry in `serviceArea.areas`.
  *
  * Built for local SEO: each page gets a unique title, meta description and H1
  * naming the area. Copy comes from that area's own `description` when set, and
@@ -9,7 +9,7 @@
  * NOTE ON THIN CONTENT
  * Template-generated location pages carry a real risk of being treated as
  * doorway pages if every one is identical bar the place name. Give the areas
- * that matter a bespoke `description` in the config — the more of these that
+ * that matter a bespoke `description` in the config, the more of these that
  * carry genuinely local detail, the better the whole set performs.
  */
 import type { GetStaticPaths } from 'astro';
@@ -40,7 +40,7 @@ const intro = fill(area.description ?? serviceArea.descriptionTemplate);
 const title = `Painting & Waterproofing in ${area.name} | ${company.name}`;
 const description = `Professional painting and waterproofing services in ${area.name}, Singapore. Free site assessment, fixed itemised quotes, bizSAFE-certified crews. Call ${contact.phone}.`;
 
-/* Nearby areas for internal linking — keeps the set crawlable. */
+/* Nearby areas for internal linking, keeps the set crawlable. */
 const others = serviceArea.areas.filter((entry) => entry.slug !== area.slug);
 const nearby = others.slice(0, 8);
 ---

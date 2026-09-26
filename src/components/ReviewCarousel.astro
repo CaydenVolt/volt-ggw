@@ -3,7 +3,7 @@
  * Horizontally-scrolling review carousel.
  *
  * Implemented as a native scrolling flex rail with CSS scroll-snap. It works
- * with no JavaScript at all — touch swipe, trackpad and keyboard scrolling are
+ * with no JavaScript at all, touch swipe, trackpad and keyboard scrolling are
  * all native. The arrow buttons are a small progressive enhancement layered on
  * top, and hide themselves if the rail does not overflow.
  *
@@ -65,7 +65,7 @@ const arrowClass =
         }
       </div>
 
-      {/* Arrow controls — revealed by script only when the rail overflows. */}
+      {/* Arrow controls, revealed by script only when the rail overflows. */}
       <div id={controlsId} class="hidden gap-2">
         <button
           type="button"
@@ -140,7 +140,7 @@ const arrowClass =
 </section>
 
 <script is:inline define:vars={{ railId, controlsId, prevId, nextId }}>
-  // Progressive enhancement only — the rail is fully usable without this.
+  // Progressive enhancement only, the rail is fully usable without this.
   (function () {
     const rail = document.getElementById(railId);
     const controls = document.getElementById(controlsId);

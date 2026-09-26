@@ -1,0 +1,141 @@
+---
+/**
+ * PDPA notice, a short standalone statement of Singapore Personal Data
+ * Protection Act 2012 compliance, with pointers to the detail in
+ * /privacy. Keeping this short and separate makes the PDPA-specific
+ * obligations (DPO, consent, withdrawal, access & correction) findable in
+ * one place, without duplicating the full privacy policy.
+ */
+import LegalLayout from '../layouts/LegalLayout.astro';
+import client from '../config/client.ts';
+
+const { company, legal, contact } = client;
+---
+
+<LegalLayout
+  title="PDPA Notice"
+  intro={`${company.legalName}'s statement of compliance with Singapore's Personal Data Protection Act 2012.`}
+>
+  <h2>1. Our commitment</h2>
+  <p>
+    {company.legalName} (<strong>{company.registrationNumber}</strong>) is
+    committed to protecting your personal data in accordance with the Singapore
+    Personal Data Protection Act 2012 (the “PDPA”) and its subsidiary
+    legislation, and the advisory guidelines issued by the Personal Data
+    Protection Commission of Singapore (“PDPC”).
+  </p>
+  <p>
+    This notice summarises how we comply with the PDPA. Our full
+    <a href="/privacy">Privacy Policy</a>{' '}contains the operational detail, what we collect, how we use it, who we share it with and how long we keep
+    it.
+  </p>
+
+  <h2>2. Purposes for collecting your personal data</h2>
+  <p>
+    We collect, use and disclose personal data for purposes a reasonable person
+    would consider appropriate in the circumstances, including:
+  </p>
+  <ul>
+    <li>Responding to your enquiries and preparing quotations</li>
+    <li>Scheduling and carrying out painting and waterproofing work</li>
+    <li>Contacting you about your project by phone, SMS, WhatsApp or email</li>
+    <li>Providing customer support and warranty service</li>
+    <li>Billing, accounting and tax record-keeping</li>
+    <li>Sending you marketing information where you have consented</li>
+    <li>Preventing fraud and misuse of our services</li>
+    <li>Meeting legal, regulatory and contractual obligations</li>
+  </ul>
+  <p>
+    Where we intend to use your personal data for a new purpose that is not
+    covered above, we will notify you and obtain your consent before doing so
+    (unless the PDPA permits or requires the use without further consent).
+  </p>
+
+  <h2>3. Consent</h2>
+  <p>
+    By submitting an enquiry, engaging our services, or otherwise providing
+    personal data to us, you consent to us collecting, using and disclosing
+    your personal data for the purposes described in Section 2 and in our full
+    Privacy Policy.
+  </p>
+  <p>
+    Where we ask for your consent to receive SMS or WhatsApp messages from us
+    about your enquiry, that consent is a separate opt-in confirmed by ticking
+    the consent box on our enquiry form. You may withdraw that consent at any
+    time by replying <strong>STOP</strong> to any message.
+  </p>
+
+  <h2>4. Withdrawal of consent</h2>
+  <p>
+    You may withdraw your consent to our continued collection, use or
+    disclosure of your personal data at any time by contacting our Data
+    Protection Officer (Section 7).
+  </p>
+  <p>
+    Withdrawing consent does not affect the lawfulness of processing carried
+    out before withdrawal. Withdrawing consent may limit our ability to respond
+    to your enquiry, complete work you have engaged us for, or provide warranty
+    support, we will let you know the specific consequences at the time.
+  </p>
+
+  <h2>5. Access and correction</h2>
+  <p>
+    You have the right, under the PDPA, to request:
+  </p>
+  <ul>
+    <li>
+      confirmation of the personal data we hold about you and how it has been
+      used or disclosed in the past year; and
+    </li>
+    <li>
+      that we correct any errors or omissions in that personal data.
+    </li>
+  </ul>
+  <p>
+    Requests can be sent to our Data Protection Officer at the details in
+    Section 7. We will respond within 30 days, or notify you of the time we
+    require if we cannot meet that deadline. A reasonable fee may apply to
+    access requests as permitted by the PDPA.
+  </p>
+
+  <h2>6. Protection, accuracy and retention</h2>
+  <p>
+    We apply reasonable security arrangements to protect personal data in our
+    possession or under our control from unauthorised access, collection, use,
+    disclosure, copying, modification, disposal or similar risks. We take
+    reasonable steps to ensure the personal data we hold is accurate and
+    complete. We retain personal data only for as long as it is needed for the
+    purposes for which it was collected, or as required by law.
+  </p>
+
+  <h2>7. Data Protection Officer</h2>
+  <p>
+    We have appointed a Data Protection Officer as required under Section 11(3)
+    of the PDPA. All queries, requests and complaints relating to your personal
+    data should be directed to:
+  </p>
+  <p>
+    <strong>Data Protection Officer</strong><br />
+    {company.legalName}<br />
+    {contact.address.line1}<br />
+    {contact.address.city} {contact.address.postalCode}<br />
+    Email: <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a><br />
+    Telephone: <a href={`tel:${contact.phoneHref}`}>{contact.phone}</a>
+  </p>
+
+  <h2>8. Complaints</h2>
+  <p>
+    If you are not satisfied with how we have handled your personal data or
+    your request, you may lodge a complaint with the Personal Data Protection
+    Commission of Singapore at{' '}
+    <a href="https://www.pdpc.gov.sg" target="_blank" rel="noopener noreferrer">
+      www.pdpc.gov.sg
+    </a>.
+  </p>
+
+  <p class="mt-8 text-sm text-brand-muted">
+    This notice was last updated on {legal.lastUpdated}. We may revise this
+    notice from time to time; the current version is always available at this
+    page.
+  </p>
+</LegalLayout>

@@ -3,9 +3,9 @@
  * Reusable lead-capture form.
  *
  * VARIANTS
- *  - `card` — compact, white card with the logo on top. Used in the homepage
+ *  - `card`, compact, white card with the logo on top. Used in the homepage
  *    hero, sitting on the dark background as the primary conversion point.
- *  - `full` — wider, roomier version for /contact and the category hubs.
+ *  - `full`, wider, roomier version for /contact and the category hubs.
  *
  * Both render identical fields, identical hidden attribution fields and the
  * identical consent checkbox. Only spacing and chrome differ.
@@ -14,7 +14,7 @@
  * Every id is namespaced with a per-instance `uid`, so two forms can coexist
  * on one page without colliding. The script scopes itself to its own root.
  *
- * CURRENT STATE — demo mode.
+ * CURRENT STATE, demo mode.
  * `client.form.endpoint` is an empty string, so submitting logs the payload to
  * the console and shows the success message without any network request. Set
  * that field to a real URL and the same handler POSTs JSON to it instead.
@@ -82,7 +82,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
     className,
   ]}
 >
-  {/* ── Success panel — revealed by the script, replaces the form ── */}
+  {/* ── Success panel, revealed by the script, replaces the form ── */}
   <div
     id={id('success')}
     hidden
@@ -130,7 +130,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
     </div>
 
     <form id={id('form')} novalidate>
-      {/* Attribution — populated on load, never shown. */}
+      {/* Attribution, populated on load, never shown. */}
       {UTM_FIELDS.map((name) => <input type="hidden" name={name} value="" />)}
       <input type="hidden" name="page_url" value="" />
       <input type="hidden" name="referrer" value="" />
@@ -211,7 +211,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
             id={id('message')}
             name="message"
             rows={isCard ? 3 : 4}
-            placeholder="Property type, rough size, and what you need done — painting, waterproofing, or a leak you want looked at."
+            placeholder="Property type, rough size, and what you need done, painting, waterproofing, or a leak you want looked at."
             class:list={[fieldBase, fieldSize]}></textarea>
         </div>
       </div>
@@ -359,7 +359,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
 
       const data = Object.fromEntries(new FormData(form).entries());
 
-      // Honeypot tripped — pretend it worked, drop it on the floor.
+      // Honeypot tripped, pretend it worked, drop it on the floor.
       if (data.company_website) {
         shell.hidden = true;
         success.hidden = false;
@@ -386,7 +386,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
           // ── Demo mode ──────────────────────────────────────────────────
           // No endpoint configured. Log the exact payload that would be sent
           // so the field shape can be verified before the CRM is wired up.
-          console.log('[EstimateForm] Demo mode — payload that would be sent:', data);
+          console.log('[EstimateForm] Demo mode, payload that would be sent:', data);
         } else {
           const response = await fetch(endpoint, {
             method: 'POST',
@@ -402,7 +402,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
       } catch (error) {
         console.error('[EstimateForm] Submission failed:', error);
         formError.textContent =
-          'Sorry — something went wrong sending that. Please call or WhatsApp us instead.';
+          'Sorry, something went wrong sending that. Please call or WhatsApp us instead.';
         formError.hidden = false;
         if (submit) {
           submit.disabled = false;

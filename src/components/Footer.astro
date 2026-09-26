@@ -10,7 +10,7 @@ import Icon from './Icon.astro';
 
 const { company, contact, social, nav, logo, services } = client;
 
-/* Computed at build time — no stale year to remember to update. */
+/* Computed at build time, no stale year to remember to update. */
 const year = new Date().getFullYear();
 
 const address = [
@@ -27,7 +27,7 @@ const address = [
     <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
       {/* ── Brand ── */}
       <div class="sm:col-span-2 lg:col-span-1">
-        {/* Light variant — sits directly on the dark footer, no plate. */}
+        {/* Light variant, sits directly on the dark footer, no plate. */}
         <img
           src={logo.srcLight}
           alt={logo.alt}

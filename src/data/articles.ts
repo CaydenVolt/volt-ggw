@@ -9,12 +9,12 @@
  * field is caught by `npm run check`.
  *
  * If you would rather author in markdown, move these into an Astro content
- * collection at `src/content/articles/` — `/resources/[slug].astro` would then
+ * collection at `src/content/articles/`, `/resources/[slug].astro` would then
  * render `entry.render()` instead of mapping over blocks.
  *
  * These three articles are PLACEHOLDERS written as generic trade advice. They
  * are safe to publish as-is, but they are not a substitute for the client's own
- * expertise — replace or expand them before treating the Resource Centre as a
+ * expertise, replace or expand them before treating the Resource Centre as a
  * real content channel.
  */
 
@@ -33,7 +33,7 @@ export interface Article {
   category: string;
   /** Shown on the card, e.g. "5 min read". */
   readTime: string;
-  /** ISO date — drives sort order on the listing page (newest first). */
+  /** ISO date, drives sort order on the listing page (newest first). */
   publishedAt: string;
   image: string;
   body: ArticleBlock[];
@@ -52,7 +52,7 @@ export const articles: Article[] = [
     body: [
       {
         type: 'paragraph',
-        text: 'If your paint is bubbling, flaking or coming away in sheets, the instinct is to scrape it back and put fresh paint on. In most Singapore properties that buys you somewhere between six and eighteen months before the same patch fails again — because the paint was never the problem.',
+        text: 'If your paint is bubbling, flaking or coming away in sheets, the instinct is to scrape it back and put fresh paint on. In most Singapore properties that buys you somewhere between six and eighteen months before the same patch fails again, because the paint was never the problem.',
       },
       { type: 'heading', text: 'Paint fails when the surface underneath is wet' },
       {
@@ -77,7 +77,7 @@ export const articles: Article[] = [
       {
         type: 'list',
         items: [
-          'Does the patch get visibly worse after heavy rain? That points upward — roof, balcony or external wall.',
+          'Does the patch get visibly worse after heavy rain? That points upward, roof, balcony or external wall.',
           'Is it worst near a bathroom, kitchen or riser? That points at plumbing.',
           'Is the affected area cool and damp to the touch but the rest of the wall dry? Likely condensation.',
           'Can you see rust staining or hear a hollow sound when you tap it? That is spalling concrete, and it is structural.',
@@ -103,7 +103,7 @@ export const articles: Article[] = [
     slug: 'waterproofing-systems-explained',
     title: 'Waterproofing Systems Explained: Which One Does Your Property Need?',
     excerpt:
-      'Torch-on membrane, liquid-applied, cementitious, injection — a plain-language guide to what each system is for and where each one fails.',
+      'Torch-on membrane, liquid-applied, cementitious, injection, a plain-language guide to what each system is for and where each one fails.',
     category: 'Waterproofing',
     readTime: '7 min read',
     publishedAt: '2026-07-22',
@@ -111,7 +111,7 @@ export const articles: Article[] = [
     body: [
       {
         type: 'paragraph',
-        text: 'Waterproofing is not one product. It is a category containing several quite different systems, and the most common cause of failure is not bad workmanship — it is the wrong system specified for the substrate and exposure in the first place.',
+        text: 'Waterproofing is not one product. It is a category containing several quite different systems, and the most common cause of failure is not bad workmanship, it is the wrong system specified for the substrate and exposure in the first place.',
       },
       { type: 'heading', text: 'Torch-on membrane' },
       {
@@ -120,12 +120,12 @@ export const articles: Article[] = [
       },
       {
         type: 'paragraph',
-        text: 'Its weakness is detail work. Around drains, upstands and pipe penetrations the sheet has to be cut and lapped, and those laps are where nearly every torch-on failure starts. It also needs a protective screed or covering — left exposed to Singapore UV it degrades faster than the datasheet suggests.',
+        text: 'Its weakness is detail work. Around drains, upstands and pipe penetrations the sheet has to be cut and lapped, and those laps are where nearly every torch-on failure starts. It also needs a protective screed or covering, left exposed to Singapore UV it degrades faster than the datasheet suggests.',
       },
       { type: 'heading', text: 'Liquid-applied membrane' },
       {
         type: 'paragraph',
-        text: 'Polyurethane or acrylic applied by roller or spray, curing into a seamless film. Because there are no joints, it handles complex shapes — balconies, planters, bathrooms, anything with a lot of corners and penetrations — far better than sheet systems.',
+        text: 'Polyurethane or acrylic applied by roller or spray, curing into a seamless film. Because there are no joints, it handles complex shapes, balconies, planters, bathrooms, anything with a lot of corners and penetrations, far better than sheet systems.',
       },
       {
         type: 'paragraph',
@@ -134,7 +134,7 @@ export const articles: Article[] = [
       { type: 'heading', text: 'Cementitious coatings' },
       {
         type: 'paragraph',
-        text: 'Cement-based slurries that bond to concrete and masonry. Cheap, easy to apply, and tolerant of damp substrates — which makes them common for water tanks, basements and internal wet areas.',
+        text: 'Cement-based slurries that bond to concrete and masonry. Cheap, easy to apply, and tolerant of damp substrates, which makes them common for water tanks, basements and internal wet areas.',
       },
       {
         type: 'paragraph',
@@ -143,7 +143,7 @@ export const articles: Article[] = [
       { type: 'heading', text: 'Injection grouting' },
       {
         type: 'paragraph',
-        text: 'Resin or grout injected under pressure into an existing crack. A repair technique rather than a waterproofing system — useful for stopping an active leak through a structural crack, not for protecting a surface.',
+        text: 'Resin or grout injected under pressure into an existing crack. A repair technique rather than a waterproofing system, useful for stopping an active leak through a structural crack, not for protecting a surface.',
       },
       { type: 'heading', text: 'What actually determines the choice' },
       {
@@ -174,14 +174,14 @@ export const articles: Article[] = [
     body: [
       {
         type: 'paragraph',
-        text: 'A repaint goes faster, cleaner and cheaper when the property is ready before the crew arrives. Most of this is not your job — but a few things genuinely help, and a few things are worth asking about before day one.',
+        text: 'A repaint goes faster, cleaner and cheaper when the property is ready before the crew arrives. Most of this is not your job, but a few things genuinely help, and a few things are worth asking about before day one.',
       },
       { type: 'heading', text: 'Before the crew arrives' },
       {
         type: 'list',
         items: [
           'Take down photos, mirrors, curtains and wall-mounted fittings you care about',
-          'Empty or move display cabinets — sheeting protects from paint, not from knocks',
+          'Empty or move display cabinets, sheeting protects from paint, not from knocks',
           'Clear a path from the door to the work area for equipment',
           'Put valuables, documents and small electronics somewhere else entirely',
           'Decide where pets will be during working hours',
@@ -199,7 +199,7 @@ export const articles: Article[] = [
           'Covering floors wall to wall, not just the middle',
           'Masking skirtings, frames, switches and sockets',
           'Removing and reinstating switch and socket faceplates where needed',
-          'Daily cleanup — you should be able to use the rest of the home each evening',
+          'Daily cleanup, you should be able to use the rest of the home each evening',
         ],
       },
       { type: 'heading', text: 'Things worth asking before they start' },
@@ -215,12 +215,12 @@ export const articles: Article[] = [
       },
       {
         type: 'paragraph',
-        text: 'That last one matters more than it sounds. Concealed damage is the most common reason a job changes price midway. Agreeing up front that additional work gets quoted and approved in writing — before anyone does it — avoids the single most common dispute in this trade.',
+        text: 'That last one matters more than it sounds. Concealed damage is the most common reason a job changes price midway. Agreeing up front that additional work gets quoted and approved in writing, before anyone does it, avoids the single most common dispute in this trade.',
       },
       { type: 'heading', text: 'After the work' },
       {
         type: 'paragraph',
-        text: 'Walk the site with the crew before they pack up. Look at the surfaces in daylight and at an angle, not straight on — that is how you spot roller marks, thin coverage and missed edges. A good contractor expects this and will touch up on the spot.',
+        text: 'Walk the site with the crew before they pack up. Look at the surfaces in daylight and at an angle, not straight on, that is how you spot roller marks, thin coverage and missed edges. A good contractor expects this and will touch up on the spot.',
       },
     ],
   },

@@ -1,12 +1,12 @@
 ---
 /**
- * /gallery — filterable project grid.
+ * /gallery, filterable project grid.
  *
  * Filtering is done client-side by toggling a `hidden` class, so every image
  * is present in the HTML for crawlers and the page works with JS disabled
  * (all projects simply show, and the filter bar is hidden).
  *
- * No lightbox — the brief marks it optional, and skipping it keeps the page
+ * No lightbox, the brief marks it optional, and skipping it keeps the page
  * at one tiny script.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -20,7 +20,7 @@ import Schema from '../components/Schema.astro';
 const { gallery } = client;
 
 /*
- * Only offer filters that actually match something — a category listed in
+ * Only offer filters that actually match something, a category listed in
  * config but unused would otherwise render a button that empties the grid.
  */
 const usedCategories = gallery.categories.filter((category) =>

@@ -4,7 +4,7 @@
  *
  * This is the machine-readable half of "so Google knows what GGW does".
  * Prose tells a reader; this tells a crawler in terms it does not have to
- * infer — business type, location, service area, services offered, ratings and
+ * infer, business type, location, service area, services offered, ratings and
  * FAQ entries.
  *
  * Emitted into <head> via `<Schema slot="head" … />`.
@@ -17,7 +17,7 @@
  *
  * `priceRange` is deliberately omitted while pricing is a placeholder.
  */
-import client from '../config/client.ts';
+import client, { siteUrl } from '../config/client.ts';
 import type { Service, FaqItem } from '../config/client.ts';
 import { reviews, reviewSummary } from '../data/reviews.ts';
 
@@ -49,7 +49,7 @@ const businessId = `${origin}/#business`;
 const business: Record<string, unknown> = {
   '@type': 'HomeAndConstructionBusiness',
   '@id': businessId,
-  name: `${company.name} — ${company.division}`,
+  name: `${company.name}, ${company.division}`,
   legalName: company.legalName,
   url: origin,
   telephone: contact.phone,
@@ -143,7 +143,7 @@ if (type === 'service' && service) {
     areaServed: { '@type': 'Country', name: 'Singapore' },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: `${service.name} — what's included`,
+      name: `${service.name}, what's included`,
       itemListElement: service.includedItems.map((item) => ({
         '@type': 'Offer',
         itemOffered: { '@type': 'Service', name: item },

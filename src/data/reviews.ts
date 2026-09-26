@@ -10,7 +10,7 @@
  * jurisdictions, not merely a trust one.
  *
  * `reviewSummary.count` must match the number of genuine reviews on the
- * profile — update it when the count changes, or set it to 0 to hide the
+ * profile, update it when the count changes, or set it to 0 to hide the
  * aggregate rating entirely.
  */
 
@@ -19,7 +19,7 @@ export interface Review {
   stars: number;
   quote: string;
   name: string;
-  /** Job type or location, e.g. "Waterproofing — Tampines". */
+  /** Job type or location, e.g. "Waterproofing, Tampines". */
   jobType: string;
   /** Relative age as shown on the profile, e.g. "3 months ago". Optional. */
   when?: string;

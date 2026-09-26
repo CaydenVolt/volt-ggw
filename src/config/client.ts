@@ -1,6 +1,6 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- *  CLIENT CONFIG — the only file you edit to re-skin this template.
+ *  CLIENT CONFIG, the only file you edit to re-skin this template.
  * ─────────────────────────────────────────────────────────────────────────────
  *
  *  To clone this template for a new client:
@@ -13,7 +13,7 @@
  *  Nothing client-specific should live in a component. If you find yourself
  *  editing a component to change copy, add a field here instead.
  *
- *  Secrets (API tokens, private keys) do NOT belong here — this file ships to
+ *  Secrets (API tokens, private keys) do NOT belong here, this file ships to
  *  the browser. Put those in `.env` (see `.env.example`).
  */
 
@@ -56,8 +56,8 @@ export interface Service {
    * The H1 on that service's own page.
    *
    * Keep the pattern "<what> in Singapore". Both of the highest-ranking
-   * Singapore competitors use exactly that shape — "Painting Services
-   * Singapore" and "Your Trusted Waterproofing Contractor in Singapore" —
+   * Singapore competitors use exactly that shape, "Painting Services
+   * Singapore" and "Your Trusted Waterproofing Contractor in Singapore", 
    * because it matches how people actually search: service plus location.
    * A slogan in the H1 ranks for nothing.
    */
@@ -150,7 +150,7 @@ export interface ServiceArea {
   description?: string;
 }
 
-/** Per-page SEO. Any page may be omitted — it falls back to `seo`. */
+/** Per-page SEO. Any page may be omitted, it falls back to `seo`. */
 export interface PageMeta {
   title?: string;
   description?: string;
@@ -200,6 +200,28 @@ export interface PaintSystem {
 /* ── Config ─────────────────────────────────────────────────────────────── */
 
 export const client = {
+  /* ---- Deployment -------------------------------------------------------- */
+  /**
+   * ⚠️ THE GO-LIVE SWITCH. Check this before every deploy.
+   *
+   * While `isPreview` is true the whole site is hidden from search:
+   *   · every page gets `<meta name="robots" content="noindex, nofollow">`
+   *   · /robots.txt disallows everything and advertises no sitemap
+   *   · canonical URLs, Open Graph URLs and JSON-LD all use `previewUrl`
+   *
+   * That matters because an unlaunched site indexed on a *.pages.dev address
+   * competes with the real domain later and gets found with placeholder
+   * pricing still on it.
+   *
+   * TO GO LIVE: set `isPreview: false` AND set `seo.siteUrl` to the real
+   * domain. Both, in that order.
+   */
+  deployment: {
+    isPreview: true,
+    /** Where the client-preview build is hosted. No trailing slash. */
+    previewUrl: 'https://volt-template1.pages.dev',
+  },
+
   /* ---- Identity ---------------------------------------------------------- */
   company: {
     name: 'Goal Green World',
@@ -225,15 +247,15 @@ export const client = {
      *   accentText  sits on accent          → keep it dark
      *   accentDeep  is accent used AS TEXT on white → must stay dark enough
      */
-    primary: '#1F3A2C',      // deep forest green — nav, hero, footer, dark bands
-    primaryLight: '#2C4E3B', // lifted green — cards and borders on dark
-    secondary: '#35604A',    // mid green — secondary surfaces
-    accent: '#A6CE39',       // logo lime — CTAs, numbers, highlights
+    primary: '#1F3A2C',      // deep forest green, nav, hero, footer, dark bands
+    primaryLight: '#2C4E3B', // lifted green, cards and borders on dark
+    secondary: '#35604A',    // mid green, secondary surfaces
+    accent: '#A6CE39',       // logo lime, CTAs, numbers, highlights
     accentHover: '#93B92C',  // hover state for lime surfaces
     /** Text colour that sits *on top of* `accent`. */
     accentText: '#16281C',
     /**
-     * Accent used as text/icons on light backgrounds — darkened for contrast.
+     * Accent used as text/icons on light backgrounds, darkened for contrast.
      * Measured 4.6:1 on `backgroundAlt`, clearing WCAG AA for normal text.
      * The brand lime itself is only ~1.9:1 on white and must never be used
      * for text on a light surface.
@@ -242,7 +264,7 @@ export const client = {
     background: '#FFFFFF',   // light content sections
     backgroundAlt: '#F1F4EC',// beige-green band, from the logo plate
     text: '#242E27',         // body copy on light
-    textMuted: '#5C645D',    // supporting copy on light — 4.5:1 on backgroundAlt
+    textMuted: '#5C645D',    // supporting copy on light, 4.5:1 on backgroundAlt
   },
 
   logo: {
@@ -250,7 +272,7 @@ export const client = {
     src: '/images/logo.png',
     /**
      * Variant for DARK surfaces (nav, footer, hero). Identical mark, except
-     * the near-black "W" is recoloured white — the red and lime letters are
+     * the near-black "W" is recoloured white, the red and lime letters are
      * untouched. Both files have transparent backgrounds, so the mark sits
      * directly on the page with no plate or box behind it.
      */
@@ -262,7 +284,7 @@ export const client = {
   /* ---- Above the fold ---------------------------------------------------- */
   hero: {
     /**
-     * The company slogan. Rendered above the H1, prominently — but NOT as the
+     * The company slogan. Rendered above the H1, prominently, but NOT as the
      * H1 itself.
      *
      * A slogan tells Google nothing about what is sold or where. The two
@@ -295,7 +317,7 @@ export const client = {
   /* ---- Contact ----------------------------------------------------------- */
   contact: {
     phone: '+65 6816 2069',
-    /** Dial string for tel: links — digits and a leading + only. */
+    /** Dial string for tel: links, digits and a leading + only. */
     phoneHref: '+6568162069',
     email: 'info@goalgreen.world',
     whatsapp:
@@ -374,7 +396,7 @@ export const client = {
   /**
    * Every service belongs to one of the two category hubs and is published at
    * `/<category>/<slug>`. Adding one here creates its page, adds it to that
-   * hub, the footer and the sitemap — no routing to touch.
+   * hub, the footer and the sitemap, no routing to touch.
    */
   services: [
     /* ── Painting ── */
@@ -389,7 +411,7 @@ export const client = {
       shortDescription:
         'Low-VOC repainting for homes and offices, with full furniture protection and same-day cleanup.',
       longDescription:
-        'We repaint occupied homes and working offices without turning your life upside down. Every job starts with protection — furniture sheeted, floors covered, edges masked — then surface repair, priming and two finish coats of low-VOC paint. We work room by room and clean up at the end of each day, so the rest of the property stays usable throughout.',
+        'We repaint occupied homes and working offices without turning your life upside down. Every job starts with protection, furniture sheeted, floors covered, edges masked, then surface repair, priming and two finish coats of low-VOC paint. We work room by room and clean up at the end of each day, so the rest of the property stays usable throughout.',
       includedItems: [
         'Full furniture and flooring protection',
         'Crack filling, sanding and skim coating',
@@ -411,17 +433,17 @@ export const client = {
         {
           question: 'How many coats do I actually get?',
           answer:
-            'Primer or sealer plus two finish coats as standard, and the coat count is written on your quotation. If a quote only promises "a fresh coat of paint", ask — that can legitimately mean one thin pass over a dirty wall.',
+            'Primer or sealer plus two finish coats as standard, and the coat count is written on your quotation. If a quote only promises "a fresh coat of paint", ask, that can legitimately mean one thin pass over a dirty wall.',
         },
         {
           question: 'What paint do you use, and is it safe with children at home?',
           answer:
-            'Low-VOC and VOC-free systems as standard, with anti-mould formulation where the humidity warrants it — bathrooms, kitchens, and any wall that has grown mould before. Singapore sits at 80–85% humidity year round, which is why that choice matters more here than in a temperate market. The exact product is named on your quotation.',
+            'Low-VOC and VOC-free systems as standard, with anti-mould formulation where the humidity warrants it, bathrooms, kitchens, and any wall that has grown mould before. Singapore sits at 80–85% humidity year round, which is why that choice matters more here than in a temperate market. The exact product is named on your quotation.',
         },
         {
           question: 'Do you move the furniture?',
           answer:
-            'We sheet and shift what is reasonable within the room. Heavy items, valuables and fragile display pieces are better cleared by you before we start — sheeting protects against paint, not against knocks.',
+            'We sheet and shift what is reasonable within the room. Heavy items, valuables and fragile display pieces are better cleared by you before we start, sheeting protects against paint, not against knocks.',
         },
       ],
       icon: 'roller',
@@ -438,7 +460,7 @@ export const client = {
       shortDescription:
         'Weather-resistant coatings built for Singapore humidity, UV and monsoon rain.',
       longDescription:
-        'Singapore weather is brutal on exterior paint — constant UV, high humidity and heavy rain will find every weak spot in a cheap job. We pressure wash, treat any fungal growth, repair spalling concrete and apply anti-carbonation or elastomeric systems rated for tropical exposure. For high-rise and facade work we coordinate scaffolding or gondola access and all the safety documentation that comes with it.',
+        'Singapore weather is brutal on exterior paint, constant UV, high humidity and heavy rain will find every weak spot in a cheap job. We pressure wash, treat any fungal growth, repair spalling concrete and apply anti-carbonation or elastomeric systems rated for tropical exposure. For high-rise and facade work we coordinate scaffolding or gondola access and all the safety documentation that comes with it.',
       includedItems: [
         'High-pressure washing and fungal treatment',
         'Spalling concrete and crack repair',
@@ -460,7 +482,7 @@ export const client = {
         {
           question: 'What happens if it rains partway through the job?',
           answer:
-            'External work is scheduled around the forecast, and we stop before rain rather than racing it. Coating applied to a surface that is about to get wet, or that has not cured, is wasted material and a callback. Weather delays are normal on exterior work in Singapore — we build them into the programme rather than hiding them and then blaming them later.',
+            'External work is scheduled around the forecast, and we stop before rain rather than racing it. Coating applied to a surface that is about to get wet, or that has not cured, is wasted material and a callback. Weather delays are normal on exterior work in Singapore, we build them into the programme rather than hiding them and then blaming them later.',
         },
         {
           question: 'Do you repair spalling concrete before painting?',
@@ -487,7 +509,7 @@ export const client = {
       shortDescription:
         'Anti-mould, anti-carbonation and epoxy systems for plants, car parks and warehouses.',
       longDescription:
-        'Industrial surfaces need coatings that do a job beyond looking clean — chemical resistance, abrasion resistance, slip resistance, or protecting reinforcement from carbonation. We handle epoxy and polyurethane floor systems for warehouses and car parks, anti-mould coatings for humid plant rooms, and protective systems for structural steel and concrete.',
+        'Industrial surfaces need coatings that do a job beyond looking clean, chemical resistance, abrasion resistance, slip resistance, or protecting reinforcement from carbonation. We handle epoxy and polyurethane floor systems for warehouses and car parks, anti-mould coatings for humid plant rooms, and protective systems for structural steel and concrete.',
       includedItems: [
         'Epoxy and polyurethane floor systems',
         'Anti-mould and anti-bacterial coatings',
@@ -514,7 +536,7 @@ export const client = {
         {
           question: 'Our floor is oily and has been coated before. Is that a problem?',
           answer:
-            'It is the single thing that decides whether the new coating sticks. Contaminated or previously coated concrete needs degreasing and mechanical preparation — grinding or shot blasting — before anything is applied. A coating over oil will delaminate regardless of what it cost.',
+            'It is the single thing that decides whether the new coating sticks. Contaminated or previously coated concrete needs degreasing and mechanical preparation, grinding or shot blasting, before anything is applied. A coating over oil will delaminate regardless of what it cost.',
         },
       ],
       icon: 'layers',
@@ -527,7 +549,7 @@ export const client = {
       h1: 'Surface Repair & Preparation in Singapore',
       metaTitle: 'Surface Preparation & Concrete Repair Singapore',
       metaDescription:
-        'Crack repair, spalling concrete repair, skim coating and substrate preparation across Singapore — the work that decides whether a paint job lasts or fails.',
+        'Crack repair, spalling concrete repair, skim coating and substrate preparation across Singapore, the work that decides whether a paint job lasts or fails.',
       shortDescription:
         'Crack filling, spalling concrete repair and skim coating before a single drop of paint.',
       longDescription:
@@ -548,7 +570,7 @@ export const client = {
         {
           question: 'Can you not just paint over it?',
           answer:
-            'You can paint over almost anything once. The question is what it looks like in twelve months. Over chalky, damp or failing substrate, new paint fails at the same rate the old one did — and you pay twice.',
+            'You can paint over almost anything once. The question is what it looks like in twelve months. Over chalky, damp or failing substrate, new paint fails at the same rate the old one did, and you pay twice.',
         },
         {
           question: 'How do you deal with spalling concrete?',
@@ -558,7 +580,7 @@ export const client = {
         {
           question: 'My walls are powdery and chalky. Is that fixable?',
           answer:
-            'Yes — that is what a penetrating sealer is for. It soaks in and binds the loose particles so the surface is stable enough to hold putty, skim coat or topcoat. Painting straight onto a powdery wall lifts the paint off along with the dust.',
+            'Yes, that is what a penetrating sealer is for. It soaks in and binds the loose particles so the surface is stable enough to hold putty, skim coat or topcoat. Painting straight onto a powdery wall lifts the paint off along with the dust.',
         },
       ],
       icon: 'sparkles',
@@ -577,7 +599,7 @@ export const client = {
       shortDescription:
         'Membrane and liquid-applied systems for flat roofs, gutters, planters and podium decks.',
       longDescription:
-        'Flat roofs and podium decks take the worst of Singapore weather — standing water after every downpour, then hours of UV. We assess the substrate and the exposure before specifying, because a torch-on membrane and a liquid-applied system fail in completely different ways when either is put in the wrong place. Detailing at upstands, drain outlets and pipe penetrations gets the same attention as the open field, because that is where nearly every roof leak actually starts.',
+        'Flat roofs and podium decks take the worst of Singapore weather, standing water after every downpour, then hours of UV. We assess the substrate and the exposure before specifying, because a torch-on membrane and a liquid-applied system fail in completely different ways when either is put in the wrong place. Detailing at upstands, drain outlets and pipe penetrations gets the same attention as the open field, because that is where nearly every roof leak actually starts.',
       includedItems: [
         'Substrate assessment and system specification in writing',
         'Torch-on membrane or liquid-applied polyurethane',
@@ -595,12 +617,12 @@ export const client = {
         {
           question: 'Why did the last roof job fail so quickly?',
           answer:
-            'Membrane failure is the leading cause of recurring repair work in Singapore buildings, and it almost always starts at the details rather than the middle of a flat surface — laps, upstands, drain outlets and pipe penetrations. Exposed membrane left without its protective covering also degrades far faster under Singapore UV than the datasheet suggests. We look at where yours failed before quoting to redo it.',
+            'Membrane failure is the leading cause of recurring repair work in Singapore buildings, and it almost always starts at the details rather than the middle of a flat surface, laps, upstands, drain outlets and pipe penetrations. Exposed membrane left without its protective covering also degrades far faster under Singapore UV than the datasheet suggests. We look at where yours failed before quoting to redo it.',
         },
         {
           question: 'Do you give a warranty?',
           answer:
-            'Yes, in writing. The term depends on the system and the substrate, and it is stated on your quotation before you commit — not promised verbally and forgotten afterwards.',
+            'Yes, in writing. The term depends on the system and the substrate, and it is stated on your quotation before you commit, not promised verbally and forgotten afterwards.',
         },
         {
           question: 'Do you test it before handover?',
@@ -627,7 +649,7 @@ export const client = {
       shortDescription:
         'Seamless liquid-applied systems for bathrooms, kitchens, balconies and planter boxes.',
       longDescription:
-        'Wet areas are all detail and no open field — corners, floor traps, pipe penetrations, door thresholds and the junction where the floor meets the wall. That is why liquid-applied membrane suits them: it cures seamless, so there are no laps to fail. The work usually means lifting finishes, because a membrane has to sit on sound substrate and be dressed up the wall past the splash line. Nothing gets tiled back over it until it has been ponding tested.',
+        'Wet areas are all detail and no open field, corners, floor traps, pipe penetrations, door thresholds and the junction where the floor meets the wall. That is why liquid-applied membrane suits them: it cures seamless, so there are no laps to fail. The work usually means lifting finishes, because a membrane has to sit on sound substrate and be dressed up the wall past the splash line. Nothing gets tiled back over it until it has been ponding tested.',
       includedItems: [
         'Removal of existing finishes back to sound substrate',
         'Screed correction so water runs to the floor trap',
@@ -640,7 +662,7 @@ export const client = {
         {
           question: 'Will you need to hack up my tiles?',
           answer:
-            'Usually, yes. A membrane has to sit on sound substrate and be dressed properly into upstands and around floor traps, which in a wet area means lifting the finishes. Where a topical or injection solution is genuinely appropriate we will say so — but we will not pretend a surface coat fixes a failed membrane underneath it.',
+            'Usually, yes. A membrane has to sit on sound substrate and be dressed properly into upstands and around floor traps, which in a wet area means lifting the finishes. Where a topical or injection solution is genuinely appropriate we will say so, but we will not pretend a surface coat fixes a failed membrane underneath it.',
         },
         {
           question: 'How long will the bathroom be out of action?',
@@ -650,7 +672,7 @@ export const client = {
         {
           question: 'My downstairs neighbour is complaining about a damp ceiling. Is that my bathroom?',
           answer:
-            'Often, but not always — water travels along slabs and conduits before it appears. That is worth diagnosing properly rather than assuming, because inter-floor leakage in Singapore is a shared matter and the documentation matters. Our leak detection service traces the actual source first.',
+            'Often, but not always, water travels along slabs and conduits before it appears. That is worth diagnosing properly rather than assuming, because inter-floor leakage in Singapore is a shared matter and the documentation matters. Our leak detection service traces the actual source first.',
         },
         {
           question: 'Do you give a warranty?',
@@ -670,7 +692,7 @@ export const client = {
       metaDescription:
         'Ceiling and wall leak detection and repair in Singapore. Moisture meter and thermal survey, written diagnosis, and repair at the source rather than a paint-over.',
       shortDescription:
-        'We trace the source of ceiling and wall leaks, then fix the cause — not just the stain.',
+        'We trace the source of ceiling and wall leaks, then fix the cause, not just the stain.',
       longDescription:
         'A damp patch on your ceiling is rarely directly under the problem. Water travels along slabs, conduits and beams before it shows itself. We trace leaks back to the actual source using moisture meters and thermal inspection, tell you what we found, and repair the cause. Painting over a stain without doing this just buys you a few months.',
       includedItems: [
@@ -699,7 +721,7 @@ export const client = {
         {
           question: 'What if the leak comes back?',
           answer:
-            'We re-inspect after the next heavy rain as part of the job. If the source was misdiagnosed, that is on us. If a second, separate source appears — which does happen on older buildings — we will show you the evidence for it rather than simply re-invoicing.',
+            'We re-inspect after the next heavy rain as part of the job. If the source was misdiagnosed, that is on us. If a second, separate source appears, which does happen on older buildings, we will show you the evidence for it rather than simply re-invoicing.',
         },
         {
           question: 'Can you just repaint over the stain?',
@@ -725,7 +747,7 @@ export const client = {
     eyebrow: 'Concrete Waterproofing',
     heading: 'Our Waterproofing Product Range',
     intro:
-      'We deliver qualified exterior project coatings, decorative paint, woodcare and adhesives, waterproof paint and paint buckets — supplying more than 8,000 stores internationally.',
+      'We deliver qualified exterior project coatings, decorative paint, woodcare and adhesives, waterproof paint and paint buckets, supplying more than 8,000 stores internationally.',
     items: [
       {
         code: 'SFS100',
@@ -741,7 +763,7 @@ export const client = {
         name: 'K11 Water-Proof Paint',
         variant: 'Flexibility',
         description:
-          'An eco-friendly product based on high-polymer waterproof emulsion, multiple inorganic materials and additive agents. It uses the permeable mechanism of crystalline material into concrete, combining binding ability, water-preserving capability, flexibility and permeable crystallisation into the pore structure of grouting mortar — doubling the waterproofing function.',
+          'An eco-friendly product based on high-polymer waterproof emulsion, multiple inorganic materials and additive agents. It uses the permeable mechanism of crystalline material into concrete, combining binding ability, water-preserving capability, flexibility and permeable crystallisation into the pore structure of grouting mortar, doubling the waterproofing function.',
         packaging: '5kg, 10kg, 20kg',
         image: '/images/wp-sfs300.webp',
       },
@@ -829,7 +851,7 @@ export const client = {
     /** Full story for /about. Each string is a paragraph. */
     story: [
       'Goal Green World Pte Ltd is an ethical, sustainability-driven group delivering green solutions across energy, infrastructure and essential services in Singapore. We started in 2020 with a simple conviction: that doing building work properly and doing it responsibly are the same problem, not competing ones.',
-      'Our Painting & Waterproofing division brings that standard to buildings. Eco-aware, low-VOC coatings applied by bizSAFE-certified crews who prepare surfaces properly the first time. Whether it is an HDB flat, a condominium block or an industrial facility, we specify the system that suits the substrate and the climate — not whatever is cheapest to apply.',
+      'Our Painting & Waterproofing division brings that standard to buildings. Eco-aware, low-VOC coatings applied by bizSAFE-certified crews who prepare surfaces properly the first time. Whether it is an HDB flat, a condominium block or an industrial facility, we specify the system that suits the substrate and the climate, not whatever is cheapest to apply.',
       'We do not subcontract your job out to whoever is free that week. The crew that quotes is the crew that turns up, and the same people are accountable from the first site visit to the final walkthrough.',
     ],
     image: '/images/about-team.webp',
@@ -839,7 +861,7 @@ export const client = {
       'ISO 9001:2015 and ISO 45001:2018 certified processes',
       'Low-VOC, eco-aware paints and coatings as standard',
       'Written warranty on waterproofing works',
-      'Direct crews — we do not subcontract your job out',
+      'Direct crews, we do not subcontract your job out',
       'Detailed, itemised quotes with no variation surprises',
     ],
     /** Mission / values cards on /about. */
@@ -876,8 +898,8 @@ export const client = {
    * Homepage timeline.
    *
    * ⚠️ ONLY THE 2020 FOUNDING DATE IS CONFIRMED (UEN 202009752D was registered
-   * that year). The other entries describe things the company genuinely does —
-   * the ISO and bizSAFE certifications, the divisions — but the YEARS attached
+   * that year). The other entries describe things the company genuinely does, 
+   * the ISO and bizSAFE certifications, the divisions, but the YEARS attached
    * to them are placeholders. Confirm each one with the client and correct it
    * before launch, or drop the `year` field to render the entry undated.
    */
@@ -915,7 +937,7 @@ export const client = {
         year: '2024',
         title: 'Painting & Waterproofing Division',
         description:
-          'Eco-aware, low-VOC coatings applied by our own certified crews — bringing the same standard to building surfaces that we apply to energy and infrastructure.',
+          'Eco-aware, low-VOC coatings applied by our own certified crews, bringing the same standard to building surfaces that we apply to energy and infrastructure.',
       },
       {
         year: 'Today',
@@ -954,7 +976,7 @@ export const client = {
   /**
    * Short silent clips of real jobs, shown on /gallery.
    *
-   * Files live in `public/videos/` — Astro's image pipeline does not process
+   * Files live in `public/videos/`, Astro's image pipeline does not process
    * video, so they are served as-is. They were trimmed to ~14s and re-encoded
    * from the originals (55MB of phone footage down to under 4MB total); see
    * README → "Adding videos" for the command.
@@ -966,7 +988,7 @@ export const client = {
     eyebrow: 'On Site',
     heading: 'Watch Us Work',
     intro:
-      'Short clips from live jobs. Roof spray painting, coating and exterior repainting — filmed on site, not staged.',
+      'Short clips from live jobs. Roof spray painting, coating and exterior repainting, filmed on site, not staged.',
     items: [
       {
         src: '/videos/roof-spray-painting.mp4',
@@ -1002,7 +1024,7 @@ export const client = {
       {
         question: 'How much does it cost to repaint an HDB flat?',
         answer:
-          'It depends on the flat type, the number of coats and how much repair work the walls need. We give you a fixed, itemised quote after a free site visit — so the number you see is the number you pay. See our pricing guide for indicative starting figures.',
+          'It depends on the flat type, the number of coats and how much repair work the walls need. We give you a fixed, itemised quote after a free site visit, so the number you see is the number you pay. See our pricing guide for indicative starting figures.',
       },
       {
         question: 'How long will the work take?',
@@ -1038,7 +1060,7 @@ export const client = {
     subheading:
       'Indicative starting prices so you can budget before you call. Every quote is fixed and itemised after a free site visit.',
     /**
-     * ⚠️ PLACEHOLDER PRICES — these numbers are invented for layout purposes.
+     * ⚠️ PLACEHOLDER PRICES, these numbers are invented for layout purposes.
      * Replace every one of them with figures the client has confirmed before
      * this site goes anywhere near production. Publishing made-up prices for a
      * real business is a misrepresentation problem, not just an accuracy one.
@@ -1096,18 +1118,18 @@ export const client = {
       },
     ] as PricingCard[],
     disclaimer:
-      'Every project is different. Substrate condition, access, height, the number of coats and how much repair work is needed all move the final figure — sometimes substantially. These starting prices are a budgeting guide, not a quotation. The only number that means anything is the fixed, itemised quote we give you after a free site visit.',
+      'Every project is different. Substrate condition, access, height, the number of coats and how much repair work is needed all move the final figure, sometimes substantially. These starting prices are a budgeting guide, not a quotation. The only number that means anything is the fixed, itemised quote we give you after a free site visit.',
     /** Pricing-specific FAQ, shown on /pricing only. */
     faq: [
       {
         question: 'Why can’t you quote over the phone?',
         answer:
-          'We can give you a range, but not a price. Until we have seen the substrate we do not know whether we are looking at a repaint or a repair — and those are very different numbers. The site visit is free precisely so nobody is guessing.',
+          'We can give you a range, but not a price. Until we have seen the substrate we do not know whether we are looking at a repaint or a repair, and those are very different numbers. The site visit is free precisely so nobody is guessing.',
       },
       {
         question: 'Is the quotation fixed, or will it change?',
         answer:
-          'Fixed. The only thing that changes the price after you accept is additional work you approve in writing — for example concealed water damage found once we open up a surface. We will never do extra work and invoice you for it afterwards.',
+          'Fixed. The only thing that changes the price after you accept is additional work you approve in writing, for example concealed water damage found once we open up a surface. We will never do extra work and invoice you for it afterwards.',
       },
       {
         question: 'Do you ask for a deposit?',
@@ -1132,14 +1154,14 @@ export const client = {
    * technical figures are retained; attribution is not.
    *
    * Figures below are quoted from the data sheets as supplied. If a data sheet
-   * is revised, update the matching `specs` rows — nothing else reads them.
+   * is revised, update the matching `specs` rows, nothing else reads them.
    */
   paintProducts: {
     heading: 'Paint Products & Painting Services in Singapore',
     eyebrow: 'Green Building Materials',
     tagline: 'Protect Structures, Protect the Planet.',
     intro:
-      'Durable, eco-conscious coatings selected for Singapore’s tropical climate — low-VOC, low-odour and formaldehyde-free, specified around the substrate rather than the price list.',
+      'Durable, eco-conscious coatings selected for Singapore’s tropical climate, low-VOC, low-odour and formaldehyde-free, specified around the substrate rather than the price list.',
     heroImage: '/images/painting-hero.webp',
 
     /** "What We Offer" cards. Numbered 01, 02… in render order. */
@@ -1156,17 +1178,17 @@ export const client = {
         {
           title: 'Eco-Friendly Interior Paint',
           description:
-            'Low-VOC formulations safe for homes, schools, and commercial interiors — without compromising finish quality.',
+            'Low-VOC formulations safe for homes, schools, and commercial interiors, without compromising finish quality.',
         },
         {
           title: 'Industrial Protective Coatings',
           description:
-            'Heavy-duty solutions for warehouses, factories, and infrastructure — engineered for long-term durability.',
+            'Heavy-duty solutions for warehouses, factories, and infrastructure, engineered for long-term durability.',
         },
         {
           title: 'Low-VOC Formulations',
           description:
-            'Healthier indoor environments and reduced chemical emissions — aligned with green building standards.',
+            'Healthier indoor environments and reduced chemical emissions, aligned with green building standards.',
         },
       ],
     },
@@ -1181,9 +1203,9 @@ export const client = {
         description:
           'A three-part system: a sealer that blocks mould at the substrate, a humidity-regulating ceiling paint, and a stain-resistant wall paint. Used together they protect the whole envelope of a room rather than one surface of it.',
         steps: [
-          { product: 'MouldSeal', role: 'Sealer coat — blocks mould at its root' },
-          { product: 'Care', role: 'Ceilings — humidity control and anti-moulding' },
-          { product: 'CleanCare', role: 'Walls — easy to clean, stain and mould resistant' },
+          { product: 'MouldSeal', role: 'Sealer coat, blocks mould at its root' },
+          { product: 'Care', role: 'Ceilings, humidity control and anti-moulding' },
+          { product: 'CleanCare', role: 'Walls, easy to clean, stain and mould resistant' },
         ],
       },
     ] as PaintSystem[],
@@ -1233,7 +1255,7 @@ export const client = {
         category: 'Interior Paint',
         tagline: 'Air-purifying, humidity-regulating interior paint.',
         description:
-          'An interior paint that purifies airborne pollutants for healthier indoor air quality. Unlike conventional paints it is certified VOC-free, releases zero odour, and adds anti-moulding, anti-bacterial and humidity-regulating properties — absorbing and desorbing moisture as ambient conditions change.',
+          'An interior paint that purifies airborne pollutants for healthier indoor air quality. Unlike conventional paints it is certified VOC-free, releases zero odour, and adds anti-moulding, anti-bacterial and humidity-regulating properties, absorbing and desorbing moisture as ambient conditions change.',
         features: [
           'Certified VOC-free (<2 g/L)',
           'Odourless',
@@ -1244,7 +1266,7 @@ export const client = {
           'Easy application, quick-drying',
         ],
         designUse: [
-          'Interior wall and ceiling surfaces — cement, plaster and fibreboard',
+          'Interior wall and ceiling surfaces, cement, plaster and fibreboard',
           'Common areas such as void decks and corridors',
           'Other properly primed material surfaces',
         ],
@@ -1293,7 +1315,7 @@ export const client = {
         ],
         image: '/images/product-cleancare-placeholder.webp',
         recommendation:
-          'Recommended for walls — easy to clean whilst being both stain and mould resistant.',
+          'Recommended for walls, easy to clean whilst being both stain and mould resistant.',
         /* No technical data sheet supplied for this product yet. */
         specsIncomplete: true,
       },
@@ -1382,7 +1404,7 @@ export const client = {
 
     /** Shown at the foot of the technical section. */
     disclaimer:
-      'The figures above describe product performance under specific test conditions. Conditions on site vary, so actual results may differ. Product data may be revised without notice — confirm current figures before specifying.',
+      'The figures above describe product performance under specific test conditions. Conditions on site vary, so actual results may differ. Product data may be revised without notice, confirm current figures before specifying.',
   },
 
   /* ---- Painting FAQ ------------------------------------------------------ */
@@ -1411,7 +1433,7 @@ export const client = {
     {
       question: 'Do you inspect the site before quoting?',
       answer:
-        'Yes, where the scope or site condition warrants it. An inspection establishes surface condition, areas needing work, existing paint deterioration, cracks or damage, access and preparation requirements, the suitable paint system, and the manpower and duration involved — so the quote reflects the actual job.',
+        'Yes, where the scope or site condition warrants it. An inspection establishes surface condition, areas needing work, existing paint deterioration, cracks or damage, access and preparation requirements, the suitable paint system, and the manpower and duration involved, so the quote reflects the actual job.',
     },
     {
       question: 'Is surface preparation included?',
@@ -1426,7 +1448,7 @@ export const client = {
     {
       question: 'Can you repair cracks and damaged walls first?',
       answer:
-        'Yes, for suitable non-structural repairs — small cracks, holes and surface imperfections are handled as part of preparation. Significant or structural cracks should be assessed separately by an appropriately qualified professional before painting proceeds.',
+        'Yes, for suitable non-structural repairs, small cracks, holes and surface imperfections are handled as part of preparation. Significant or structural cracks should be assessed separately by an appropriately qualified professional before painting proceeds.',
     },
     {
       question: 'What type of paint do you use?',
@@ -1436,7 +1458,7 @@ export const client = {
     {
       question: 'Can you help with colour selection and matching?',
       answer:
-        'Yes. Bring your preferred colours, references or existing scheme, and we can discuss combinations suited to the space — including company branding for commercial projects. Matching an existing colour is usually possible, though age, fading, lighting and product differences affect accuracy. A physical sample gives the closest match.',
+        'Yes. Bring your preferred colours, references or existing scheme, and we can discuss combinations suited to the space, including company branding for commercial projects. Matching an existing colour is usually possible, though age, fading, lighting and product differences affect accuracy. A physical sample gives the closest match.',
     },
     {
       question: 'How long does a painting project take?',
@@ -1446,12 +1468,12 @@ export const client = {
     {
       question: 'Can you work while the building is occupied?',
       answer:
-        'Usually yes. We plan works in stages where practical — section-by-section painting, protection of furniture and equipment, controlled work areas, coordination around operating hours, ventilation and daily housekeeping. Commercial and industrial schedules can be arranged around site operations.',
+        'Usually yes. We plan works in stages where practical, section-by-section painting, protection of furniture and equipment, controlled work areas, coordination around operating hours, ventilation and daily housekeeping. Commercial and industrial schedules can be arranged around site operations.',
     },
     {
       question: 'Do you take on commercial and industrial projects?',
       answer:
-        'Yes — offices, retail units, warehouses, factories, workshops, industrial buildings, carparks, common areas and building exteriors. Larger projects are planned around access, safety, working hours, site operations and coordination with other contractors.',
+        'Yes, offices, retail units, warehouses, factories, workshops, industrial buildings, carparks, common areas and building exteriors. Larger projects are planned around access, safety, working hours, site operations and coordination with other contractors.',
     },
     {
       question: 'Do you carry out high-level and external work?',
@@ -1461,7 +1483,7 @@ export const client = {
     {
       question: 'Can painting be combined with other maintenance works?',
       answer:
-        'Yes, and it usually saves money. Painting coordinates well with waterproofing, concrete repair, crack repair, surface restoration, scaffolding, roof maintenance and general building maintenance — combining them avoids paying to mobilise twice.',
+        'Yes, and it usually saves money. Painting coordinates well with waterproofing, concrete repair, crack repair, surface restoration, scaffolding, roof maintenance and general building maintenance, combining them avoids paying to mobilise twice.',
     },
     {
       question: 'What should I do before the painters arrive?',
@@ -1471,12 +1493,12 @@ export const client = {
     {
       question: 'Do you do touch-up painting?',
       answer:
-        'Yes — scuffed walls, minor damage, doors and frames, high-traffic and common areas. Whether a localised touch-up or a full repaint is better depends on the existing paint condition and whether the colour is still available.',
+        'Yes, scuffed walls, minor damage, doors and frames, high-traffic and common areas. Whether a localised touch-up or a full repaint is better depends on the existing paint condition and whether the colour is still available.',
     },
     {
       question: 'Can you paint metal surfaces?',
       answer:
-        'Yes. Metal needs specialised preparation and coatings, especially outdoors or in damp conditions — typically cleaning, removing loose coatings or rust, suitable priming, then a compatible protective coating.',
+        'Yes. Metal needs specialised preparation and coatings, especially outdoors or in damp conditions, typically cleaning, removing loose coatings or rust, suitable priming, then a compatible protective coating.',
     },
     {
       question: 'How do I get a quotation?',
@@ -1493,7 +1515,7 @@ export const client = {
     descriptionTemplate:
       'Professional painting and waterproofing services in {area}. Free site assessment, fixed itemised quotes, and bizSAFE-certified crews across every HDB block, condominium and commercial unit in the area.',
     areas: [
-      { slug: 'yishun', name: 'Yishun', description: 'Our home ground — our office is on Yishun Street 23, so {area} jobs get the fastest response times we offer. Painting, waterproofing and leak repair across the whole estate.' },
+      { slug: 'yishun', name: 'Yishun', description: 'Our home ground, our office is on Yishun Street 23, so {area} jobs get the fastest response times we offer. Painting, waterproofing and leak repair across the whole estate.' },
       { slug: 'woodlands', name: 'Woodlands' },
       { slug: 'sembawang', name: 'Sembawang' },
       { slug: 'ang-mo-kio', name: 'Ang Mo Kio' },
@@ -1522,7 +1544,7 @@ export const client = {
   finalCta: {
     headline: 'Ready to Get Started?',
     subtext:
-      'Book a free site assessment. We will inspect, advise and quote — with no obligation to proceed.',
+      'Book a free site assessment. We will inspect, advise and quote, with no obligation to proceed.',
     buttonLabel: 'Get My Free Estimate',
   },
 
@@ -1532,7 +1554,7 @@ export const client = {
     subheading: 'Tell us about your project and we will come back to you within one business day.',
     submitLabel: 'Request My Free Estimate',
     successMessage:
-      'Thank you — your request is in. We will contact you within one business day.',
+      'Thank you, your request is in. We will contact you within one business day.',
     /**
      * Where the form POSTs. Empty string = demo mode: the form logs the payload
      * to the console and shows the success message without a network call.
@@ -1547,13 +1569,13 @@ export const client = {
 
   /* ---- Compliance -------------------------------------------------------- */
   legal: {
-    lastUpdated: '24 September 2026',
+    lastUpdated: '26 September 2026',
     privacyEmail: 'info@goalgreen.world',
   },
 
   /* ---- Analytics --------------------------------------------------------- */
   /**
-   * IDs only — these are public by design. The actual <script> snippets are
+   * IDs only, these are public by design. The actual <script> snippets are
    * NOT injected yet; `BaseLayout.astro` has commented slots in <head> ready
    * for them. Leave a value as '' to keep that slot dormant.
    */
@@ -1577,7 +1599,7 @@ export const client = {
     locale: 'en_SG',
     /**
      * Per-page overrides. Any key may be omitted, and any page may omit either
-     * field — both fall back to the values above. The dynamic routes
+     * field, both fall back to the values above. The dynamic routes
      * (/areas/<slug>, /resources/<slug>) build their own metadata from the
      * area or article, so they are not listed here.
      */
@@ -1590,7 +1612,7 @@ export const client = {
       gallery: {
         title: 'Project Gallery | Goal Green World',
         description:
-          'Recent painting and waterproofing projects across Singapore — residential, commercial and industrial.',
+          'Recent painting and waterproofing projects across Singapore, residential, commercial and industrial.',
       },
       pricing: {
         title: 'Pricing Guide | Painting & Waterproofing Singapore',
@@ -1617,4 +1639,22 @@ export const client = {
 } as const;
 
 export type ClientConfig = typeof client;
+
+/**
+ * The origin this build should advertise, in canonicals, Open Graph tags,
+ * JSON-LD and the sitemap.
+ *
+ * Resolved in ONE place so a preview build can never leak the production
+ * domain, or, worse, ship canonical tags pointing at example.com.
+ * Always import this rather than reading `seo.siteUrl` directly.
+ */
+export const siteUrl = (
+  client.deployment.isPreview
+    ? client.deployment.previewUrl
+    : client.seo.siteUrl
+).replace(/\/+$/, '');
+
+/** True when this build is a client preview and must stay out of search. */
+export const isPreview = client.deployment.isPreview;
+
 export default client;

@@ -3,7 +3,7 @@
  * The body of a single service page.
  *
  * Shared by `/painting/[slug]` and `/waterproofing/[slug]` so the two category
- * routes stay as thin as possible — each one only supplies `getStaticPaths`
+ * routes stay as thin as possible, each one only supplies `getStaticPaths`
  * and hands the service here.
  */
 import PageHero from './PageHero.astro';
@@ -27,7 +27,7 @@ const { services, serviceCategories, contact, serviceArea } = client;
 
 const category = serviceCategories.find((c) => c.slug === service.category)!;
 
-/* Siblings first — they are the closest alternative — then the other hub. */
+/* Siblings first, they are the closest alternative, then the other hub. */
 const siblings = services.filter(
   (s) => s.category === service.category && s.slug !== service.slug
 );
@@ -198,8 +198,7 @@ const areas = serviceArea.areas.slice(0, 10);
         class="font-bold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
       >
         See our {otherHub.eyebrow.toLowerCase()} services
-      </a>{' '}
-      — combining related works avoids paying to mobilise twice.
+      </a>, combining related works avoids paying to mobilise twice.
     </p>
 
     <div class="mx-auto mt-12 max-w-4xl text-center">
