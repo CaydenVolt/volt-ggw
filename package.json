@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=volt-template1 --branch=main --commit-dirty=true"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=volt-template1 --branch=main --commit-dirty=true"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

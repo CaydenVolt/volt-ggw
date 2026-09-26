@@ -126,18 +126,6 @@ export interface ValueCard {
   icon: IconName;
 }
 
-export interface PricingCard {
-  /** Usually matches a service slug, but does not have to. */
-  slug: string;
-  name: string;
-  /** Shown verbatim. Include the currency. */
-  startingFrom: string;
-  /** Qualifier under the price, e.g. "per room, 2 coats". */
-  priceNote: string;
-  includes: string[];
-  /** Adds a highlighted border. At most one card should set this. */
-  featured?: boolean;
-}
 
 export interface ServiceArea {
   /** Drives `/areas/<slug>`. Lowercase, hyphenated. */
@@ -352,7 +340,6 @@ export const client = {
     { label: 'Painting', href: '/painting' },
     { label: 'Waterproofing', href: '/waterproofing' },
     { label: 'Gallery', href: '/gallery' },
-    { label: 'Pricing', href: '/pricing' },
     { label: 'Resources', href: '/resources' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
@@ -1032,7 +1019,7 @@ export const client = {
       {
         question: 'How much does it cost to repaint an HDB flat?',
         answer:
-          'It depends on the flat type, the number of coats and how much repair work the walls need. We give you a fixed, itemised quote after a free site visit, so the number you see is the number you pay. See our pricing guide for indicative starting figures.',
+          'It depends on the flat type, the number of coats and how much repair work the walls need. We give you a fixed, itemised quote after a free site visit, so the number you see is the number you pay.',
       },
       {
         question: 'How long will the work take?',
@@ -1058,96 +1045,6 @@ export const client = {
         question: 'Which areas of Singapore do you cover?',
         answer:
           'We serve the whole of Singapore, including all HDB towns, private condominiums and industrial estates.',
-      },
-    ] as FaqItem[],
-  },
-
-  /* ---- Pricing ----------------------------------------------------------- */
-  pricing: {
-    heading: 'Painting & Waterproofing Prices in Singapore',
-    subheading:
-      'Indicative starting prices so you can budget before you call. Every quote is fixed and itemised after a free site visit.',
-    /**
-     * ⚠️ PLACEHOLDER PRICES, these numbers are invented for layout purposes.
-     * Replace every one of them with figures the client has confirmed before
-     * this site goes anywhere near production. Publishing made-up prices for a
-     * real business is a misrepresentation problem, not just an accuracy one.
-     */
-    cards: [
-      {
-        slug: 'interior-painting',
-        name: 'Interior Painting',
-        startingFrom: 'S$--',
-        priceNote: 'per room · primer + 2 coats',
-        includes: [
-          'Furniture and floor protection',
-          'Minor crack filling and sanding',
-          'Primer plus two coats, low-VOC',
-          'Daily cleanup',
-        ],
-      },
-      {
-        slug: 'waterproofing',
-        name: 'Waterproofing',
-        startingFrom: 'S$--',
-        priceNote: 'per m² · system dependent',
-        includes: [
-          'Substrate assessment',
-          'System specification in writing',
-          'Full detailing at upstands and drains',
-          'Ponding test before handover',
-          'Written warranty',
-        ],
-        featured: true,
-      },
-      {
-        slug: 'leak-repair',
-        name: 'Leak Detection & Repair',
-        startingFrom: 'S$--',
-        priceNote: 'per survey · offset against works',
-        includes: [
-          'Moisture meter and thermal survey',
-          'Written diagnosis of the source',
-          'Repair quotation with fixed price',
-          'Reinstatement and repainting',
-        ],
-      },
-      {
-        slug: 'exterior-painting',
-        name: 'Exterior & Facade',
-        startingFrom: 'S$--',
-        priceNote: 'per m² · access dependent',
-        includes: [
-          'Pressure washing and fungal treatment',
-          'Spalling and crack repair',
-          'Anti-carbonation coating system',
-          'Access and safety documentation',
-        ],
-      },
-    ] as PricingCard[],
-    disclaimer:
-      'Every project is different. Substrate condition, access, height, the number of coats and how much repair work is needed all move the final figure, sometimes substantially. These starting prices are a budgeting guide, not a quotation. The only number that means anything is the fixed, itemised quote we give you after a free site visit.',
-    /** Pricing-specific FAQ, shown on /pricing only. */
-    faq: [
-      {
-        question: 'Why can’t you quote over the phone?',
-        answer:
-          'We can give you a range, but not a price. Until we have seen the substrate we do not know whether we are looking at a repaint or a repair, and those are very different numbers. The site visit is free precisely so nobody is guessing.',
-      },
-      {
-        question: 'Is the quotation fixed, or will it change?',
-        answer:
-          'Fixed. The only thing that changes the price after you accept is additional work you approve in writing, for example concealed water damage found once we open up a surface. We will never do extra work and invoice you for it afterwards.',
-      },
-      {
-        question: 'Do you ask for a deposit?',
-        answer:
-          'Payment terms are set out in your quotation before you commit. They vary with the size and duration of the job.',
-      },
-      {
-        question: 'Why is the cheapest quote usually the most expensive?',
-        answer:
-          'Because preparation is invisible and it is the first thing a low quote cuts. A job that skips crack repair, priming and proper coats looks identical on handover day and starts failing within a year. You then pay twice.',
       },
     ] as FaqItem[],
   },
@@ -1621,11 +1518,6 @@ export const client = {
         title: 'Project Gallery | Goal Green World',
         description:
           'Recent painting and waterproofing projects across Singapore, residential, commercial and industrial.',
-      },
-      pricing: {
-        title: 'Pricing Guide | Painting & Waterproofing Singapore',
-        description:
-          'Indicative starting prices for painting and waterproofing in Singapore, plus what moves the final figure. Fixed itemised quotes after a free site visit.',
       },
       resources: {
         title: 'Resource Centre | Painting & Waterproofing Guides',
