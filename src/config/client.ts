@@ -447,7 +447,7 @@ export const client = {
         },
       ],
       icon: 'roller',
-      image: '/images/stock-interior-painting.webp',
+      image: '/images/job-interior-door-43.webp',
     },
     {
       slug: 'exterior-painting',
@@ -969,6 +969,14 @@ export const client = {
       { image: '/images/job-highlevel-scaffold-sq.webp', alt: 'High-level works from a suspended scaffold at roof gable', category: 'Painting' },
       { image: '/images/job-facade-works-sq.webp', alt: 'Exterior works in progress from scaffold access', category: 'Painting' },
       { image: '/images/job-crew-at-work-sq.webp', alt: 'Crew repainting the exterior of a multi-storey house', category: 'Residential' },
+      { image: '/images/job-roof-grey-sq.webp', alt: 'Grey roof coating applied over the entire tiled roof of a landed home', category: 'Painting' },
+      { image: '/images/job-scaffold-workers-sq.webp', alt: 'Two-tier scaffold in use for a full-height facade repaint', category: 'Residential' },
+      { image: '/images/job-interior-door-sq.webp', alt: 'Crew member repainting an internal door with the room sheeted for protection', category: 'Residential' },
+      { image: '/images/job-interior-ceiling-sq.webp', alt: 'Interior ceiling works with furniture and fittings sheeted throughout the room', category: 'Residential' },
+      { image: '/images/job-scaffold-terrace-sq.webp', alt: 'Scaffold work at a three-storey terrace house', category: 'Residential' },
+      { image: '/images/job-facade-window-sq.webp', alt: 'Completed exterior repaint of a landed home upper storey', category: 'Residential' },
+      { image: '/images/job-tarp-facade-sq.webp', alt: 'Tarp-protected facade during exterior painting works', category: 'Residential' },
+      { image: '/images/job-front-gate-sq.webp', alt: 'Completed exterior repaint, full-height view of a landed home', category: 'Residential' },
     ] as GalleryItem[],
   },
 

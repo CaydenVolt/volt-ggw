@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-import client from './src/config/client.ts';
+import client, { siteUrl } from './src/config/client.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,7 +10,7 @@ export default defineConfig({
    * Production origin. Drives canonical URLs and the generated sitemap.
    * Change it in `src/config/client.ts` → `seo.siteUrl`, not here.
    */
-  site: client.seo.siteUrl,
+  site: siteUrl,
 
   /**
    * Fully static. Every page is pre-rendered to HTML at build time and the
