@@ -32,3 +32,4 @@ pnpm-debug.log*
 
 # Editor
 *.swp
+dist-preview*.zip
