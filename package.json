@@ -1,5 +1,5 @@
 {
-  "name": "volt-template1",
+  "name": "volt-ggw",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=volt-template1 --branch=main --commit-dirty=true"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name=volt-ggw --branch=main --commit-dirty=true"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -26,5 +26,6 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "typescript": "^6.0.3"
-  }
+  },
+  "description": "Goal Green World Pte Ltd - Painting & Waterproofing website (Singapore)."
 }
