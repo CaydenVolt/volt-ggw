@@ -40,7 +40,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const { brand, analytics, seo } = client;
+const { brand, siteVerification, seo } = client;
 
 /* Explicit prop → page config → site default. */
 const pageMeta = pageKey ? (seo.pages as Record<string, { title?: string; description?: string }>)[pageKey] : undefined;
@@ -56,18 +56,6 @@ const ogImage = new URL(ogImageProp ?? seo.ogImage, siteUrl).href;
  */
 const blockIndexing = isPreview || noindex;
 
-/*
- * Dormant tracking slots. Rendering the configured IDs into the page source
- * makes it trivial to confirm the config is wired up before the real vendor
- * snippets go in.
- */
-const trackingSlots = [
-  ['GA4', analytics.ga4Id],
-  ['META PIXEL', analytics.metaPixelId],
-  ['GOOGLE ADS', analytics.googleAdsId],
-]
-  .map(([label, id]) => `<!-- ${label} SLOT, id: ${id || '(not set)'} -->`)
-  .join('\n    ');
 
 /*
  * Palette → CSS custom properties. This is the single bridge between the
@@ -107,8 +95,28 @@ const brandVars = [
       )
     }
 
+    {/*
+      Favicons: SVG for modern browsers (crisp on Retina), PNG fallbacks for
+      the rest, apple-touch-icon for iOS home-screen, .ico at root for
+      legacy browsers and bots that hardcode the path.
+    */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="theme-color" content={brand.primary} />
+
+    {/*
+      Google Search Console verification. Add this domain as a property in
+      GSC, pick the "HTML tag" verification method, and paste the token into
+      `siteVerification.google` in the config. Empty = no tag rendered.
+    */}
+    {
+      siteVerification.google && (
+        <meta name="google-site-verification" content={siteVerification.google} />
+      )
+    }
 
     {/* Open Graph / social preview */}
     <meta property="og:type" content="website" />
@@ -133,18 +141,6 @@ const brandVars = [
 
     {/* Brand palette from src/config/client.ts */}
     <style is:inline set:html={`:root{${brandVars}}`}></style>
-
-    {/*
-      ─────────────────────────────────────────────────────────────────────
-       TRACKING SLOTS, intentionally NOT active yet.
-      ─────────────────────────────────────────────────────────────────────
-       The IDs below come from `client.analytics`. To go live, replace the
-       matching comment with the real vendor snippet.
-
-       Emitted via set:html because Astro passes literal HTML comments
-       through verbatim, an expression inside `<!-- -->` never evaluates.
-    */}
-    <Fragment set:html={trackingSlots} />
 
     <slot name="head" />
   </head>

@@ -1478,17 +1478,17 @@ export const client = {
     privacyEmail: 'info@goalgreen.world',
   },
 
-  /* ---- Analytics --------------------------------------------------------- */
+  /* ---- Site verification ------------------------------------------------ */
   /**
-   * IDs only, these are public by design. The actual <script> snippets are
-   * NOT injected yet; `BaseLayout.astro` has commented slots in <head> ready
-   * for them. Leave a value as '' to keep that slot dormant.
+   * Google Search Console verification tokens. Paste the token GSC gives you
+   * when you add this domain as a property. Leave '' to disable.
+   *
+   * GA4 / Meta Pixel / Google Ads scaffolding was removed, GGW is not using
+   * those channels. If a future client needs them, this is where they'd be
+   * added back.
    */
-  analytics: {
-    ga4Id: '',
-    metaPixelId: '',
-    googleAdsId: '',
-    googleAdsConversionLabel: '',
+  siteVerification: {
+    google: '',
   },
 
   /* ---- SEO --------------------------------------------------------------- */
