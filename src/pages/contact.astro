@@ -171,45 +171,5 @@ const address = [
     </div>
   </section>
 
-  {/* ── Map slot ── */}
-  <section class="section-y bg-brand-bg-alt" aria-labelledby="map-heading">
-    <div class="container-x">
-      <div class="mx-auto max-w-2xl text-center">
-        <p class="eyebrow">Find Us</p>
-        <h2 id="map-heading" class="heading-section mt-3">Our Location</h2>
-        <p class="lead mt-4">{address.join(', ')}</p>
-      </div>
-
-      {/*
-        Google Maps embed. Query string is built from `contact.address` in
-        the config, so editing the address there also moves the pin here.
-        `loading="lazy"` keeps the map out of the critical path, it only
-        loads when the section scrolls into view.
-      */}
-      <div class="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <iframe
-          title={`Map showing the location of ${company.name}, ${address.join(', ')}`}
-          src={`https://www.google.com/maps?q=${encodeURIComponent(address.join(', '))}&output=embed`}
-          class="block aspect-[21/9] w-full border-0"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen
-        ></iframe>
-      </div>
-
-      <p class="mt-4 text-center text-sm">
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.join(', '))}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 font-semibold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
-        >
-          <Icon name="map-pin" size={16} />
-          Open in Google Maps for directions
-        </a>
-      </p>
-    </div>
-  </section>
-
   <TrustBar />
 </BaseLayout>
