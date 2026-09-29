@@ -14,10 +14,9 @@
  * Every id is namespaced with a per-instance `uid`, so two forms can coexist
  * on one page without colliding. The script scopes itself to its own root.
  *
- * CURRENT STATE, demo mode.
- * `client.form.endpoint` is an empty string, so submitting logs the payload to
- * the console and shows the success message without any network request. Set
- * that field to a real URL and the same handler POSTs JSON to it instead.
+ * SUBMISSION
+ * POSTs JSON to `/api/lead`, a Cloudflare Pages Function that upserts the
+ * contact in GoHighLevel and creates a pipeline opportunity.
  *
  * ATTRIBUTION
  * Seven hidden fields are populated on load: the five standard UTM params from
@@ -132,6 +131,8 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
     <form id={id('form')} novalidate>
       {/* Attribution, populated on load, never shown. */}
       {UTM_FIELDS.map((name) => <input type="hidden" name={name} value="" />)}
+      <input type="hidden" name="gclid" value="" />
+      <input type="hidden" name="fbclid" value="" />
       <input type="hidden" name="page_url" value="" />
       <input type="hidden" name="referrer" value="" />
 
@@ -277,7 +278,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
   </div>
 </div>
 
-<script is:inline define:vars={{ uid, endpoint: client.form.endpoint }}>
+<script is:inline define:vars={{ uid }}>
   (function () {
     const root = document.getElementById(uid);
     if (!root) return;
@@ -294,7 +295,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
 
     /* ── Attribution: UTMs from the query string, plus page and referrer ── */
     const params = new URLSearchParams(window.location.search);
-    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach((key) => {
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach((key) => {
       const field = form.elements.namedItem(key);
       if (field) field.value = params.get(key) || '';
     });
@@ -332,8 +333,6 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
         showError('fullName', 'Please enter your name.');
         firstBad = firstBad || 'fullName';
       }
-      // Deliberately permissive: international formats vary far too much to
-      // pattern-match safely, so we only require a plausible number of digits.
       const digits = String(data.phone || '').replace(/\D/g, '');
       if (digits.length < 7) {
         showError('phone', 'Please enter a valid phone number.');
@@ -359,7 +358,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
 
       const data = Object.fromEntries(new FormData(form).entries());
 
-      // Honeypot tripped, pretend it worked, drop it on the floor.
+      // Honeypot tripped — pretend it worked, drop it on the floor.
       if (data.company_website) {
         shell.hidden = true;
         success.hidden = false;
@@ -374,6 +373,7 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
         return;
       }
 
+      data.consentGiven = true;
       data.submitted_at = new Date().toISOString();
 
       if (submit) {
@@ -382,18 +382,18 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
       }
 
       try {
-        if (!endpoint) {
-          // ── Demo mode ──────────────────────────────────────────────────
-          // No endpoint configured. Log the exact payload that would be sent
-          // so the field shape can be verified before the CRM is wired up.
-          console.log('[EstimateForm] Demo mode, payload that would be sent:', data);
-        } else {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          });
-          if (!response.ok) throw new Error('Request failed: ' + response.status);
+        const response = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(
+            (result && result.error) || 'Request failed: ' + response.status
+          );
         }
 
         shell.hidden = true;
