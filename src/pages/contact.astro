@@ -181,28 +181,33 @@ const address = [
       </div>
 
       {/*
-        Placeholder for a per-client map embed. Replace this whole div with the
-        client's Google Maps iframe. It is left out deliberately: a hardcoded
-        embed would load third-party cookies on every page view and point at
-        the wrong address for the next client.
+        Google Maps embed. Query string is built from `contact.address` in
+        the config, so editing the address there also moves the pin here.
+        `loading="lazy"` keeps the map out of the critical path, it only
+        loads when the section scrolls into view.
       */}
-      <div
-        class="mt-10 flex aspect-[21/9] w-full items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white"
-      >
-        <div class="px-6 text-center">
-          <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/5 text-brand-accent-deep">
-            <Icon name="map-pin" size={28} />
-          </span>
-          <p class="mt-4 text-lg font-bold text-brand-primary">
-            Map embed goes here
-          </p>
-          <p class="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-brand-muted">
-            Paste the client’s Google Maps iframe into
-            <code class="rounded bg-brand-bg-alt px-1.5 py-0.5">src/pages/contact.astro</code>
-            to replace this block.
-          </p>
-        </div>
+      <div class="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <iframe
+          title={`Map showing the location of ${company.name}, ${address.join(', ')}`}
+          src={`https://www.google.com/maps?q=${encodeURIComponent(address.join(', '))}&output=embed`}
+          class="block aspect-[21/9] w-full border-0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
       </div>
+
+      <p class="mt-4 text-center text-sm">
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.join(', '))}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 font-semibold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
+        >
+          <Icon name="map-pin" size={16} />
+          Open in Google Maps for directions
+        </a>
+      </p>
     </div>
   </section>
 
