@@ -311,10 +311,10 @@ export const client = {
     whatsapp:
       'https://wa.me/6568162069?text=Hi%20Goal%20Green%20World%2C%20I%27d%20like%20a%20quote%20for%20painting%20%2F%20waterproofing.',
     address: {
-      line1: '1 Yishun Street 23',
-      line2: '',
+      line1: '7030 Ang Mo Kio Ave 5, #05-48',
+      line2: 'Northstar @ AMK',
       city: 'Singapore',
-      postalCode: '768441',
+      postalCode: '569880',
       country: 'Singapore',
     },
     hours: [
