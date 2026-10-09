@@ -141,11 +141,11 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
         Hidden from sight AND from screen readers, and excluded from tabbing.
       */}
       <div class="absolute left-[-9999px]" aria-hidden="true">
-        <label for={id('company-website')}>Do not fill this in</label>
+        <label for={id('hp')}>Do not fill this in</label>
         <input
           type="text"
-          id={id('company-website')}
-          name="company_website"
+          id={id('hp')}
+          name="hp_trap"
           tabindex="-1"
           autocomplete="off"
         />
@@ -359,12 +359,12 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
       const data = Object.fromEntries(new FormData(form).entries());
 
       // Honeypot tripped — pretend it worked, drop it on the floor.
-      if (data.company_website) {
+      if (data.hp_trap) {
         shell.hidden = true;
         success.hidden = false;
         return;
       }
-      delete data.company_website;
+      delete data.hp_trap;
 
       const firstBad = validate(data);
       if (firstBad) {

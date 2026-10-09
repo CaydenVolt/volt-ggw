@@ -191,6 +191,12 @@ async function createOpportunity(
   });
   if (!res.ok) {
     const text = await res.text();
+    // The pipeline disallows duplicates: a returning contact already has an
+    // opportunity. The contact was updated above, so the lead is not lost.
+    if (res.status === 400 && text.includes('OPPORTUNITY_NO_DUPLICATE')) {
+      console.log(`[lead] Contact ${contactId} already has an opportunity, skipped creating another.`);
+      return;
+    }
     throw new Error(`GHL create opportunity ${res.status}: ${text}`);
   }
 }

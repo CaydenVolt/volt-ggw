@@ -205,7 +205,7 @@ export const client = {
    * domain. Both, in that order.
    */
   deployment: {
-    isPreview: true,
+    isPreview: false,
     /** Where the client-preview build is hosted. No trailing slash. */
     previewUrl: 'https://volt-template1.pages.dev',
   },
@@ -304,12 +304,12 @@ export const client = {
 
   /* ---- Contact ----------------------------------------------------------- */
   contact: {
-    phone: '+65 6816 2069',
+    phone: '+65 8827 0331',
     /** Dial string for tel: links, digits and a leading + only. */
-    phoneHref: '+6568162069',
+    phoneHref: '+6588270331',
     email: 'info@goalgreen.world',
     whatsapp:
-      'https://wa.me/6568162069?text=Hi%20Goal%20Green%20World%2C%20I%27d%20like%20a%20quote%20for%20painting%20%2F%20waterproofing.',
+      'https://wa.me/6588270331?text=Hi%20Goal%20Green%20World%2C%20I%27d%20like%20a%20quote%20for%20painting%20%2F%20waterproofing.',
     address: {
       line1: '7030 Ang Mo Kio Ave 5, #05-48',
       line2: 'Northstar @ AMK',
@@ -1494,7 +1494,7 @@ export const client = {
   /* ---- SEO --------------------------------------------------------------- */
   seo: {
     /** Production origin, no trailing slash. Drives canonicals + sitemap. */
-    siteUrl: 'https://example.com',
+    siteUrl: 'https://goalgreensg.com',
     /** Site-wide fallbacks, used when a page sets nothing of its own. */
     title: 'Painting & Waterproofing Singapore | Goal Green World',
     description:
