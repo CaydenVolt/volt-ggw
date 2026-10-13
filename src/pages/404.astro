@@ -1,0 +1,38 @@
+---
+/**
+ * Not-found page. Cloudflare Pages serves `404.html` with a real 404 status
+ * for any unknown URL. Without this file it falls back to the homepage with a
+ * 200, which Google reports as a soft 404 and treats as duplicate content.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import client from '../config/client.ts';
+
+const { contact, company } = client;
+---
+
+<BaseLayout
+  title={`Page Not Found | ${company.name}`}
+  description="The page you were looking for could not be found."
+  noindex
+>
+  <section class="section-y bg-white">
+    <div class="container-x">
+      <div class="mx-auto flex max-w-xl flex-col items-center text-center">
+        <p class="eyebrow">Error 404</p>
+        <h1 class="heading-section mt-3">We Can't Find That Page</h1>
+        <p class="lead mt-4">
+          The link may be out of date or mistyped. Head back to the homepage, or
+          get in touch and we will help directly.
+        </p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="/" class="btn btn-accent">Back to homepage</a>
+          <a href={`tel:${contact.phoneHref}`} class="btn btn-outline-dark">
+            <Icon name="phone" size={17} />
+            <span>{contact.phone}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

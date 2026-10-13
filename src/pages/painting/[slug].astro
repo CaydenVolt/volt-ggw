@@ -26,6 +26,15 @@ const { service } = Astro.props;
   description={service.metaDescription}
   ogImage={service.image}
 >
-  <Schema slot="head" type="service" service={service} />
+  <Schema
+    slot="head"
+    type="service"
+    service={service}
+    breadcrumbs={[
+      { name: 'Home', path: '/' },
+      { name: 'Painting', path: '/painting' },
+      { name: service.name, path: `/painting/${service.slug}` },
+    ]}
+  />
   <ServiceDetail service={service} />
 </BaseLayout>

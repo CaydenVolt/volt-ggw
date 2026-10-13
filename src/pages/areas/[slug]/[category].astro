@@ -1,0 +1,193 @@
+---
+/**
+ * /areas/<area>/<category>, e.g. /areas/ang-mo-kio/waterproofing.
+ *
+ * One page per (area × service category), but ONLY for areas that carry a
+ * `profile` in the config. Those profiles hold the local detail that makes
+ * each page different from the next; without one, an area just keeps its
+ * general /areas/<slug> page. Do not add a profile you cannot back up with
+ * true, specific information, and add real completed jobs to it as the
+ * client supplies them. Templated pages that differ only by place name get
+ * treated as doorway pages.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import Icon from '../../../components/Icon.astro';
+import EstimateForm from '../../../components/EstimateForm.astro';
+import TrustBar from '../../../components/TrustBar.astro';
+import ReviewCarousel from '../../../components/ReviewCarousel.astro';
+import CTABanner from '../../../components/CTABanner.astro';
+import Schema from '../../../components/Schema.astro';
+import client from '../../../config/client.ts';
+
+export const getStaticPaths = (() =>
+  client.serviceArea.areas
+    .filter((area) => area.profile)
+    .flatMap((area) =>
+      client.serviceCategories.map((category) => ({
+        params: { slug: area.slug, category: category.slug },
+        props: { area, category },
+      })),
+    )) satisfies GetStaticPaths;
+
+const { area, category } = Astro.props;
+const { company, contact, services, serviceArea } = client;
+const profile = area.profile!;
+
+const label = category.eyebrow;
+const lower = label.toLowerCase();
+const otherCategory = client.serviceCategories.find((c) => c.slug !== category.slug)!;
+
+const categoryServices = services.filter((s) => s.category === category.slug);
+const focus = category.slug === 'painting' ? profile.painting : profile.waterproofing;
+
+const path = `/areas/${area.slug}/${category.slug}`;
+const title = `${label} Contractor in ${area.name} | ${company.name}`;
+const topServices = categoryServices
+  .slice(0, 3)
+  .map((s) => s.name)
+  .join(', ');
+const description = `${label} contractor in ${area.name}, Singapore. ${topServices}. Free site assessment, bizSAFE-certified crews. Call ${contact.phone}.`;
+
+/* Same service in the other priority areas, for crawlable internal links. */
+const sameServiceElsewhere = serviceArea.areas.filter(
+  (entry) => entry.profile && entry.slug !== area.slug,
+);
+
+const breadcrumbs = [
+  { name: 'Home', path: '/' },
+  { name: area.name, path: `/areas/${area.slug}` },
+  { name: label, path },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <Schema
+    slot="head"
+    type="area-service"
+    areaService={{ areaName: area.name, category: label, path, description }}
+    breadcrumbs={breadcrumbs}
+  />
+  <PageHero
+    eyebrow={`${label} · ${area.name}`}
+    title={`${label} Contractor in ${area.name}, Singapore`}
+    subtitle={`${profile.character} We handle ${lower} for homes and properties across ${area.name}, with a free site assessment before any quote.`}
+    backLink={{ href: `/areas/${area.slug}`, label: `All services in ${area.name}` }}
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/contact" class="btn btn-accent px-7 py-3.5">Get a Free Estimate</a>
+      <a href={`tel:${contact.phoneHref}`} class="btn btn-outline-light px-7 py-3.5">
+        <Icon name="phone" size={17} />
+        <span>{contact.phone}</span>
+      </a>
+    </div>
+  </PageHero>
+
+  <TrustBar />
+
+  <section class="section-y bg-white" aria-labelledby="focus-heading">
+    <div class="container-x">
+      <div class="grid gap-10 lg:grid-cols-[1fr_minmax(0,400px)] lg:gap-14">
+        <div>
+          <p class="eyebrow">Local Considerations</p>
+          <h2 id="focus-heading" class="heading-section mt-3">
+            What Matters for {label} in {area.name}
+          </h2>
+          <ul class="mt-6 space-y-4">
+            {
+              focus.map((point) => (
+                <li class="flex items-start gap-3.5">
+                  <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-accent text-brand-accent-text">
+                    <Icon name="check" size={14} />
+                  </span>
+                  <span class="text-[15px] leading-relaxed text-brand-text">{point}</span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <h2 class="heading-section mt-12">Our {label} Services</h2>
+          <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+            {
+              categoryServices.map((service) => (
+                <li>
+                  <a
+                    href={`/${service.category}/${service.slug}`}
+                    class="flex h-full items-start gap-3.5 rounded-xl bg-brand-bg-alt p-5 transition-colors hover:bg-brand-accent/10"
+                  >
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-accent text-brand-accent-text">
+                      <Icon name={service.icon} size={20} />
+                    </span>
+                    <span>
+                      <span class="block text-[15px] font-bold leading-snug text-brand-primary">
+                        {service.name}
+                      </span>
+                      <span class="mt-1 block text-sm leading-relaxed text-brand-muted">
+                        {service.shortDescription}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="mt-10 rounded-2xl border-l-4 border-brand-accent bg-brand-bg-alt p-6">
+            <h3 class="text-lg font-bold text-brand-primary">
+              Also need {otherCategory.eyebrow.toLowerCase()} in {area.name}?
+            </h3>
+            <p class="mt-2.5 text-[15px] leading-relaxed text-brand-muted">
+              We cover both under one roof, so one site visit can look at the
+              whole job.
+              <a
+                href={`/areas/${area.slug}/${otherCategory.slug}`}
+                class="font-bold text-brand-primary underline underline-offset-2 hover:text-brand-accent-hover"
+              >
+                See {otherCategory.eyebrow.toLowerCase()} in {area.name}
+              </a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:sticky lg:top-24 lg:self-start">
+          <EstimateForm
+            variant="card"
+            heading={`Free ${label} Estimate in ${area.name}`}
+            subheading="One business day turnaround."
+            showLogo={false}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ReviewCarousel variant="alt" uid="area-service-reviews" />
+
+  <section class="section-y bg-white" aria-labelledby="elsewhere-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="eyebrow">Nearby</p>
+        <h2 id="elsewhere-heading" class="heading-section mt-3">
+          {label} in Other Areas
+        </h2>
+      </div>
+      <ul class="mx-auto mt-8 flex max-w-4xl flex-wrap justify-center gap-2.5">
+        {
+          sameServiceElsewhere.map((entry) => (
+            <li>
+              <a
+                href={`/areas/${entry.slug}/${category.slug}`}
+                class="block rounded-full border border-slate-200 bg-brand-bg-alt px-4 py-2 text-sm font-medium text-brand-text transition-colors hover:border-brand-accent hover:bg-brand-accent/10 hover:text-brand-primary"
+              >
+                {entry.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTABanner headline={`Need ${label} in ${area.name}?`} />
+</BaseLayout>

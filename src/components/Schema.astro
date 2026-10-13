@@ -22,9 +22,15 @@ import type { Service, FaqItem } from '../config/client.ts';
 import { reviews, reviewSummary } from '../data/reviews.ts';
 
 export interface Props {
-  /** `organization` for sitewide pages, `service` for a service page. */
-  type?: 'organization' | 'service';
+  /**
+   * `organization` for sitewide pages, `service` for a service page,
+   * `area-service` for `/areas/<slug>/<category>` (needs `areaService`).
+   */
+  type?: 'organization' | 'service' | 'area-service';
   service?: Service;
+  areaService?: { areaName: string; category: string; path: string; description: string };
+  /** Trail from the homepage down to this page, emitted as BreadcrumbList. */
+  breadcrumbs?: readonly { name: string; path: string }[];
   /**
    * FAQ entries to emit as a FAQPage node.
    *
@@ -38,7 +44,7 @@ export interface Props {
   faqs?: readonly FaqItem[];
 }
 
-const { type = 'organization', service, faqs } = Astro.props;
+const { type = 'organization', service, areaService, faqs, breadcrumbs } = Astro.props;
 
 const { company, contact, seo, social, serviceArea, services, faq } = client;
 const origin = seo.siteUrl.replace(/\/$/, '');
@@ -162,6 +168,17 @@ if (type === 'service' && service) {
       })),
     });
   }
+} else if (type === 'area-service' && areaService) {
+  graph.push({
+    '@type': 'Service',
+    '@id': `${origin}${areaService.path}#service`,
+    name: `${areaService.category} in ${areaService.areaName}`,
+    serviceType: areaService.category,
+    description: areaService.description,
+    url: `${origin}${areaService.path}`,
+    provider: { '@id': businessId },
+    areaServed: { '@type': 'Place', name: `${areaService.areaName}, Singapore` },
+  });
 } else {
   /* Explicit `faqs` wins; otherwise the homepage's own FAQ set. */
   const entries = faqs ?? (Astro.url.pathname === '/' ? faq.items : undefined);
@@ -176,6 +193,18 @@ if (type === 'service' && service) {
       })),
     });
   }
+}
+
+if (breadcrumbs && breadcrumbs.length > 0) {
+  graph.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: `${origin}${crumb.path}`,
+    })),
+  });
 }
 
 const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });

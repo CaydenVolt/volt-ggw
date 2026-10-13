@@ -127,10 +127,30 @@ export interface ValueCard {
 }
 
 
+/**
+ * Local detail that unlocks the `/areas/<slug>/painting` and
+ * `/areas/<slug>/waterproofing` pages. An area without a `profile` only gets
+ * its general `/areas/<slug>` page.
+ *
+ * Keep every line TRUE and general. Describe the housing stock, not GGW's
+ * history there, and never invent projects. Add real completed jobs
+ * (location, what was done) here once the client supplies them; those are
+ * what turn these from templated pages into genuinely local ones.
+ */
+export interface AreaProfile {
+  /** One sentence on the estate's age and housing mix. */
+  character: string;
+  /** What tends to matter for painting jobs here. */
+  painting: string[];
+  /** What tends to matter for waterproofing jobs here. */
+  waterproofing: string[];
+}
+
 export interface ServiceArea {
   /** Drives `/areas/<slug>`. Lowercase, hyphenated. */
   slug: string;
   name: string;
+  profile?: AreaProfile;
   /**
    * Optional bespoke intro for that area's page. When omitted, the page falls
    * back to `serviceArea.descriptionTemplate` with `{area}` substituted.
@@ -1420,20 +1440,149 @@ export const client = {
     descriptionTemplate:
       'Professional painting and waterproofing services in {area}. Free site assessment, fixed itemised quotes, and bizSAFE-certified crews across every HDB block, condominium and commercial unit in the area.',
     areas: [
-      { slug: 'yishun', name: 'Yishun', description: 'Our home ground, our office is on Yishun Street 23, so {area} jobs get the fastest response times we offer. Painting, waterproofing and leak repair across the whole estate.' },
-      { slug: 'woodlands', name: 'Woodlands' },
+      {
+        slug: 'yishun',
+        name: 'Yishun',
+        profile: {
+          character: 'Yishun is a large northern town developed mainly from the 1980s, with HDB estates of different ages side by side.',
+          painting: [
+            'Blocks of different ages sit next to each other here, so conditions vary from home to home. We assess each unit rather than assume.',
+            'Exterior walls, window surrounds and roof edges take the heaviest rain and sun, so the coating system matters as much as the colour.',
+            'Older units often have decades of paint build-up and hairline cracks. Surface preparation decides how long the finish lasts.',
+          ],
+          waterproofing: [
+            'In older blocks the original bathroom and balcony waterproofing may be near the end of its life. A ceiling stain in the unit below is a common first sign.',
+            'A leak that shows on your ceiling often starts in the unit above, so we trace the source rather than patch the stain.',
+            'Top-floor units and roof slabs are worth checking before the next monsoon season.',
+          ],
+        },
+      },
+      {
+        slug: 'woodlands',
+        name: 'Woodlands',
+        profile: {
+          character: 'Woodlands is one of the largest HDB towns in the north, developed in phases from the 1970s to the 1990s.',
+          painting: [
+            'With such a large and varied estate, blocks and finishes differ a lot. A site assessment before quoting avoids surprises.',
+            'Exterior walls and common corridors are exposed to heavy rain and sun, so the coating system matters as much as the colour.',
+            'Older units often need cracks and peeling areas dealt with before any new paint goes on.',
+          ],
+          waterproofing: [
+            'Older blocks may have bathroom and balcony waterproofing that has aged. Ceiling stains below are a common first sign.',
+            'Where a leak shows is not always where it starts, so we trace the source before quoting a fix.',
+            'Roof slabs and parapets on top floors are worth checking ahead of heavy rain.',
+          ],
+        },
+      },
       { slug: 'sembawang', name: 'Sembawang' },
-      { slug: 'ang-mo-kio', name: 'Ang Mo Kio' },
-      { slug: 'bishan', name: 'Bishan' },
-      { slug: 'toa-payoh', name: 'Toa Payoh' },
+      {
+        slug: 'ang-mo-kio',
+        name: 'Ang Mo Kio',
+        description: 'Our home ground, our office is at Northstar @ AMK, so {area} jobs get the fastest response times we offer. Painting, waterproofing and leak repair across the whole estate.',
+        profile: {
+          character: 'Ang Mo Kio is one of Singapore’s earliest HDB towns, and many of its blocks date from the 1970s and 1980s.',
+          painting: [
+            'Older blocks tend to carry decades of paint build-up, so scraping, crack repair and priming decide how long the finish lasts.',
+            'Exterior walls, window surrounds and roof edges take the heaviest rain and sun, so the coating system matters as much as the colour.',
+            'We assess ceilings and walls for defects first, so the quote covers what is actually needed.',
+          ],
+          waterproofing: [
+            'In older blocks the original bathroom and balcony waterproofing may have reached the end of its life. Ceiling stains in the unit below are a common first sign.',
+            'A leak that shows on your ceiling often starts in the unit above, so we trace the source rather than patch the stain.',
+            'Top-floor units and roof slabs are worth checking before the next monsoon season.',
+          ],
+        },
+      },
+      {
+        slug: 'bishan',
+        name: 'Bishan',
+        profile: {
+          character: 'Bishan mixes HDB flats, condominiums and landed homes, mostly developed from the 1980s.',
+          painting: [
+            'Landed and condominium homes often need exterior and roof work, so we plan scaffold access and surface preparation around the building.',
+            'Condominium management corporations usually need to approve exterior and common-area work first. We can work to their requirements.',
+            'HDB units of this age often need cracks and old paint dealt with before repainting.',
+          ],
+          waterproofing: [
+            'Roofs, balconies and planter boxes on landed and condominium homes are common leak points and need a proper membrane, not just a topcoat.',
+            'In older HDB blocks, bathroom and balcony waterproofing may have aged. Ceiling stains below are a common first sign.',
+            'We trace where water is actually travelling before quoting a repair.',
+          ],
+        },
+      },
+      {
+        slug: 'toa-payoh',
+        name: 'Toa Payoh',
+        profile: {
+          character: 'Toa Payoh is Singapore’s second HDB town, and some of its blocks are among the oldest still standing.',
+          painting: [
+            'Older blocks tend to have layers of old paint and hairline cracks, so preparation is most of the job.',
+            'Exterior walls and common corridors take heavy rain and sun, so the coating system matters as much as the colour.',
+            'We assess each unit first so the quote covers the repairs it actually needs.',
+          ],
+          waterproofing: [
+            'In some of Singapore’s oldest HDB blocks the original waterproofing has long since aged. Ceiling stains below are a common first sign.',
+            'A leak that shows on your ceiling often starts in the unit above, so we trace the source rather than patch the stain.',
+            'Roof slabs and parapets on top floors are worth checking before heavy rain.',
+          ],
+        },
+      },
       { slug: 'serangoon', name: 'Serangoon' },
       { slug: 'hougang', name: 'Hougang' },
-      { slug: 'sengkang', name: 'Sengkang' },
+      {
+        slug: 'sengkang',
+        name: 'Sengkang',
+        profile: {
+          character: 'Sengkang is one of the newer HDB towns, developed mainly from the 2000s.',
+          painting: [
+            'Newer blocks usually need a refresh rather than repair: colour changes, touch-ups and hairline cracks after the first few years.',
+            'Many homes have now passed their defects liability period, so small defects become the owner’s to fix. We can assess and quote them together with the paint.',
+            'Exterior walls and common areas still weather quickly in Singapore’s rain and sun, so the coating system matters.',
+          ],
+          waterproofing: [
+            'Younger estates rarely have worn-out waterproofing, but leaks can still come from workmanship, pipe penetrations and window or balcony junctions.',
+            'If you are still within the defects liability period, check whether you are covered first. We can advise after a site check.',
+            'We trace where water is actually travelling before quoting a repair.',
+          ],
+        },
+      },
       { slug: 'punggol', name: 'Punggol' },
-      { slug: 'tampines', name: 'Tampines' },
+      {
+        slug: 'tampines',
+        name: 'Tampines',
+        profile: {
+          character: 'Tampines was Singapore’s first regional centre, developed from the 1980s, and mixes HDB estates with condominiums.',
+          painting: [
+            'HDB blocks from the 1980s onwards often need old paint and cracks dealt with before repainting.',
+            'Condominium management corporations usually need to approve exterior and common-area work first. We can work to their requirements.',
+            'Exterior walls take heavy rain and sun, so the coating system matters as much as the colour.',
+          ],
+          waterproofing: [
+            'Original bathroom and balcony waterproofing in older blocks may have aged. Ceiling stains below are a common first sign.',
+            'In condominiums, roofs, planter boxes and balconies are common leak points and need a proper membrane.',
+            'We trace where water is actually travelling before quoting a repair.',
+          ],
+        },
+      },
       { slug: 'bedok', name: 'Bedok' },
       { slug: 'pasir-ris', name: 'Pasir Ris' },
-      { slug: 'jurong-east', name: 'Jurong East' },
+      {
+        slug: 'jurong-east',
+        name: 'Jurong East',
+        profile: {
+          character: 'Jurong East mixes HDB estates from the 1970s and 1980s with newer condominiums around the regional centre.',
+          painting: [
+            'Older HDB blocks often carry layers of old paint and hairline cracks, so preparation is most of the job.',
+            'Condominium management corporations usually need to approve exterior and common-area work first. We can work to their requirements.',
+            'Exterior walls take heavy rain and sun, so the coating system matters as much as the colour.',
+          ],
+          waterproofing: [
+            'In older HDB blocks the original bathroom and balcony waterproofing may have aged. Ceiling stains below are a common first sign.',
+            'Newer condominiums can still leak at balconies, planter boxes and roof edges, where workmanship and junction details matter.',
+            'A leak that shows on your ceiling often starts elsewhere, so we trace the source before quoting a fix.',
+          ],
+        },
+      },
       { slug: 'jurong-west', name: 'Jurong West' },
       { slug: 'clementi', name: 'Clementi' },
       { slug: 'bukit-batok', name: 'Bukit Batok' },

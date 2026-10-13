@@ -46,7 +46,13 @@ const nearby = others.slice(0, 8);
 ---
 
 <BaseLayout title={title} description={description}>
-  <Schema slot="head" />
+  <Schema
+    slot="head"
+    breadcrumbs={[
+      { name: 'Home', path: '/' },
+      { name: area.name, path: `/areas/${area.slug}` },
+    ]}
+  />
   <PageHero
     eyebrow="Service Area"
     title={`Painting & Waterproofing in ${area.name}`}
@@ -106,16 +112,40 @@ const nearby = others.slice(0, 8);
             }
           </ul>
 
-          {/* ── Why local matters ── */}
+          {
+            area.profile && (
+              <div class="mt-10">
+                <h3 class="text-lg font-bold text-brand-primary">
+                  {area.name} Painting & Waterproofing
+                </h3>
+                <p class="mt-2.5 text-[15px] leading-relaxed text-brand-muted">
+                  {area.profile.character} See what matters for each service
+                  here:
+                </p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                  {client.serviceCategories.map((category) => (
+                    <a
+                      href={`/areas/${area.slug}/${category.slug}`}
+                      class="btn btn-outline-dark"
+                    >
+                      {category.eyebrow} in {area.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+
+          {/* ── Why a site visit matters ── */}
           <div class="mt-10 rounded-2xl border-l-4 border-brand-accent bg-brand-bg-alt p-6">
             <h3 class="text-lg font-bold text-brand-primary">
-              Why use a contractor who works in {area.name}?
+              Why we inspect before we quote
             </h3>
             <p class="mt-2.5 text-[15px] leading-relaxed text-brand-muted">
-              Because we have already seen how the blocks in this area are
-              built, which estates have recurring ceiling leak patterns, and
-              what the management corporations will and will not approve. That
-              shortens diagnosis and avoids surprises once work starts.
+              Every property is different, even within one estate. We inspect
+              first, explain what we find, and give a fixed itemised quote, so
+              you know what is being done and why. For condominiums we can work
+              to the management corporation's approval requirements.
             </p>
           </div>
         </div>
