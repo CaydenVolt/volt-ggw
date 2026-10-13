@@ -1,0 +1,85 @@
+---
+/**
+ * /thank-you, where every EstimateForm submission lands.
+ *
+ * It only shows to someone who just submitted a form. The form sets a
+ * short-lived sessionStorage flag before redirecting here; this page checks
+ * it, consumes it, and otherwise sends the visitor to the homepage. That is
+ * a client-side gate (a static site has no server to enforce it), which is
+ * enough to keep the page from being reached or counted as a conversion by
+ * accident. The page is noindex and left out of the sitemap.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import client from '../config/client.ts';
+
+const { contact, company, form } = client;
+---
+
+<BaseLayout
+  title={`Thank You | ${company.name}`}
+  description="Your request has been received."
+  noindex
+>
+  <section id="ty" hidden class="section-y bg-white">
+    <div class="container-x">
+      <div class="mx-auto flex max-w-xl flex-col items-center text-center">
+        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-accent text-brand-accent-text">
+          <Icon name="check" size={32} />
+        </span>
+        <h1 class="heading-section mt-6">We Have Your Request</h1>
+        <p class="lead mt-4">{form.successMessage}</p>
+
+        <p class="mt-8 text-sm font-semibold uppercase tracking-wider text-brand-muted">
+          Need us sooner?
+        </p>
+        <div class="mt-3 flex flex-col gap-3 sm:flex-row">
+          <a href={`tel:${contact.phoneHref}`} class="btn btn-accent">
+            <Icon name="phone" size={17} />
+            <span>{contact.phone}</span>
+          </a>
+          <a
+            href={contact.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-outline-dark"
+          >
+            <Icon name="whatsapp" size={17} />
+            <span>WhatsApp Us</span>
+          </a>
+        </div>
+
+        <a id="ty-back" href="/" class="btn btn-outline-dark mt-12">
+          Back to website
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var allowed = false;
+    var back = '/';
+    try {
+      var raw = sessionStorage.getItem('ggw_lead_submitted');
+      if (raw) {
+        var data = JSON.parse(raw);
+        if (Date.now() - data.t < 30 * 60 * 1000) {
+          allowed = true;
+          if (typeof data.from === 'string' && data.from.charAt(0) === '/' && data.from.charAt(1) !== '/') {
+            back = data.from;
+          }
+        }
+        sessionStorage.removeItem('ggw_lead_submitted');
+      }
+    } catch (e) {}
+
+    if (!allowed) {
+      window.location.replace('/');
+      return;
+    }
+    document.getElementById('ty-back').setAttribute('href', back);
+    document.getElementById('ty').hidden = false;
+  })();
+</script>

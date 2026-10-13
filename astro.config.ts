@@ -46,7 +46,7 @@ export default defineConfig({
        * in the sitemap tells search engines two contradictory things, so keep
        * them out of it.
        */
-      filter: (page) => !/\/(privacy|terms)\/?$/.test(page),
+      filter: (page) => !/\/(privacy|terms|thank-you)\/?$/.test(page),
     }),
   ],
 

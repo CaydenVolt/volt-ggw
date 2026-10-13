@@ -396,6 +396,21 @@ const labelClass = 'mb-1.5 block text-sm font-semibold text-brand-primary';
           );
         }
 
+        // Hand off to /thank-you. If storage is unavailable the page could
+        // not verify the visit, so fall back to the inline success message.
+        let handedOff = false;
+        try {
+          sessionStorage.setItem(
+            'ggw_lead_submitted',
+            JSON.stringify({ t: Date.now(), from: window.location.pathname })
+          );
+          handedOff = true;
+        } catch (storageError) {}
+        if (handedOff) {
+          window.location.href = '/thank-you';
+          return;
+        }
+
         shell.hidden = true;
         success.hidden = false;
         success.scrollIntoView({ behavior: 'smooth', block: 'center' });
