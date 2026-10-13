@@ -1640,6 +1640,15 @@ export const client = {
     google: '',
   },
 
+  /* ---- Chat widget ------------------------------------------------------- */
+  /**
+   * GoHighLevel chat widget, loaded on every page. Copy the `data-widget-id`
+   * from the widget's embed code (Sites, Chat Widget). Empty = no widget.
+   */
+  chatWidget: {
+    widgetId: '6abb608603da7099e0520332',
+  },
+
   /* ---- SEO --------------------------------------------------------------- */
   seo: {
     /** Production origin, no trailing slash. Drives canonicals + sitemap. */

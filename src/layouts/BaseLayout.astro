@@ -40,7 +40,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const { brand, siteVerification, seo } = client;
+const { brand, siteVerification, seo, chatWidget } = client;
 
 /* Explicit prop → page config → site default. */
 const pageMeta = pageKey ? (seo.pages as Record<string, { title?: string; description?: string }>)[pageKey] : undefined;
@@ -161,5 +161,16 @@ const brandVars = [
     </main>
 
     <Footer />
+
+    {
+      chatWidget.widgetId && (
+        <script
+          is:inline
+          src="https://widgets.leadconnectorhq.com/loader.js"
+          data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+          data-widget-id={chatWidget.widgetId}
+        />
+      )
+    }
   </body>
 </html>
